@@ -4,40 +4,41 @@
 
 /** @type { PrettierConfig | SortImportsConfig | TailwindConfig } */
 const prettierConfig = {
-  plugins: [
-    "@ianvs/prettier-plugin-sort-imports",
-    "prettier-plugin-tailwindcss",
-  ],
-  tailwindFunctions: ["cn", "cva"],
-  importOrder: [
-    "<TYPES>",
-    "^(react/(.*)$)|^(react$)|^(react-native(.*)$)",
-    "^(next/(.*)$)|^(next$)",
-    "^(expo(.*)$)|^(expo$)",
-    "<THIRD_PARTY_MODULES>",
-    "",
-    "<TYPES>^[.|..|~]",
-    "^#client/",
-    "^#server/",
-    "^[../]",
-    "^[./]",
-  ],
-  importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
-  importOrderTypeScriptVersion: "4.4.0",
-  overrides: [
-    {
-      files: "*.json.hbs",
-      options: {
-        parser: "json",
-      },
-    },
-    {
-      files: "*.js.hbs",
-      options: {
-        parser: "babel",
-      },
-    },
-  ],
+    tabWidth: 4,
+    plugins: [
+        "@ianvs/prettier-plugin-sort-imports",
+        "prettier-plugin-tailwindcss",
+    ],
+    tailwindFunctions: ["cn", "cva"],
+    importOrder: [
+        "<TYPES>",
+        "^(react/(.*)$)|^(react$)|^(react-native(.*)$)",
+        "^(next/(.*)$)|^(next$)",
+        "^(expo(.*)$)|^(expo$)",
+        "<THIRD_PARTY_MODULES>",
+        "",
+        "<TYPES>^[.|..|~]",
+        "^#client/",
+        "^#server/",
+        "^[../]",
+        "^[./]",
+    ],
+    importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
+    importOrderTypeScriptVersion: "4.4.0",
+    overrides: [
+        {
+            files: "*.json.hbs",
+            options: {
+                parser: "json",
+            },
+        },
+        {
+            files: "*.js.hbs",
+            options: {
+                parser: "babel",
+            },
+        },
+    ],
 };
 
 export default prettierConfig;
