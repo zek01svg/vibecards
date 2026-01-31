@@ -1,18 +1,46 @@
+import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+
+export const restrictEnvAccess = tseslint.config(
+    { ignores: ["**/env.ts"] },
+    {
+        files: ["**/*.js", "**/*.ts", "**/*.tsx"],
+        ignores: ["**/playwright.config.ts"],
+        rules: {
+            "no-restricted-properties": [
+                "error",
+                {
+                    object: "process",
+                    property: "env",
+                    message:
+                        "Use `import { env } from '@/lib/env'` instead to ensure validated types.",
+                },
+            ],
+            "no-restricted-imports": [
+                "error",
+                {
+                    name: "process",
+                    importNames: ["env"],
+                    message:
+                        "Use `import { env } from '@/lib/env'` instead to ensure validated types.",
+                },
+            ],
+        },
+    }
+);
 
 const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+    ...nextVitals,
+    ...restrictEnvAccess,
+    globalIgnores([
+        ".next/**",
+        "out/**",
+        "build/**",
+        "next-env.d.ts",
+        "node_modules/**",
+        ".clerk/**",
+    ]),
 ]);
 
 export default eslintConfig;
