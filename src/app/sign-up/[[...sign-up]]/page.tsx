@@ -1,15 +1,11 @@
-import { SignUp } from '@clerk/nextjs';
+import { SignupForm } from "@/components/auth/signup-form";
 
 export default function SignUpPage() {
-  return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      padding: '2rem',
-    }}>
-      <SignUp />
-    </div>
-  );
+    return (
+        <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+            <div className="w-full max-w-sm">
+                <SignupForm />
+            </div>
+        </div>
+    );
 }
