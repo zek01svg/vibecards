@@ -1,5 +1,5 @@
-import { account, session, user, verification } from "@/database/auth-schema";
 import db from "@/database/db";
+import { account, session, user, verification } from "@/database/schema";
 import { env } from "@/lib/env";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
