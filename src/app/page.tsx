@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import LandingPageButton from "@/components/ui/LandingPageButton";
+
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -15,24 +15,7 @@ export default function Home() {
                 </div>
 
                 <div className={styles.authSection}>
-                    <SignedOut>
-                        <div className={styles.ctas}>
-                            <Link href="/sign-in" className={styles.primary}>
-                                Sign In
-                            </Link>
-                            <Link href="/sign-up" className={styles.secondary}>
-                                Sign Up
-                            </Link>
-                        </div>
-                    </SignedOut>
-                    <SignedIn>
-                        <div className={styles.signedIn}>
-                            <UserButton afterSignOutUrl="/" />
-                            <Link href="/dashboard" className={styles.primary}>
-                                Go to Dashboard
-                            </Link>
-                        </div>
-                    </SignedIn>
+                    <LandingPageButton />
                 </div>
 
                 <div className={styles.features}>
