@@ -59,7 +59,7 @@ const auth = betterAuth({
             },
         }),
     ],
-    trustedOrigins: ["http://localhost:3000", "https://vibecards.*"],
+    trustedOrigins: ["http://localhost:3000", "https://vibecards-*"],
     socialProviders: {
         google: {
             prompt: "select_account consent",
