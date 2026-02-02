@@ -1,12 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect, notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import styles from "./page.module.css";
+import { notFound, redirect } from "next/navigation";
+import db from "@/database/db";
+import { decks } from "@/database/schema";
 import { Card } from "@/lib/schemas";
-import { StudyMode } from "./study-mode";
+import authenticate from "@/utils/authenticate";
+import { eq } from "drizzle-orm";
+
 import { DeckView } from "./deck-view";
 import { ExportButton } from "./export-button";
+import styles from "./page.module.css";
+import { StudyMode } from "./study-mode";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +18,7 @@ interface Deck {
     title: string;
     topic: string;
     cards: Card[];
-    owner_id: string;
+    ownerId: string;
 }
 
 export default async function DeckPage({
@@ -25,28 +28,23 @@ export default async function DeckPage({
     params: Promise<{ id: string }>;
     searchParams: Promise<{ mode?: string }>;
 }) {
-    const { userId } = await auth();
+    const userId = await authenticate();
     const { id } = await params;
     const { mode } = await searchParams;
 
-    if (!userId) {
+    if (userId === "Unauthorized") {
         redirect("/sign-in");
     }
 
     // Fetch deck and verify it belongs to current user
-    const { data: deck, error } = await supabase
-        .from("decks")
-        .select("id, title, topic, cards, owner_id")
-        .eq("id", id)
-        .single();
+    const [deck] = await db.select().from(decks).where(eq(decks.id, id));
 
-    if (error || !deck) {
-        console.error("Error fetching deck:", error);
+    if (!deck) {
         notFound();
     }
 
     // Verify deck belongs to current user (owner_id check)
-    if (deck.owner_id !== userId) {
+    if (deck.ownerId !== userId) {
         notFound();
     }
 
