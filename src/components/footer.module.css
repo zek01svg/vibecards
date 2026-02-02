@@ -98,8 +98,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
     flex-wrap: wrap;
     gap: 1rem;
 }
@@ -155,7 +153,6 @@
     .bottom {
         flex-direction: column;
         text-align: center;
-        padding-top: 1.5rem;
     }
 
     .social {
