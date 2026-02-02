@@ -1,38 +1,44 @@
-import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import { createDeckSchema } from '@/lib/schemas';
-import { supabase } from '@/lib/supabase';
+import { NextRequest, NextResponse } from "next/server";
+import db from "@/database/db";
+import { decks } from "@/database/schema";
+import { env } from "@/lib/env";
+import { createDeckSchema } from "@/lib/schemas";
+import authenticate from "@/utils/authenticate";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { ZodError } from "zod";
 
 // Guardrails
 const MAX_TOPIC_LENGTH = 500;
-const MAX_OUTPUT_TOKENS = 2000;
+const MAX_OUTPUT_TOKENS = 8192;
 
 export async function POST(request: NextRequest) {
     try {
         // 1. Verify authentication
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        const userId = await authenticate();
+        if (userId === "Unauthorized") {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 },
+            );
         }
 
         // 2. Parse and validate request body
         const body = await request.json();
-        const { topic, difficulty = 'intermediate', cardCount = 10 } = body;
+        const { topic, difficulty = "intermediate", cardCount = 10 } = body;
 
-        if (!topic || typeof topic !== 'string') {
+        if (!topic || typeof topic !== "string") {
             return NextResponse.json(
-                { error: 'Topic is required' },
-                { status: 400 }
+                { error: "Topic is required" },
+                { status: 400 },
             );
         }
 
         // Validate difficulty
-        const validDifficulties = ['beginner', 'intermediate', 'advanced'];
+        const validDifficulties = ["beginner", "intermediate", "advanced"];
         if (difficulty && !validDifficulties.includes(difficulty)) {
             return NextResponse.json(
-                { error: 'Invalid difficulty level' },
-                { status: 400 }
+                { error: "Invalid difficulty level" },
+                { status: 400 },
             );
         }
 
@@ -41,113 +47,57 @@ export async function POST(request: NextRequest) {
         const numCardCount = Number(cardCount);
         if (!validCardCounts.includes(numCardCount)) {
             return NextResponse.json(
-                { error: 'Invalid card count. Must be 5, 8, 10, 12, 15, or 20' },
-                { status: 400 }
+                {
+                    error: "Invalid card count. Must be 5, 8, 10, 12, 15, or 20",
+                },
+                { status: 400 },
             );
         }
 
         // 3. Validate topic length
         if (topic.length > MAX_TOPIC_LENGTH) {
             return NextResponse.json(
-                { error: `Topic must be ${MAX_TOPIC_LENGTH} characters or less` },
-                { status: 400 }
-            );
-        }
-
-        // 4. Instantiate OpenAI client inside route handler
-        const apiKey = process.env.OPENAI_API_KEY;
-        if (!apiKey) {
-            return NextResponse.json(
-                { error: 'OpenAI API key not configured' },
-                { status: 500 }
-            );
-        }
-
-        const openai = new OpenAI({ apiKey });
-
-        // 5. Call OpenAI with structured output
-        // Using chat completions with response_format for structured outputs
-        // Try gpt-5.2 first, fallback to gpt-4o if not available
-        let completion;
-        try {
-            completion = await openai.chat.completions.create({
-                model: 'gpt-5.2',
-                messages: [
-                    {
-                        role: 'system',
-                        content: `You are a helpful assistant that creates educational flashcards. 
-Given a topic or notes, generate exactly ${numCardCount} flashcards with clear front and back content.
-Each card should cover an important concept, fact, or question related to the topic.
-
-Difficulty Level: ${difficulty}
-- Beginner: Use simple language, basic concepts, and clear explanations. Suitable for newcomers.
-- Intermediate: Use moderate complexity, detailed explanations, and assume some prior knowledge.
-- Advanced: Use complex terminology, in-depth analysis, and assume strong background knowledge.
-
-Adjust the complexity and depth of each flashcard according to the difficulty level.`,
-                    },
-                    {
-                        role: 'user',
-                        content: `Create ${numCardCount} ${difficulty}-level flashcards for the following topic:\n\n${topic}`,
-                    },
-                ],
-                response_format: {
-                    type: 'json_schema',
-                    json_schema: {
-                        name: 'deck_schema',
-                        description: 'A deck of flashcards',
-                        schema: {
-                            type: 'object',
-                            properties: {
-                                title: {
-                                    type: 'string',
-                                    description: 'A concise title for the flashcard deck',
-                                },
-                                topic: {
-                                    type: 'string',
-                                    description: 'The topic covered by these flashcards',
-                                },
-                                cards: {
-                                    type: 'array',
-                                    description: `Array of flashcards, exactly ${numCardCount} cards`,
-                                    minItems: numCardCount,
-                                    maxItems: numCardCount,
-                                    items: {
-                                        type: 'object',
-                                        properties: {
-                                            front: {
-                                                type: 'string',
-                                                description: 'The front of the card (question or prompt)',
-                                            },
-                                            back: {
-                                                type: 'string',
-                                                description: 'The back of the card (answer or explanation)',
-                                            },
-                                        },
-                                        required: ['front', 'back'],
-                                        additionalProperties: false,
-                                    },
-                                },
-                            },
-                            required: ['title', 'topic', 'cards'],
-                            additionalProperties: false,
-                        },
-                        strict: true,
-                    },
+                {
+                    error: `Topic must be ${MAX_TOPIC_LENGTH} characters or less`,
                 },
-                max_tokens: MAX_OUTPUT_TOKENS,
+                { status: 400 },
+            );
+        }
+
+        // 4. Instantiate Gemini client
+        const apiKey = env.GOOGLE_GENERATIVE_AI_API_KEY;
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            generationConfig: {
+                maxOutputTokens: MAX_OUTPUT_TOKENS,
                 temperature: 0.7,
-            });
-        } catch (modelError: any) {
-            // Fallback to gpt-4o if gpt-5.2 is not available
-            if (modelError?.status === 404 || modelError?.message?.includes('model')) {
-                completion = await openai.chat.completions.create({
-                    model: 'gpt-4o',
-                    messages: [
-                        {
-                            role: 'system',
-                            content: `You are a helpful assistant that creates educational flashcards. 
-Given a topic or notes, generate exactly ${numCardCount} flashcards with clear front and back content.
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        title: { type: SchemaType.STRING },
+                        topic: { type: SchemaType.STRING },
+                        cards: {
+                            type: SchemaType.ARRAY,
+                            items: {
+                                type: SchemaType.OBJECT,
+                                properties: {
+                                    front: { type: SchemaType.STRING },
+                                    back: { type: SchemaType.STRING },
+                                },
+                                required: ["front", "back"],
+                            },
+                        },
+                    },
+                    required: ["title", "topic", "cards"],
+                },
+            },
+        });
+
+        // 5. Call Gemini
+        const prompt = `You are a helpful assistant that creates educational flashcards. 
+Given a topic or notes, generate exactly ${cardCount} flashcards with clear front and back content.
 Each card should cover an important concept, fact, or question related to the topic.
 
 Difficulty Level: ${difficulty}
@@ -155,81 +105,32 @@ Difficulty Level: ${difficulty}
 - Intermediate: Use moderate complexity, detailed explanations, and assume some prior knowledge.
 - Advanced: Use complex terminology, in-depth analysis, and assume strong background knowledge.
 
-Adjust the complexity and depth of each flashcard according to the difficulty level.`,
-                        },
-                        {
-                            role: 'user',
-                            content: `Create ${numCardCount} ${difficulty}-level flashcards for the following topic:\n\n${topic}`,
-                        },
-                    ],
-                    response_format: {
-                        type: 'json_schema',
-                        json_schema: {
-                            name: 'deck_schema',
-                            description: 'A deck of flashcards',
-                            schema: {
-                                type: 'object',
-                                properties: {
-                                    title: {
-                                        type: 'string',
-                                        description: 'A concise title for the flashcard deck',
-                                    },
-                                    topic: {
-                                        type: 'string',
-                                        description: 'The topic covered by these flashcards',
-                                    },
-                                    cards: {
-                                        type: 'array',
-                                        description: `Array of flashcards, exactly ${numCardCount} cards`,
-                                        minItems: numCardCount,
-                                        maxItems: numCardCount,
-                                        items: {
-                                            type: 'object',
-                                            properties: {
-                                                front: {
-                                                    type: 'string',
-                                                    description: 'The front of the card (question or prompt)',
-                                                },
-                                                back: {
-                                                    type: 'string',
-                                                    description: 'The back of the card (answer or explanation)',
-                                                },
-                                            },
-                                            required: ['front', 'back'],
-                                            additionalProperties: false,
-                                        },
-                                    },
-                                },
-                                required: ['title', 'topic', 'cards'],
-                                additionalProperties: false,
-                            },
-                            strict: true,
-                        },
-                    },
-                    max_tokens: MAX_OUTPUT_TOKENS,
-                    temperature: 0.7,
-                });
-            } else {
-                throw modelError;
-            }
-        }
+Adjust the complexity and depth of each flashcard according to the difficulty level.
 
-        // 6. Parse response with Zod
-        const content = completion.choices[0]?.message?.content;
-        if (!content) {
+Create ${cardCount} ${difficulty}-level flashcards for the following topic:
+${topic}`;
+
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+
+        if (!responseText) {
             return NextResponse.json(
-                { error: 'No response from OpenAI' },
-                { status: 500 }
+                { error: "No response from Gemini" },
+                { status: 500 },
             );
         }
 
+        // 6. Parse response
         let parsedData;
+
         try {
-            parsedData = JSON.parse(content);
+            console.log(responseText);
+            parsedData = JSON.parse(responseText);
         } catch (error) {
+            console.error("JSON parse error:", error);
             return NextResponse.json(
-                { error: 'Failed to parse OpenAI response' },
-                { status: 500 }
+                { error: "Failed to parse Gemini response" },
+                { status: 500 },
             );
         }
 
@@ -238,38 +139,29 @@ Adjust the complexity and depth of each flashcard according to the difficulty le
         const validatedDeck = DeckSchema.parse(parsedData);
 
         // 7. Save to Supabase with owner_id
-        const { data, error: dbError } = await supabase
-            .from('decks')
-            .insert({
-                owner_id: userId,
+        const deck = await db
+            .insert(decks)
+            .values({
+                ownerId: userId,
                 title: validatedDeck.title,
                 topic: validatedDeck.topic,
                 cards: validatedDeck.cards,
             })
-            .select('id')
-            .single();
-
-        if (dbError || !data) {
-            console.error('Database error:', dbError);
-            return NextResponse.json(
-                { error: 'Failed to save deck to database' },
-                { status: 500 }
-            );
-        }
+            .returning();
 
         // 8. Return deckId
-        return NextResponse.json({ deckId: data.id });
+        return NextResponse.json({ deckId: deck[0].id });
     } catch (error) {
-        console.error('Error generating deck:', error);
-        if (error instanceof Error && error.name === 'ZodError') {
+        console.error("Error generating deck:", error);
+        if (error instanceof ZodError) {
             return NextResponse.json(
-                { error: 'Invalid deck structure from AI' },
-                { status: 500 }
+                { error: "Invalid deck structure from AI" },
+                { status: 500 },
             );
         }
         return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
+            { error: "Internal server error" },
+            { status: 500 },
         );
     }
 }
