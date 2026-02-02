@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Card } from "@/lib/schemas";
+
 import styles from "./page.module.css";
 
 interface Deck {
     id: string;
     title: string;
     topic: string;
-    cards: any[];
-    created_at: string;
+    cards: Card[];
+    createdAt: string;
 }
 
 interface DeckListProps {
@@ -48,8 +50,8 @@ export function DeckList({ decks }: DeckListProps) {
         if (filter === "recent") {
             filtered = filtered.sort(
                 (a, b) =>
-                    new Date(b.created_at).getTime() -
-                    new Date(a.created_at).getTime(),
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime(),
             );
         } else if (filter === "large") {
             filtered = filtered
@@ -114,7 +116,7 @@ export function DeckList({ decks }: DeckListProps) {
                             <div className={styles.date}>
                                 <span>📅</span>
                                 Created:{" "}
-                                {new Date(deck.created_at).toLocaleDateString()}
+                                {new Date(deck.createdAt).toLocaleDateString()}
                             </div>
                             <span className={styles.cardCount}>
                                 {deck.cards?.length || 0} cards
@@ -146,7 +148,7 @@ export function DeckList({ decks }: DeckListProps) {
             </ul>
             {filteredDecks.length === 0 && searchQuery && (
                 <div className={styles.empty}>
-                    <p>No decks found matching "{searchQuery}"</p>
+                    <p>No decks found matching &quot;{searchQuery}&quot;</p>
                 </div>
             )}
         </>
