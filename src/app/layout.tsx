@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
 import "./globals.css";
-import { Providers } from "@/components/providers";
-import { Header } from "@/components/header";
+
 import { Footer } from "@/components/footer";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -29,20 +29,17 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${geistSans.variable} ${geistMono.variable}`}>
-                <Providers>
-                    <Analytics />
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            minHeight: "100vh",
-                        }}
-                    >
-                        <Header />
-                        <main style={{ flex: 1 }}>{children}</main>
-                        <Footer />
-                    </div>
-                </Providers>
+                <Analytics />
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        minHeight: "100vh",
+                    }}
+                >
+                    <main style={{ flex: 1 }}>{children}</main>
+                    <Footer />
+                </div>
             </body>
         </html>
     );
