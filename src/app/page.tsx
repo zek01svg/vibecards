@@ -1,4 +1,5 @@
 import LandingPageButton from "@/components/ui/LandingPageButton";
+import Typewriter from "@/components/ui/TypewriterWrapper";
 
 import styles from "./page.module.css";
 
@@ -7,11 +8,22 @@ export default function Home() {
         <div className={styles.page}>
             <main className={styles.main}>
                 <div className={styles.intro}>
-                    <h1>VibeCards</h1>
-                    <p className={styles.subtitle}>
-                        AI-powered flashcards for learning. Generate
-                        personalized study decks from any topic.
-                    </p>
+                    <h1>
+                        <Typewriter
+                            options={{
+                                strings: [
+                                    "Gemini-powered flashcards.",
+                                    "Generate study decks from any topic.",
+                                    "Master any subject with ease.",
+                                    "Study smarter, not harder.",
+                                ],
+                                autoStart: true,
+                                loop: true,
+                                cursor: "|",
+                                cursorClassName: "cursor",
+                            }}
+                        />
+                    </h1>
                 </div>
 
                 <div className={styles.authSection}>
