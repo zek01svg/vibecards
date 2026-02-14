@@ -3,7 +3,13 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 
 export const restrictEnvAccess = tseslint.config(
-    { ignores: ["**/env.ts", "**/playwright.config.ts"] },
+    { ignores: ["**/env.ts", 
+        "**/playwright.config.ts",
+        "**/instrumentation.ts",
+        "**/instrumentation-client.ts",
+        "**/instrumentation-server.ts",
+        "**/instrumentation-edge.ts",
+        "**/next.config.js"] },
     {
         files: ["**/*.js", "**/*.ts", "**/*.tsx"],
         rules: {
