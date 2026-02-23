@@ -1,4 +1,5 @@
-import { type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import auth from "@/lib/auth";
 import { env } from "@/lib/env";
 
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     // Use better-auth internal API to perform the sign-in
     // asResponse: true ensures it returns a standard Response with session cookies set
-    const response = await auth.api.signInEmail({
+    const authResponse = await auth.api.signInEmail({
       body: {
         email,
         password,
@@ -42,7 +43,27 @@ export async function POST(req: NextRequest) {
       asResponse: true,
     });
 
-    return response;
+    if (!authResponse.ok) {
+      return authResponse;
+    }
+
+    // Create a redirect response and copy the session cookies (and other headers)
+    // from the better-auth response.
+    const redirectResponse = NextResponse.redirect(
+      new URL("/dashboard", req.url),
+      {
+        status: 303, // See Other is often better for POST -> GET redirects
+      },
+    );
+
+    // Copy Set-Cookie headers from the auth response to the redirect response
+    authResponse.headers.forEach((value, key) => {
+      if (key.toLowerCase() === "set-cookie") {
+        redirectResponse.headers.append(key, value);
+      }
+    });
+
+    return redirectResponse;
   } catch (error) {
     return new Response(
       JSON.stringify({
