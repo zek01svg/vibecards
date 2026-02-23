@@ -1,5 +1,4 @@
 import { env } from "@/lib/env";
-import logger from "@/lib/pino";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 

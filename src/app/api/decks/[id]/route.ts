@@ -28,7 +28,7 @@ export async function DELETE(
 
     if (deck.ownerId !== userId) {
       logger.warn(
-        { userId, deckId, ownerId: deck.ownerId },
+        { userId: userId, deckId: deckId, ownerId: deck.ownerId },
         "Forbidden: user attempted to delete another user's deck",
       );
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -37,12 +37,15 @@ export async function DELETE(
     // Delete the deck
     await db.delete(decks).where(eq(decks.id, deckId));
 
-    logger.info({ userId, deckId }, "Deck deleted successfully");
+    logger.info(
+      { userId: userId, deckId: deckId },
+      "Deck deleted successfully",
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {
     const { id: deckId } = await params;
-    logger.error({ err: error, deckId }, "Error deleting deck");
+    logger.error({ err: error, deckId: deckId }, "Error deleting deck");
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

@@ -3,7 +3,7 @@ import db from "@/database/db";
 import { decks } from "@/database/schema";
 import { env } from "@/lib/env";
 import logger from "@/lib/pino";
-import { createDeckSchema } from "@/lib/validations/generate-deck-schema";
+import generateDeckSchema from "@/lib/validations/generate-deck-schema";
 import authenticate from "@/utils/authenticate";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { ZodError } from "zod";
@@ -91,7 +91,12 @@ export async function POST(request: NextRequest) {
     });
 
     logger.info(
-      { userId, topic, difficulty, cardCount: numCardCount },
+      {
+        userId: userId,
+        topic: topic,
+        difficulty: difficulty,
+        cardCount: numCardCount,
+      },
       "Generating deck via Gemini",
     );
 
@@ -114,7 +119,10 @@ ${topic}`;
     const responseText = result.response.text();
 
     if (!responseText) {
-      logger.warn({ userId, topic }, "Empty response from Gemini");
+      logger.warn(
+        { userId: userId, topic: topic },
+        "Empty response from Gemini",
+      );
       return NextResponse.json(
         { error: "No response from Gemini" },
         { status: 500 },
@@ -132,7 +140,7 @@ ${topic}`;
       parsedData = JSON.parse(responseText);
     } catch (error) {
       logger.error(
-        { err: error, userId, topic },
+        { err: error, userId: userId, topic: topic },
         "Failed to parse Gemini JSON response",
       );
       return NextResponse.json(
@@ -142,7 +150,7 @@ ${topic}`;
     }
 
     // Validate with Zod schema (dynamic based on card count)
-    const DeckSchema = createDeckSchema(numCardCount, numCardCount);
+    const DeckSchema = generateDeckSchema(numCardCount, numCardCount);
     const validatedDeck = DeckSchema.parse(parsedData);
 
     // 7. Save to Supabase with owner_id
@@ -158,7 +166,7 @@ ${topic}`;
 
     const createdDeck = deck[0];
     if (!createdDeck) {
-      logger.error({ userId }, "Deck insert returned no rows");
+      logger.error({ userId: userId }, "Deck insert returned no rows");
       return NextResponse.json(
         { error: "Failed to save deck" },
         { status: 500 },
@@ -166,7 +174,7 @@ ${topic}`;
     }
 
     logger.info(
-      { userId, deckId: createdDeck.id, topic: validatedDeck.topic },
+      { userId: userId, deckId: createdDeck.id, topic: validatedDeck.topic },
       "Deck generated and saved successfully",
     );
 
