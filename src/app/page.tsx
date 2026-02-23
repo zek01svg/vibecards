@@ -1,5 +1,5 @@
-import { FeatureCard } from "@/components/ui/feature-card";
-import LandingPageButton from "@/components/ui/landing-page-button";
+import { FeatureCard } from "@/components/deck/feature-card";
+import LandingPageButton from "@/components/landing/landing-page-button";
 import Typewriter from "@/components/ui/typewriter-wrapper";
 import { Brain, Layers, Sparkles, Zap } from "lucide-react";
 

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
-import { NavButtons } from "../ui/nav-buttons";
 import ThemeToggle from "../ui/theme-toggle";
+import { NavButtons } from "./nav-buttons";
 
 export function Header() {
   return (
