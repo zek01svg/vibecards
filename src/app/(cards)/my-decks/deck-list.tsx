@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Deck, FlashcardDeck } from "@/components/ui/flashcard-deck";
+import { Deck, FlashcardDeck } from "@/components/deck/flashcard-deck";
 import { toast } from "sonner";
 
 interface DeckListProps {
