@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { generateDeckSchema } from "@/lib/validations/generate-deck-schema";
+import { GenerateDeckRequestSchema } from "@/lib/validations/generate-deck-schema";
 import { useForm } from "@tanstack/react-form";
 import { Sparkles } from "lucide-react";
 
@@ -29,7 +29,13 @@ export function GenerateDeckForm() {
       cardCount: "10",
     },
     validators: {
-      onChange: generateDeckSchema,
+      onChange: ({ value }) => {
+        const result = GenerateDeckRequestSchema.safeParse(value);
+        if (!result.success) {
+          return result.error.issues[0]?.message || "Invalid form";
+        }
+        return undefined;
+      },
     },
     onSubmit: async ({ value }) => {
       const response = await fetch("/api/generate-deck", {
@@ -40,7 +46,7 @@ export function GenerateDeckForm() {
         body: JSON.stringify({
           topic: value.topic,
           difficulty: value.difficulty,
-          cardCount: Number(value.cardCount),
+          cardCount: value.cardCount,
         }),
       });
 
@@ -111,19 +117,19 @@ export function GenerateDeckForm() {
 
       <div className="pt-2">
         <form.Subscribe
-          selector={(state) => [state.isSubmitting, state.errorMap]}
+          selector={(state) => [state.isSubmitting, state.canSubmit]}
         >
-          {([isSubmitting, errorMap]) => (
+          {([isSubmitting, canSubmit]) => (
             <div className="space-y-4">
-              {errorMap?.onSubmit && (
+              {form.state.errors.length > 0 && (
                 <div className="border-destructive/20 bg-destructive/10 text-destructive rounded-xl border p-4 text-center text-sm">
-                  {errorMap.onSubmit.toString()}
+                  {form.state.errors.map((err) => String(err)).join(", ")}
                 </div>
               )}
               <Button
                 type="submit"
                 className="bg-primary text-primary-foreground shadow-primary/20 group h-12 w-full rounded-2xl text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-50"
-                disabled={isSubmitting || !form.state.canSubmit}
+                disabled={isSubmitting || !canSubmit}
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">

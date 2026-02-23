@@ -3,13 +3,15 @@ import db from "@/database/db";
 import { decks } from "@/database/schema";
 import { env } from "@/lib/env";
 import logger from "@/lib/pino";
-import generateDeckSchema from "@/lib/validations/generate-deck-schema";
+import {
+  GeminiResponseSchema,
+  GenerateDeckRequestSchema,
+} from "@/lib/validations/generate-deck-schema";
 import authenticate from "@/utils/authenticate";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { ZodError } from "zod";
 
 // Guardrails
-const MAX_TOPIC_LENGTH = 500;
 const MAX_OUTPUT_TOKENS = 8192;
 
 export async function POST(request: NextRequest) {
@@ -22,42 +24,8 @@ export async function POST(request: NextRequest) {
 
     // 2. Parse and validate request body
     const body = await request.json();
-    const { topic, difficulty = "intermediate", cardCount = 10 } = body;
-
-    if (!topic || typeof topic !== "string") {
-      return NextResponse.json({ error: "Topic is required" }, { status: 400 });
-    }
-
-    // Validate difficulty
-    const validDifficulties = ["beginner", "intermediate", "advanced"];
-    if (difficulty && !validDifficulties.includes(difficulty)) {
-      return NextResponse.json(
-        { error: "Invalid difficulty level" },
-        { status: 400 },
-      );
-    }
-
-    // Validate card count
-    const validCardCounts = [5, 8, 10, 12, 15, 20];
-    const numCardCount = Number(cardCount);
-    if (!validCardCounts.includes(numCardCount)) {
-      return NextResponse.json(
-        {
-          error: "Invalid card count. Must be 5, 8, 10, 12, 15, or 20",
-        },
-        { status: 400 },
-      );
-    }
-
-    // 3. Validate topic length
-    if (topic.length > MAX_TOPIC_LENGTH) {
-      return NextResponse.json(
-        {
-          error: `Topic must be ${MAX_TOPIC_LENGTH} characters or less`,
-        },
-        { status: 400 },
-      );
-    }
+    const validatedRequest = GenerateDeckRequestSchema.parse(body);
+    const { topic, difficulty, cardCount } = validatedRequest;
 
     // 4. Instantiate Gemini client
     const apiKey = env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -95,7 +63,7 @@ export async function POST(request: NextRequest) {
         userId: userId,
         topic: topic,
         difficulty: difficulty,
-        cardCount: numCardCount,
+        cardCount: cardCount,
       },
       "Generating deck via Gemini",
     );
@@ -149,9 +117,8 @@ ${topic}`;
       );
     }
 
-    // Validate with Zod schema (dynamic based on card count)
-    const DeckSchema = generateDeckSchema(numCardCount, numCardCount);
-    const validatedDeck = DeckSchema.parse(parsedData);
+    // Validate with Zod schema
+    const validatedDeck = GeminiResponseSchema.parse(parsedData);
 
     // 7. Save to Supabase with owner_id
     const deck = await db
@@ -181,13 +148,17 @@ ${topic}`;
     // 8. Return deckId
     return NextResponse.json({ deckId: createdDeck.id });
   } catch (error) {
-    logger.error({ err: error }, "Error generating deck");
     if (error instanceof ZodError) {
+      logger.warn({ err: error.format() }, "Validation error");
       return NextResponse.json(
-        { error: "Invalid deck structure from AI" },
-        { status: 500 },
+        {
+          error: "Validation failed",
+          details: error.issues.map((issue) => issue.message),
+        },
+        { status: 400 },
       );
     }
+    logger.error({ err: error }, "Error generating deck");
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
