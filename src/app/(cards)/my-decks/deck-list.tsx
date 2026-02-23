@@ -12,14 +12,11 @@ interface DeckListProps {
 
 export function DeckList({ decks }: DeckListProps) {
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-  const [filter, setFilter] = useState(searchParams.get("filter") || "all");
+  const [searchQuery] = useState(searchParams.get("q") || "");
+  const [filter] = useState(searchParams.get("filter") || "all");
   const router = useRouter();
 
-  // Sync with URL params
-  useEffect(() => {
-    // Note: SearchBar handles its own routing, so we only need to sync internal state if needed
-  }, [searchQuery, filter, router]);
+  useEffect(() => {}, [searchQuery, filter, router]);
 
   const handleDelete = async (deckId: string, e: React.MouseEvent) => {
     e.preventDefault();

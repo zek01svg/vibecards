@@ -44,7 +44,7 @@ export function useAuthActions() {
   }
 
   async function verifyEmail(email: string, otp: string) {
-    const { data, error } = await authClient.emailOtp.verifyEmail({
+    const { error } = await authClient.emailOtp.verifyEmail({
       email,
       otp,
     });

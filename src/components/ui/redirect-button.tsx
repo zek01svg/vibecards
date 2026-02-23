@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
@@ -23,9 +22,8 @@ export function RedirectButton({
   ...props
 }: RedirectButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = () => {
     setIsLoading(true);
   };
 
