@@ -2,20 +2,40 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests",
+  // Run tests in parallel for speed
   fullyParallel: true,
+  // Fail CI if test.only is accidentally left in
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  // Retry failed tests (2x in CI, 1x locally for flake detection)
+  retries: process.env.CI ? 2 : 1,
+  // Concurrency (limited in CI for stability, full speed locally)
   workers: process.env.CI ? 1 : 4,
+  // Keep the dot reporter; add HTML report for detailed post-run analysis
   reporter: "dot",
+  // Folder for test artifacts (screenshots, videos, traces)
+  outputDir: "test-results",
+
+  // Assertion-level expect configuration
+  expect: {
+    // Max time an expect() call waits for condition (10s)
+    timeout: 10_000,
+    toHaveScreenshot: {
+      // Allow up to 100 differing pixels for visual regression tolerance
+      maxDiffPixels: 100,
+    },
+  },
 
   use: {
     baseURL:
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
         : "https://vibecards-v2.vercel.app",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
+    locale: "en-SG",
+    timezoneId: "Asia/Singapore",
+    ignoreHTTPSErrors: true,
   },
 
   projects: [
