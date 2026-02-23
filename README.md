@@ -14,24 +14,24 @@ Users simply type a topic (e.g., "Photosynthesis"), select a difficulty level, a
 ┌─────────────────────────────────────────────────────┐
 │                   Next.js 16 (App Router)           │
 │  ┌────────────────┐  ┌──────────────────────────┐   │
-│  │  Landing Page   │  │  Dashboard (Authed)      │   │
-│  │  ├─ Typewriter  │  │  ├─ Generate Deck Form   │   │
-│  │  └─ CTA         │  │  ├─ Deck List + Search   │   │
-│  └────────────────┘  │  └─ Deck Detail [id]      │   │
-│                       └──────────────────────────┘   │
-│  ┌──────────────────────────────────────────────┐    │
-│  │  API Routes (Server-side)                    │    │
-│  │  ├─ /api/generate-deck  → Gemini AI          │    │
-│  │  ├─ /api/auth/[...]     → better-auth        │    │
-│  │  └─ /api/decks          → CRUD operations    │    │
-│  └──────────────────────────────────────────────┘    │
-└──────────────┬───────────────────────┬───────────────┘
+│  │  Landing Page  │  │  Dashboard (Authed)      │   │
+│  │  ├─ Typewriter │  │  ├─ Generate Deck Form   │   │
+│  │  └─ CTA        │  │  ├─ Deck List + Search   │   │
+│  └────────────────┘  │  └─ Deck Detail [id]     │   │
+│                      └──────────────────────────┘   │
+│  ┌──────────────────────────────────────────────┐   │
+│  │  API Routes (Server-side)                    │   │
+│  │  ├─ /api/generate-deck  → Gemini AI          │   │
+│  │  ├─ /api/auth/[...]     → better-auth        │   │
+│  │  └─ /api/decks          → CRUD operations    │   │
+│  └──────────────────────────────────────────────┘   │
+└──────────────┬───────────────────────┬──────────────┘
                │                       │
     ┌──────────▼──────────┐  ┌─────────▼──────────┐
-    │  Supabase (Postgres) │  │  Google Gemini API │
-    │  ├─ Users/Sessions   │  │  (2.5 Flash)       │
-    │  ├─ Accounts         │  │  Structured output  │
-    │  └─ Decks (JSONB)    │  │  with JSON schema   │
+    │  Supabase (Postgres)│  │  Google Gemini API │
+    │  ├─ Users/Sessions  │  │  (2.5 Flash)       │
+    │  ├─ Accounts        │  │  Structured output │
+    │  └─ Decks (JSONB)   │  │  with JSON schema  │
     └─────────────────────┘  └────────────────────┘
 ```
 
@@ -64,7 +64,7 @@ Users simply type a topic (e.g., "Photosynthesis"), select a difficulty level, a
 | Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage)                          |
 | E2E Testing     | [Playwright](https://playwright.dev/) (Chromium, Firefox, WebKit, Mobile Chrome)                          |
 | Code Quality    | ESLint, Prettier, Husky, lint-staged                                                                      |
-| Package Manager | [pnpm](https://pnpm.io/) 10.28                                                                            |
+| Package Manager | [pnpm](https://pnpm.io/) 10.30.1                                                                          |
 
 ## 🚀 Getting Started
 
@@ -73,7 +73,7 @@ Users simply type a topic (e.g., "Photosynthesis"), select a difficulty level, a
 | Tool                           | Version      |
 | ------------------------------ | ------------ |
 | [Bun](https://bun.sh/)         | `>= 1.1.56`  |
-| [pnpm](https://pnpm.io/)       | `>= 10.28.0` |
+| [pnpm](https://pnpm.io/)       | `>= 10.30.1` |
 | [Node.js](https://nodejs.org/) | `>= 22`      |
 
 ### 📦 Installation
@@ -156,11 +156,10 @@ pnpm run test
 
 ### E2E Tests
 
-End-to-end tests use [Playwright](https://playwright.dev/) and run against the built application:
+End-to-end tests use [Playwright](https://playwright.dev/) and run against the built application on Chromium:
 
 **Playwright configuration** ([`playwright.config.ts`](playwright.config.ts)):
 
-- Browsers: Chromium, Firefox, WebKit, Mobile Chrome (iPhone 15 Pro / Pro Max)
 - Parallel: Fully parallel execution
 - Retries: 2 on CI, 0 locally
 - Artifacts: Screenshots on failure, video retained on failure, traces on first retry
