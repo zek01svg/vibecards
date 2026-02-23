@@ -1,1 +1,3 @@
+echo "🚧 Running static analyses..."
 pnpm dlx lint-staged
+echo "✅ Static analyses completed."
