@@ -1,23 +1,16 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
 import db from "@/database/db";
 import { decks } from "@/database/schema";
 import { Card } from "@/lib/validations/generate-deck-schema";
 import authenticate from "@/utils/authenticate";
 import { eq } from "drizzle-orm";
 
+
 import { DeckList } from "./deck-list";
+import { EmptyDeckList } from "./empty-deck-list";
 import { SearchBar } from "./search-bar";
+
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +24,6 @@ interface Deck {
 
 export default async function DashboardPage() {
   const userId = await authenticate();
-
   if (userId === "Unauthorized") {
     redirect("/sign-in");
   }
@@ -40,13 +32,6 @@ export default async function DashboardPage() {
   const userDecks = await db.query.decks.findMany({
     where: eq(decks.ownerId, userId),
   });
-
-  let totalCards = 0;
-  if (userDecks.length > 0) {
-    for (const deck of userDecks) {
-      totalCards += deck.cards?.length || 0;
-    }
-  }
 
   return (
     <div className="bg-background/50 flex min-h-[calc(100vh-64px)] flex-col">
@@ -76,26 +61,7 @@ export default async function DashboardPage() {
               </div>
 
               {!userDecks || userDecks.length === 0 ? (
-                <Empty className="border-border/60 bg-card/30 rounded-3xl border border-dashed p-12 text-center backdrop-blur-sm">
-                  <EmptyHeader>
-                    <EmptyMedia variant="icon">
-                      <div className="text-4xl opacity-50">📚</div>
-                    </EmptyMedia>
-                    <EmptyTitle className="mt-4 text-xl font-semibold">
-                      No decks found
-                    </EmptyTitle>
-                    <EmptyDescription className="text-muted-foreground">
-                      You haven&apos;t generated any flashcard decks yet.
-                    </EmptyDescription>
-                  </EmptyHeader>
-                  <EmptyContent className="mt-6">
-                    <Link href="/dashboard">
-                      <Button className="shadow-primary/20 rounded-xl font-bold shadow-lg transition-all active:scale-95">
-                        Generate Your First Deck
-                      </Button>
-                    </Link>
-                  </EmptyContent>
-                </Empty>
+                <EmptyDeckList />
               ) : (
                 <DeckList decks={userDecks as Deck[]} />
               )}
