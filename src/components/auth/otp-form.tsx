@@ -22,15 +22,11 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useAuthActions } from "@/hooks/use-auth-actions";
+import { otpSchema } from "@/lib/validations/otp";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Spinner } from "../ui/spinner";
-
-const otpSchema = z.object({
-  otp: z.string().length(6, "Verification code must be 6 digits"),
-});
 
 export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
   const searchParams = useSearchParams();
@@ -46,9 +42,6 @@ export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
   const form = useForm({
     defaultValues: {
       otp: "",
-    },
-    validators: {
-      onChange: otpSchema,
     },
     onSubmit: async ({ value }) => {
       if (!email || !type) {
@@ -108,7 +101,17 @@ export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
           className="space-y-6"
         >
           <FieldGroup>
-            <form.Field name="otp">
+            <form.Field
+              name="otp"
+              validators={{
+                onChange: ({ value }) => {
+                  const result = otpSchema.shape.otp.safeParse(value);
+                  if (!result.success) {
+                    return result.error.issues[0]?.message;
+                  }
+                },
+              }}
+            >
               {(field) => (
                 <Field
                   data-invalid={

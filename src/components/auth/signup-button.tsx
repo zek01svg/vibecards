@@ -14,11 +14,11 @@ export default function SignupButton({ isSubmitting }: SignupButtonProps) {
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
-            &quot;Creating Account...&quot;
+            Creating Account...
             <Spinner className="ml-2" />
           </>
         ) : (
-          <>&quot;Create Account&quot;</>
+          <>Create Account</>
         )}
       </Button>
       <FieldDescription className="text-center">

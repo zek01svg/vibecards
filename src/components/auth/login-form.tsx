@@ -20,18 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthActions } from "@/hooks/use-auth-actions";
 import { cn } from "@/lib/utils";
+import { loginSchema } from "@/lib/validations/login";
 import { useForm } from "@tanstack/react-form";
-import { GalleryVerticalEnd } from "lucide-react";
-import { z } from "zod";
 
 import { Spinner } from "../ui/spinner";
-
-const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Please enter a valid email address"),
-});
 
 export function LoginForm({
   className,
@@ -43,9 +35,6 @@ export function LoginForm({
     defaultValues: {
       email: "",
     },
-    validators: {
-      onChange: loginSchema,
-    },
     onSubmit: async ({ value }) => {
       await sendSignInOTP(value.email);
     },
@@ -55,9 +44,6 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="border-border/50 overflow-hidden shadow-xl">
         <CardHeader className="flex flex-col items-center gap-2 pb-2 text-center">
-          <div className="bg-primary/10 text-primary mb-2 flex size-10 items-center justify-center rounded-xl">
-            <GalleryVerticalEnd className="size-6" />
-          </div>
           <CardTitle className="text-2xl font-bold tracking-tight">
             Welcome Back
           </CardTitle>
@@ -76,7 +62,19 @@ export function LoginForm({
             className="space-y-6"
           >
             <FieldGroup>
-              <form.Field name="email">
+              <form.Field
+                name="email"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = loginSchema.shape.email.safeParse(value);
+                    if (!result.success) {
+                      return result.error.issues
+                        .map((i) => i.message)
+                        .join(", ");
+                    }
+                  },
+                }}
+              >
                 {(field) => (
                   <Field
                     data-invalid={

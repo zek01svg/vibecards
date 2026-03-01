@@ -20,29 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthActions } from "@/hooks/use-auth-actions";
 import { cn } from "@/lib/utils";
+import { signupSchema } from "@/lib/validations/signup";
 import { useForm } from "@tanstack/react-form";
-import { z } from "zod";
-
-const signupSchema = z
-  .object({
-    name: z
-      .string()
-      .min(1, "Full name is required")
-      .min(2, "Name must be at least 2 characters"),
-    email: z
-      .string()
-      .min(1, "Email is required")
-      .email("Please enter a valid email address"),
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
 
 export function SignupForm({
   className,
@@ -56,9 +35,6 @@ export function SignupForm({
       email: "",
       password: "",
       confirmPassword: "",
-    },
-    validators: {
-      onChange: signupSchema,
     },
     onSubmit: async ({ value }) => {
       await handleSignUp(value.email, value.password, value.name);
@@ -84,7 +60,17 @@ export function SignupForm({
             noValidate
           >
             <FieldGroup>
-              <form.Field name="name">
+              <form.Field
+                name="name"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = signupSchema.shape.name.safeParse(value);
+                    if (!result.success) {
+                      return result.error.issues[0]?.message;
+                    }
+                  },
+                }}
+              >
                 {(field) => (
                   <Field
                     data-invalid={
@@ -113,7 +99,17 @@ export function SignupForm({
                 )}
               </form.Field>
 
-              <form.Field name="email">
+              <form.Field
+                name="email"
+                validators={{
+                  onChange: ({ value }) => {
+                    const result = signupSchema.shape.email.safeParse(value);
+                    if (!result.success) {
+                      return result.error.issues[0]?.message;
+                    }
+                  },
+                }}
+              >
                 {(field) => (
                   <Field
                     data-invalid={
@@ -144,7 +140,18 @@ export function SignupForm({
 
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
-                  <form.Field name="password">
+                  <form.Field
+                    name="password"
+                    validators={{
+                      onChange: ({ value }) => {
+                        const result =
+                          signupSchema.shape.password.safeParse(value);
+                        if (!result.success) {
+                          return result.error.issues[0]?.message;
+                        }
+                      },
+                    }}
+                  >
                     {(field) => (
                       <Field
                         data-invalid={
@@ -174,7 +181,22 @@ export function SignupForm({
                     )}
                   </form.Field>
 
-                  <form.Field name="confirmPassword">
+                  <form.Field
+                    name="confirmPassword"
+                    validators={{
+                      onChangeListenTo: ["password"],
+                      onChange: ({ value, fieldApi }) => {
+                        const result =
+                          signupSchema.shape.confirmPassword.safeParse(value);
+                        if (!result.success) {
+                          return result.error.issues[0]?.message;
+                        }
+                        if (value !== fieldApi.form.getFieldValue("password")) {
+                          return "Passwords do not match";
+                        }
+                      },
+                    }}
+                  >
                     {(field) => (
                       <Field
                         data-invalid={

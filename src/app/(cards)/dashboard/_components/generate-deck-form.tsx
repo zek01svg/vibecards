@@ -28,15 +28,6 @@ export function GenerateDeckForm() {
       difficulty: "intermediate" as (typeof difficulties)[number],
       cardCount: "10",
     },
-    validators: {
-      onChange: ({ value }) => {
-        const result = GenerateDeckRequestSchema.safeParse(value);
-        if (!result.success) {
-          return result.error.issues[0]?.message || "Invalid form";
-        }
-        return undefined;
-      },
-    },
     onSubmit: async ({ value }) => {
       const response = await fetch("/api/generate-deck", {
         method: "POST",
@@ -71,7 +62,18 @@ export function GenerateDeckForm() {
       className="space-y-8"
     >
       <FieldGroup>
-        <form.Field name="topic">
+        <form.Field
+          name="topic"
+          validators={{
+            onChange: ({ value }) => {
+              const result =
+                GenerateDeckRequestSchema.shape.topic.safeParse(value);
+              if (!result.success) {
+                return result.error.issues[0]?.message;
+              }
+            },
+          }}
+        >
           {(field) => (
             <Field>
               <FieldLabel htmlFor="topic">Topic or Notes</FieldLabel>
