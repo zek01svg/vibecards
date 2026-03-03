@@ -1,7 +1,6 @@
-import { FeatureCard } from "@/components/deck/feature-card";
+import { FeatureCards } from "@/components/landing/feature-cards";
+import { HeroSection } from "@/components/landing/hero-section";
 import LandingPageButton from "@/components/landing/landing-page-button";
-import Typewriter from "@/components/ui/typewriter-wrapper";
-import { Brain, Layers, Sparkles, Zap } from "lucide-react";
 
 export default function Home() {
   return (
@@ -13,27 +12,7 @@ export default function Home() {
 
       <main className="relative container mx-auto flex flex-col items-center justify-center px-4 pt-12 pb-24 text-center sm:pt-20 sm:pb-32">
         <div className="max-w-4xl space-y-8">
-          <div className="space-y-6">
-            <h1 className="text-3xl font-extrabold tracking-tight whitespace-nowrap sm:text-7xl lg:text-8xl">
-              Master Any Topic in{" "}
-              <span className="from-primary bg-linear-to-r to-purple-400 bg-clip-text text-transparent">
-                <Typewriter
-                  options={{
-                    strings: ["Seconds", "Minutes", "Style"],
-                    autoStart: true,
-                    loop: true,
-                    wrapperClassName: "text-primary",
-                  }}
-                />
-              </span>
-            </h1>
-
-            <p className="text-muted-foreground mx-auto max-w-2xl text-lg leading-relaxed sm:text-xl">
-              Transform your topics into comprehensive study decks instantly.
-              <br />
-              Powered by Google Gemini.
-            </p>
-          </div>
+          <HeroSection />
 
           <div className="flex flex-col items-center justify-center pt-2">
             <LandingPageButton />
@@ -42,32 +21,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 pt-24 sm:grid-cols-2 lg:grid-cols-4">
-            <FeatureCard
-              title="AI Magic"
-              description="Gemini transforms your messy notes into perfect study decks in milliseconds."
-              icon={Sparkles}
-              variant="primary"
-            />
-            <FeatureCard
-              title="Vibe Study"
-              description="A focused, premium study mode designed for flow and maximum retention."
-              icon={Brain}
-              variant="purple"
-            />
-            <FeatureCard
-              title="Instant Sync"
-              description="Your decks are everywhere you are. Mobile, desktop, or in-class. Always ready."
-              icon={Zap}
-              variant="emerald"
-            />
-            <FeatureCard
-              title="Pro Organization"
-              description="Tag, filter, and search through thousands of cards with lightning speed."
-              icon={Layers}
-              variant="orange"
-            />
-          </div>
+          <FeatureCards />
         </div>
       </main>
     </div>
