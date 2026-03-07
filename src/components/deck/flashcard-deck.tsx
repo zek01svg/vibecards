@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card as CardType } from "@/lib/validations/generate-deck-schema";
 import { Calendar, ChevronRight, Trash2 } from "lucide-react";
 
@@ -37,11 +38,20 @@ interface FlashcardProps {
   onDelete: (id: string, e: React.MouseEvent) => Promise<void>;
 }
 
-export function FlashcardDeck({ deck, onDelete }: FlashcardProps) {
+export function FlashcardDeck({
+  deck,
+  onDelete,
+  isPending,
+}: FlashcardProps & { isPending?: boolean }) {
   return (
-    <Card className="border-border/50 bg-card/50 hover:border-primary/50 hover:bg-card hover:shadow-primary/5 h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <CardHeader className="p-6">
-        <div className="flex items-start justify-between gap-4">
+    <Card className="border-border/50 bg-card/50 hover:border-primary/50 hover:bg-card hover:shadow-primary/5 group relative h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <Link
+        href={`/deck/${deck.id}`}
+        className="focus:ring-primary absolute inset-0 z-0 rounded-xl focus:ring-2 focus:ring-offset-2 focus:outline-none"
+        aria-label={`Study deck: ${deck.title}`}
+      />
+      <CardHeader className="pointer-events-none relative z-10 p-6">
+        <div className="pointer-events-auto flex items-start justify-between gap-4">
           <div className="space-y-1">
             <Badge
               variant="secondary"
@@ -59,17 +69,14 @@ export function FlashcardDeck({ deck, onDelete }: FlashcardProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
+                className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive relative z-10 shrink-0 transition-colors"
+                disabled={isPending}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+            <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -79,12 +86,15 @@ export function FlashcardDeck({ deck, onDelete }: FlashcardProps) {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel disabled={isPending}>
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={(e) => onDelete(deck.id, e)}
+                  disabled={isPending}
                 >
-                  Delete
+                  {isPending ? "Deleting..." : "Delete"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -92,13 +102,13 @@ export function FlashcardDeck({ deck, onDelete }: FlashcardProps) {
         </div>
       </CardHeader>
 
-      <CardContent className="px-6 pt-0 pb-6">
+      <CardContent className="pointer-events-none relative z-10 px-6 pt-0 pb-6">
         <p className="text-muted-foreground line-clamp-2 text-sm">
           {deck.topic}
         </p>
       </CardContent>
 
-      <CardFooter className="border-border/50 bg-muted/20 flex items-center justify-between border-t px-6 py-4">
+      <CardFooter className="border-border/50 bg-muted/20 pointer-events-none relative z-10 flex items-center justify-between border-t px-6 py-4">
         <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
           <Calendar className="h-3 w-3" />
           {new Date(deck.createdAt).toLocaleDateString()}
