@@ -9,6 +9,12 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 
+/**
+ * Renders an empty state UI when a user has no flashcard decks.
+ * Provides a clear call-to-action instructing the user to generate their first deck.
+ *
+ * @returns A visually distinct empty state component with a CTA button
+ */
 export function EmptyDeckList() {
   return (
     <>

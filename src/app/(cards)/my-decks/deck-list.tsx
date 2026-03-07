@@ -1,49 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { Deck, FlashcardDeck } from "@/components/deck/flashcard-deck";
-import { toast } from "sonner";
+import { useDeleteDeck } from "@/hooks/use-delete-deck";
 
 interface DeckListProps {
   decks: Deck[];
 }
 
+/**
+ * Renders a grid of flashcard deck summary cards.
+ * Manages the delete state for individual decks to ensure appropriate UI feedback during deletion.
+ *
+ * @param props - Component properties
+ * @param props.decks - Array of deck objects to display
+ * @returns A responsive grid layout containing the user's decks
+ */
 export function DeckList({ decks }: DeckListProps) {
-  const searchParams = useSearchParams();
-  const [searchQuery] = useState(searchParams.get("q") || "");
-  const [filter] = useState(searchParams.get("filter") || "all");
-  const router = useRouter();
+  const { handleDeleteDeck, isPending } = useDeleteDeck();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {}, [searchQuery, filter, router]);
-
-  const handleDelete = async (deckId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    try {
-      const response = await fetch(`/api/decks/${deckId}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        toast.success("Deck deleted successfully");
-        router.refresh();
-      } else {
-        toast.error(`Failed to delete deck`);
-      }
-    } catch (error) {
-      toast.error(`Error deleting deck`);
-    }
+  const onDelete = async (id: string) => {
+    setDeletingId(id);
+    await handleDeleteDeck(id);
   };
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {decks.map((deck) => (
-        <Link key={deck.id} href={`/deck/${deck.id}`} className="group block">
-          <FlashcardDeck deck={deck} onDelete={handleDelete} />
-        </Link>
+        <FlashcardDeck
+          key={deck.id}
+          deck={deck}
+          onDelete={async (id) => await onDelete(id)}
+          isPending={isPending && deletingId === deck.id}
+        />
       ))}
     </div>
   );
