@@ -1,36 +1,56 @@
 import { expect, test } from "@playwright/test";
 
-test("landing page", async ({ page }) => {
-  await page.goto("/");
+test.describe("Landing page", () => {
+  test("should have complete elements", async ({ page }) => {
+    await page.goto("/");
 
-  // header
-  await expect(page.getByRole("navigation")).toContainText("VibeCards");
-  await expect(page.getByRole("button", { name: "Generate" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "My Decks" })).toBeVisible();
+    // header
+    await page
+      .locator("div")
+      .filter({ hasText: /^VibeCards$/ })
+      .click();
+    await expect(page.getByRole("link", { name: "VibeCards" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Light theme" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "System theme" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Dark theme" }),
+    ).toBeVisible();
 
-  // theme toggle
-  await expect(page.getByRole("button", { name: "Light theme" })).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "System theme" }),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Dark theme" })).toBeVisible();
+    // cta
+    await expect(page.getByText("Transform your topics into")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Dashboard" })).toBeVisible();
+    await expect(page.getByText("No credit card required. Free")).toBeVisible();
 
-  // hero section
-  await expect(
-    page.getByRole("heading", { name: "Master Any Topic in Seco|" }),
-  ).toBeVisible();
-  await expect(page.locator("body")).toContainText(
-    "Transform your topics into comprehensive study decks instantly.Powered by Google Gemini.",
-  );
-  await expect(page.getByRole("link", { name: "Sign In" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Sign Up" })).toBeVisible();
-  await expect(page.locator("body")).toContainText(
-    "No credit card required. Free forever for students.",
-  );
+    // feature cards
+    await expect(page.locator("body")).toContainText("AI Magic");
+    await expect(page.locator("body")).toContainText(
+      "Gemini transforms your messy notes into perfect study decks in milliseconds.",
+    );
+    await expect(page.locator("body")).toContainText("Vibe Study");
+    await expect(page.locator("body")).toContainText(
+      "A focused, premium study mode designed for flow and maximum retention.",
+    );
+    await expect(page.locator("body")).toContainText("Instant Sync");
+    await expect(page.locator("body")).toContainText(
+      "Your decks are everywhere you are. Mobile, desktop, or in-class. Always ready.",
+    );
+    await expect(page.locator("body")).toContainText("Pro Organization");
+    await expect(page.locator("body")).toContainText(
+      "Tag, filter, and search through thousands of cards with lightning speed.",
+    );
 
-  // feature cards
-  await expect(page.getByText("AI MagicGemini transforms")).toBeVisible();
-  await expect(page.getByText("Vibe StudyA focused, premium")).toBeVisible();
-  await expect(page.getByText("Instant SyncYour decks are")).toBeVisible();
-  await expect(page.getByText("Pro OrganizationTag, filter,")).toBeVisible();
+    // footer
+    await expect(
+      page.getByRole("contentinfo").getByText("VibeCards"),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "Terms" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Privacy" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "GitHub Repository" }),
+    ).toBeVisible();
+  });
 });
