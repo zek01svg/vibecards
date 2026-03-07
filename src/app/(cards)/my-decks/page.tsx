@@ -4,7 +4,7 @@ import db from "@/database/db";
 import { decks } from "@/database/schema";
 import { Card } from "@/lib/validations/generate-deck-schema";
 import authenticate from "@/utils/authenticate";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 import { DeckList } from "./deck-list";
 import { EmptyDeckList } from "./empty-deck-list";
@@ -16,6 +16,7 @@ interface Deck {
   topic: string;
   cards: Card[];
   createdAt: string;
+  isFavorite: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ async function DecksFetcher({ userId }: { userId: string }) {
   // Query MUST filter by owner_id to only show current user's decks
   const userDecks = await db.query.decks.findMany({
     where: eq(decks.ownerId, userId),
+    orderBy: [desc(decks.createdAt)],
   });
 
   if (!userDecks || userDecks.length === 0) {

@@ -99,6 +99,7 @@ export const decks = pgTable(
     })
       .defaultNow()
       .notNull(),
+    isFavorite: boolean("is_favorite").default(false).notNull(),
   },
   (table) => [
     index("idx_decks_created_at").using(

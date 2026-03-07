@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Card as CardType } from "@/lib/validations/generate-deck-schema";
-import { Calendar, ChevronRight, Trash2 } from "lucide-react";
+import { Calendar, ChevronRight, Star, Trash2 } from "lucide-react";
 
 import {
   AlertDialog,
@@ -31,18 +31,26 @@ export interface Deck {
   topic: string;
   cards: CardType[];
   createdAt: string;
+  isFavorite: boolean;
 }
 
 interface FlashcardProps {
   deck: Deck;
   onDelete: (id: string, e: React.MouseEvent) => Promise<void>;
+  onToggleFavorite: (
+    id: string,
+    isFavorite: boolean,
+    e: React.MouseEvent,
+  ) => Promise<void>;
 }
 
 export function FlashcardDeck({
   deck,
   onDelete,
+  onToggleFavorite,
   isPending,
-}: FlashcardProps & { isPending?: boolean }) {
+  isPendingFavorite,
+}: FlashcardProps & { isPending?: boolean; isPendingFavorite?: boolean }) {
   return (
     <Card className="border-border/50 bg-card/50 hover:border-primary/50 hover:bg-card hover:shadow-primary/5 group relative h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <Link
@@ -64,41 +72,54 @@ export function FlashcardDeck({
             </CardTitle>
           </div>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive relative z-10 shrink-0 transition-colors"
-                disabled={isPending}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </AlertDialogTrigger>
-
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  deck <strong>&quot;{deck.title}&quot;</strong> and all its
-                  cards.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={isPending}>
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={(e) => onDelete(deck.id, e)}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`relative z-10 shrink-0 transition-colors hover:bg-yellow-500/10 hover:text-yellow-500 ${deck.isFavorite ? "text-yellow-500" : "text-muted-foreground"}`}
+              onClick={(e) => onToggleFavorite(deck.id, !deck.isFavorite, e)}
+              disabled={isPendingFavorite}
+            >
+              <Star
+                className={`h-4 w-4 ${deck.isFavorite ? "fill-current" : ""}`}
+              />
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive relative z-10 shrink-0 transition-colors"
                   disabled={isPending}
                 >
-                  {isPending ? "Deleting..." : "Delete"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the deck <strong>&quot;{deck.title}&quot;</strong> and all
+                    its cards.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={isPending}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={(e) => onDelete(deck.id, e)}
+                    disabled={isPending}
+                  >
+                    {isPending ? "Deleting..." : "Delete"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </CardHeader>
 

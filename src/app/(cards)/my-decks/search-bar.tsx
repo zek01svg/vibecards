@@ -1,47 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { useDeckSearch } from "@/hooks/use-deck-search";
 import { cn } from "@/lib/utils";
 import { Search, X } from "lucide-react";
 
+/**
+ * A client-side search and filtering interface for the user's deck collection.
+ * Utilizes the custom `useDeckSearch` hook to update URL parameters and manage local text state seamlessly.
+ *
+ * @returns The search input component alongside quick filter pills
+ */
 export function SearchBar() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-  const [activeFilter, setActiveFilter] = useState(
-    searchParams.get("filter") || "all",
-  );
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    updatePath(query, activeFilter);
-  };
-
-  const handleFilter = (filter: string) => {
-    setActiveFilter(filter);
-    updatePath(searchQuery, filter);
-  };
-
-  const updatePath = (query: string, filter: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    if (query) {
-      params.set("q", query);
-    } else {
-      params.delete("q");
-    }
-
-    if (filter !== "all") {
-      params.set("filter", filter);
-    } else {
-      params.delete("filter");
-    }
-
-    router.replace(`/my-decks?${params.toString()}`, { scroll: false });
-  };
+  const {
+    searchQuery,
+    setSearchQuery,
+    activeFilter,
+    handleSearch,
+    handleFilter,
+    updatePath,
+  } = useDeckSearch();
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
