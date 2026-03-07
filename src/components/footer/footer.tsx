@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Github } from "lucide-react";
 
@@ -16,8 +14,7 @@ export function Footer() {
               VibeCards
             </span>
             <p className="text-muted-foreground text-sm font-medium">
-              © {currentYear} — Built with ☕, Gemini, Next.js, Supabase, &
-              Better Auth.
+              © {currentYear} — Built with ☕ and Gemini.
             </p>
           </div>
 
