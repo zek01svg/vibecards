@@ -15,6 +15,7 @@ import { GenerateDeckRequestSchema } from "@/lib/validations/generate-deck-schem
 import { useForm } from "@tanstack/react-form";
 import { Sparkles } from "lucide-react";
 
+import { generateDeckAction } from "../generate-deck";
 import { DeckCardCount } from "./deck-card-count";
 import { DeckDifficulty } from "./deck-difficulty";
 
@@ -29,26 +30,17 @@ export function GenerateDeckForm() {
       cardCount: "10",
     },
     onSubmit: async ({ value }) => {
-      const response = await fetch("/api/generate-deck", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          topic: value.topic,
-          difficulty: value.difficulty,
-          cardCount: value.cardCount,
-        }),
+      const result = await generateDeckAction({
+        topic: value.topic,
+        difficulty: value.difficulty,
+        cardCount: value.cardCount,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to generate deck");
+      if (!result.success) {
+        throw new Error(result.error || "Failed to generate deck");
       }
 
-      router.push(`/deck/${data.deckId}`);
-      router.refresh();
+      router.push(`/deck/${result.deckId}`);
     },
   });
 

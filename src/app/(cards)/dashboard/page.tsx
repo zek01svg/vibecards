@@ -1,29 +1,17 @@
 import { redirect } from "next/navigation";
-import db from "@/database/db";
-import { decks } from "@/database/schema";
 import authenticate from "@/utils/authenticate";
-import { eq } from "drizzle-orm";
 
 import { GenerateDeckForm } from "./_components/generate-deck-form";
 
-export const dynamic = "force-dynamic";
-
+/**
+ * Dashboard page for generating new decks.
+ * @returns The dashboard page.
+ */
 export default async function DashboardPage() {
   const userId = await authenticate();
 
   if (userId === "Unauthorized") {
     redirect("/sign-in");
-  }
-
-  const userDecks = await db.query.decks.findMany({
-    where: eq(decks.ownerId, userId),
-  });
-
-  let totalCards = 0;
-  if (userDecks.length > 0) {
-    for (let deck of userDecks) {
-      totalCards += deck.cards?.length || 0;
-    }
   }
 
   return (
