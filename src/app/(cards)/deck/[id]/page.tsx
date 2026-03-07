@@ -10,8 +10,6 @@ import { eq } from "drizzle-orm";
 import { DeckView } from "./deck-view";
 import { StudyMode } from "./study-mode";
 
-export const dynamic = "force-dynamic";
-
 interface Deck {
   id: string;
   title: string;
