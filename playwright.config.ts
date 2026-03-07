@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 export default defineConfig({
-  testDir: "./tests",
+  testDir: "./tests/e2e",
   // Run tests in parallel for speed
   fullyParallel: true,
   // Fail CI if test.only is accidentally left in
@@ -17,7 +17,7 @@ export default defineConfig({
   // Keep the dot reporter; add HTML report for detailed post-run analysis
   reporter: "dot",
   // Folder for test artifacts (screenshots, videos, traces)
-  outputDir: "test-results",
+  outputDir: "playwright/test-results",
 
   // Assertion-level expect configuration
   expect: {
@@ -43,9 +43,14 @@ export default defineConfig({
   },
 
   projects: [
+    { name: "setup", testMatch: /.*\.setup\.ts/ },
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
+      },
+      dependencies: ["setup"],
     },
   ],
 });
