@@ -6,13 +6,9 @@ import { Card } from "@/lib/validations/generate-deck-schema";
 import authenticate from "@/utils/authenticate";
 import { eq } from "drizzle-orm";
 
-
 import { DeckList } from "./deck-list";
 import { EmptyDeckList } from "./empty-deck-list";
 import { SearchBar } from "./search-bar";
-
-
-export const dynamic = "force-dynamic";
 
 interface Deck {
   id: string;
@@ -22,22 +18,45 @@ interface Deck {
   createdAt: string;
 }
 
-export default async function DashboardPage() {
-  const userId = await authenticate();
-  if (userId === "Unauthorized") {
-    redirect("/sign-in");
-  }
-
+/**
+ * Server Component responsible for securely querying the database for a specific user's decks.
+ * If no decks are found, it falls back to the `EmptyDeckList` view.
+ *
+ * @param props - Component properties
+ * @param props.userId - The authenticated user's ID
+ * @returns The populated `DeckList` component or the `EmptyDeckList` fallback
+ */
+async function DecksFetcher({ userId }: { userId: string }) {
   // Query MUST filter by owner_id to only show current user's decks
   const userDecks = await db.query.decks.findMany({
     where: eq(decks.ownerId, userId),
   });
 
+  if (!userDecks || userDecks.length === 0) {
+    return <EmptyDeckList />;
+  }
+
+  return <DeckList decks={userDecks as Deck[]} />;
+}
+
+/**
+ * The main "My Decks" page structural layout.
+ * Ensures the user is authenticated, provides the header UI, and utilizes React Suspense
+ * to stream the database deck fetching process for better perceived performance.
+ *
+ * @returns The Next.js page layout
+ */
+export default async function MyDecksPage() {
+  const userId = await authenticate();
+  if (userId === "Unauthorized") {
+    redirect("/sign-in");
+  }
+
   return (
     <div className="bg-background/50 flex min-h-[calc(100vh-64px)] flex-col">
       <main className="container mx-auto flex-1 px-4 py-8 md:py-12">
         <div className="mx-auto max-w-5xl space-y-12">
-          <section className="animate-fade-in group">
+          <section className="animate-fade-in">
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
@@ -49,6 +68,10 @@ export default async function DashboardPage() {
               </div>
             </div>
 
+            <div className="mb-8">
+              <SearchBar />
+            </div>
+
             <Suspense
               fallback={
                 <div className="flex h-32 items-center justify-center">
@@ -56,15 +79,7 @@ export default async function DashboardPage() {
                 </div>
               }
             >
-              <div className="mb-8">
-                <SearchBar />
-              </div>
-
-              {!userDecks || userDecks.length === 0 ? (
-                <EmptyDeckList />
-              ) : (
-                <DeckList decks={userDecks as Deck[]} />
-              )}
+              <DecksFetcher userId={userId} />
             </Suspense>
           </section>
         </div>
