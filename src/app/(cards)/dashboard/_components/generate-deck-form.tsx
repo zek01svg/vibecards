@@ -9,11 +9,11 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { GenerateDeckRequestSchema } from "@/lib/validations/generate-deck-schema";
 import { useForm } from "@tanstack/react-form";
 import { Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 import { generateDeckAction } from "../generate-deck";
 import { DeckCardCount } from "./deck-card-count";
@@ -30,11 +30,19 @@ export function GenerateDeckForm() {
       cardCount: "10",
     },
     onSubmit: async ({ value }) => {
-      const result = await generateDeckAction({
+      const promise = generateDeckAction({
         topic: value.topic,
         difficulty: value.difficulty,
         cardCount: value.cardCount,
       });
+
+      toast.promise(promise, {
+        loading: "Brewing Magic...",
+        success: "Deck generated successfully!",
+        error: "Failed to generate deck",
+      });
+
+      const result = await promise;
 
       if (!result.success) {
         throw new Error(result.error || "Failed to generate deck");
@@ -125,20 +133,13 @@ export function GenerateDeckForm() {
                 className="bg-primary text-primary-foreground shadow-primary/20 group h-12 w-full rounded-2xl text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-50"
                 disabled={isSubmitting || !canSubmit}
               >
-                {isSubmitting ? (
-                  <div className="flex items-center gap-2">
-                    <Spinner className="h-5 w-5" />
-                    <span>Brewing Magic...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Sparkles
-                      size={20}
-                      className="transition-transform group-hover:rotate-12"
-                    />
-                    <span>Generate My Deck</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <Sparkles
+                    size={20}
+                    className="transition-transform group-hover:rotate-12"
+                  />
+                  <span>Generate My Deck</span>
+                </div>
               </Button>
             </div>
           )}
