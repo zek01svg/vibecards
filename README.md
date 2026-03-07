@@ -4,58 +4,61 @@
 
 ## 💡 Why This Exists
 
-Traditional flashcard apps require users to manually write every card—a time-consuming barrier that discourages consistent study habits. VibeCards removes that friction by leveraging **Google Gemini 2.5 Flash** to generate entire study decks from a single topic prompt in seconds.
+Traditional flashcard apps require users to manually write every card—a time-consuming barrier that discourages consistent study habits. VibeCards removes that friction by leveraging **Google Gemini** (with robust model fallbacks) to generate entire study decks from a single topic prompt in seconds.
 
 Users simply type a topic (e.g., "Photosynthesis"), select a difficulty level, and receive a structured deck of flashcards they can immediately study, save, and revisit.
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   Next.js 16 (App Router)           │
-│  ┌────────────────┐  ┌──────────────────────────┐   │
-│  │  Landing Page  │  │  Dashboard (Authed)      │   │
-│  │  ├─ Typewriter │  │  ├─ Generate Deck Form   │   │
-│  │  └─ CTA        │  │  ├─ Deck List + Search   │   │
-│  └────────────────┘  │  └─ Deck Detail [id]     │   │
-│                      └──────────────────────────┘   │
-│  ┌──────────────────────────────────────────────┐   │
-│  │  API Routes (Server-side)                    │   │
-│  │  ├─ /api/generate-deck  → Gemini AI          │   │
-│  │  ├─ /api/auth/[...]     → better-auth        │   │
-│  │  └─ /api/decks          → CRUD operations    │   │
-│  └──────────────────────────────────────────────┘   │
-└──────────────┬───────────────────────┬──────────────┘
-               │                       │
-    ┌──────────▼──────────┐  ┌─────────▼──────────┐
-    │  Supabase (Postgres)│  │  Google Gemini API │
-    │  ├─ Users/Sessions  │  │  (2.5 Flash)       │
-    │  ├─ Accounts        │  │  Structured output │
-    │  └─ Decks (JSONB)   │  │  with JSON schema  │
-    └─────────────────────┘  └────────────────────┘
+```mermaid
+flowchart TD
+    subgraph NextJS["Next.js 16 (App Router)"]
+        direction TB
+
+        subgraph Pages["Client UI"]
+            direction LR
+            Landing["Landing Page<br/>├─ Typewriter<br/>└─ CTA"]
+            Dashboard["Dashboard (Authed)<br/>├─ Generate Deck Form<br/>├─ Deck List + Search<br/>└─ Deck Detail (id)"]
+        end
+
+        subgraph Server["Server Handlers"]
+            direction LR
+            ServerActions["Server Actions"]
+            AuthAPI["/api/auth/..."]
+        end
+
+    Pages --> Server
+    end
+
+    Supabase[("Supabase (Postgres)<br/>├─ Users/Sessions<br/>├─ Accounts<br/>└─ Decks (JSONB)")]
+    Gemini{{"Google Gemini API<br/>(Multiple models with fallback)<br/>Structured output<br/>with JSON schema"}}
+
+    ServerActions -- "Gemini AI" ---> Gemini
+    AuthAPI -- "better-auth" ---> Supabase
+    ServerActions -- "CRUD operations" ---> Supabase
 ```
 
-| Layer              | Component                     | Purpose                                                                    |
-| ------------------ | ----------------------------- | -------------------------------------------------------------------------- |
-| **Frontend**       | Next.js 16 App Router         | Server-rendered pages with React 19, CSS Modules, and Tailwind CSS v4      |
-| **Authentication** | better-auth                   | Email/password + OTP verification + Google OAuth, session management       |
-| **AI Generation**  | Google Gemini 2.5 Flash       | Structured JSON output with Zod schema validation for flashcard generation |
-| **Database**       | Supabase PostgreSQL + Drizzle | Type-safe ORM with Row-Level Security policies on decks                    |
-| **Forms**          | TanStack Form                 | Type-safe form management with Zod validation                              |
-| **Email**          | Resend                        | Transactional emails for OTP verification and password resets              |
+| Layer              | Component                     | Purpose                                                                                                                                      |
+| ------------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend**       | Next.js 16 App Router         | Server-rendered pages with React 19, CSS Modules, and Tailwind CSS v4                                                                        |
+| **Authentication** | better-auth                   | Email/password + OTP verification + Google OAuth, session management                                                                         |
+| **AI Generation**  | Google Gemini                 | Structured JSON output with Zod schema validation, utilizing an automatic 8-model fallback hierarchy (3.1 down to 1.5) for high reliability. |
+| **Database**       | Supabase PostgreSQL + Drizzle | Type-safe ORM with Row-Level Security policies on decks                                                                                      |
+| **Forms**          | TanStack Form                 | Type-safe form management with Zod validation                                                                                                |
+| **Email**          | Resend                        | Transactional emails for OTP verification and password resets                                                                                |
 
 ## 🛠️ Tech Stack
 
 | Category        | Technology                                                                                                |
 | --------------- | --------------------------------------------------------------------------------------------------------- |
 | Framework       | [Next.js](https://nextjs.org/) 16 (App Router) with [React](https://react.dev/) 19                        |
-| Language        | [TypeScript](https://www.typescriptlang.org/) 5.9 (strict mode)                                           |
-| Runtime         | [Bun](https://bun.sh/) ≥ 1.1.56                                                                           |
+| Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                      |
+| Runtime         | [Node.js](https://bun.sh/) ≥ 24.14                                                                        |
 | Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                  |
 | UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons |
 | Authentication  | [better-auth](https://www.better-auth.com/) (Email OTP + Google OAuth)                                    |
 | Database        | [Supabase](https://supabase.com/) (PostgreSQL) via [Drizzle ORM](https://orm.drizzle.team/)               |
-| AI              | [Google Gemini](https://ai.google.dev/) 2.5 Flash (structured output)                                     |
+| AI              | [Google Gemini](https://ai.google.dev/) (structured output)                                               |
 | Forms           | [TanStack Form](https://tanstack.com/form) with [Zod](https://zod.dev/) validation                        |
 | Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                   |
 | Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                    |
@@ -72,9 +75,8 @@ Users simply type a topic (e.g., "Photosynthesis"), select a difficulty level, a
 
 | Tool                           | Version      |
 | ------------------------------ | ------------ |
-| [Bun](https://bun.sh/)         | `>= 1.1.56`  |
 | [pnpm](https://pnpm.io/)       | `>= 10.30.1` |
-| [Node.js](https://nodejs.org/) | `>= 22`      |
+| [Node.js](https://nodejs.org/) | `>= 24.14`   |
 
 ### 📦 Installation
 
@@ -178,14 +180,15 @@ vibecards/
 │   │   ├── (cards)/                  # Main application route group
 │   │   │   ├── dashboard/            # Generator and stats
 │   │   │   │   ├── _components/      # Dashboard-specific components
+│   │   │   │   ├── generate-deck.ts  # Server Action for generation
 │   │   │   │   └── page.tsx
 │   │   │   ├── deck/[id]/            # Individual deck viewer
 │   │   │   └── my-decks/             # User's deck collection
+│   │   │       ├── delete-deck.ts    # Server Action for deletion
+│   │   │       └── page.tsx
 │   │   ├── (legal)/                  # Legal pages (TOS, privacy)
 │   │   ├── api/
-│   │   │   ├── auth/[...all]/        # better-auth catch-all route
-│   │   │   ├── decks/                # Deck CRUD endpoints
-│   │   │   └── generate-deck/        # Gemini AI generation endpoint
+│   │   │   └── auth/[...all]/        # better-auth catch-all route
 │   │   ├── layout.tsx                # Root layout
 │   │   ├── page.tsx                  # Landing page
 │   │   └── globals.css               # Tailwind v4 styles
@@ -206,7 +209,7 @@ vibecards/
 │   │   └── pino.ts                   # Structured logger
 │   └── hooks/                        # Custom React hooks
 ├── tests/
-│   ├── e2e/                          # Playwright E2E tests
+│   ├── e2e/                          # Playwright tests + global.setup.ts
 │   └── unit/                         # Vitest unit tests
 ├── playwright.config.ts              # Playwright configuration
 ├── vitest.config.ts                  # Vitest configuration
