@@ -31,9 +31,9 @@ export default defineConfig({
 
   use: {
     baseURL:
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : "https://vibecards-v2.vercel.app",
+      process.env.NODE_ENV === "production" && !process.env.CI
+        ? "https://vibecards-v2.vercel.app"
+        : "http://localhost:3000",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
@@ -53,4 +53,9 @@ export default defineConfig({
       dependencies: ["setup"],
     },
   ],
+  webServer: {
+    command: "pnpm run dev",
+    url: "http://localhost:3000",
+    reuseExistingServer: !process.env.CI,
+  },
 });
