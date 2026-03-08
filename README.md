@@ -66,7 +66,7 @@ flowchart TD
 | Analytics       | [Vercel Analytics](https://vercel.com/analytics)                                                          |
 | Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage)                          |
 | E2E Testing     | [Playwright](https://playwright.dev/) (Chromium, Firefox, WebKit, Mobile Chrome)                          |
-| Code Quality    | ESLint, Prettier, Husky, lint-staged                                                                      |
+| Code Quality    | ESLint, Prettier, Husky, lint-staged, GitHub Actions (CI/CD), Gitleaks, CodeQL                            |
 | Package Manager | [pnpm](https://pnpm.io/) 10.30.1                                                                          |
 
 ## 🚀 Getting Started
@@ -108,6 +108,8 @@ cp .env.example .env.local
 | `GOOGLE_CLIENT_ID`             | Google OAuth client ID                                             |
 | `GOOGLE_CLIENT_SECRET`         | Google OAuth client secret                                         |
 | `RESEND_API_KEY`               | API key for Resend transactional email                             |
+| `TEST_EMAIL`                   | Verified email address used by Playwright for E2E testing          |
+| `TEST_PASSWORD`                | Password for the test email account used in E2E testing            |
 
 > [!NOTE]
 > Environment variables are validated at startup using [T3 Env](https://env.t3.gg/) with Zod schemas (see [`env.ts`](src/lib/env.ts)). Missing or invalid values will cause an immediate, descriptive error.
