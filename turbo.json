@@ -3,7 +3,16 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**"],
+      "env": [
+        "RESEND_API_KEY",
+        "DATABASE_URL",
+        "GOOGLE_GENERATIVE_AI_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET"
+      ]
     },
     "lint": {
       "cache": true
