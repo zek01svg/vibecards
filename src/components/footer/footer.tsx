@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Github } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -34,15 +33,6 @@ export function Footer() {
                 Privacy
               </Link>
             </div>
-            <a
-              href="https://github.com/zek01svg/vibecards"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-muted/50 hover:bg-primary hover:text-primary-foreground relative flex h-10 w-10 items-center justify-center rounded-xl transition-all"
-              aria-label="GitHub Repository"
-            >
-              <Github className="h-5 w-5 transition-transform group-hover:scale-110" />
-            </a>
           </div>
         </div>
       </div>

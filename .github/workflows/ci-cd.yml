@@ -11,6 +11,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   scan-for-secrets:
     name: Scan for secrets
@@ -22,19 +26,19 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 10.30.1
+          bun-version: 1.3.12
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.14
-          cache: "pnpm"
+          
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Scan for secrets using Gitleaks
         uses: gitleaks/gitleaks-action@v2
@@ -49,28 +53,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 10.30.1
+          bun-version: 1.3.12
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.14
-          cache: "pnpm"
+          
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
-      - name: Check code formatting
-        run: pnpm exec prettier --write .
-
-      - name: Run linter
-        run: pnpm run lint
+      - name: Turbo Lint and Format
+        run: bun run turbo lint format:check
 
       - name: Type check
-        run: pnpm exec tsc --noEmit
+        run: bunx tsc --noEmit
 
   test:
     name: Run Unit and E2E Tests
@@ -83,27 +84,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 10.30.1
+          bun-version: 1.3.12
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.14
-          cache: "pnpm"
+          
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
-      - name: Run unit tests
-        run: pnpm run test:unit
-
-      - name: Run E2E tests
-        run: pnpm run test:e2e
+      - name: Run tests with Turbo
+        run: bun run turbo test:unit test:e2e
         env:
           NEXT_PUBLIC_APP_URL: http://localhost:3000
           NODE_ENV: test
@@ -139,22 +137,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 10.30.1
+          bun-version: 1.3.12
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.14
-          cache: "pnpm"
+          
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Software Composition Analysis (SCA)
-        run: pnpm audit --audit-level=high
+        run: bun audit --audit-level=high
 
       - name: Initialize CodeQL (SAST)
         uses: github/codeql-action/init@v3
@@ -178,13 +176,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 10.30.1
+          bun-version: 1.3.12
 
       - name: Install Vercel CLI
-        run: pnpm install --global vercel@latest
+        run: bun install --global vercel@latest
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
