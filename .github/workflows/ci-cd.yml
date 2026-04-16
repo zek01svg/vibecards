@@ -79,10 +79,24 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.58.2-jammy
+      env:
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NODE_ENV: test
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: http://localhost:3000
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Install unzip
+        run: apt-get update && apt-get install -y unzip
 
       - name: Install bun
         uses: oven-sh/setup-bun@v2
@@ -102,18 +116,6 @@ jobs:
 
       - name: Run tests with Turbo
         run: bun run turbo test:unit test:e2e
-        env:
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
-          NODE_ENV: test
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          BETTER_AUTH_URL: http://localhost:3000
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
 
       - name: Upload Playwright report
         if: failure()
