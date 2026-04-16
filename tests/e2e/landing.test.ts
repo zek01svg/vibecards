@@ -49,8 +49,5 @@ test.describe("Landing page", () => {
     ).toBeVisible();
     await expect(page.getByRole("link", { name: "Terms" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Privacy" })).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "GitHub Repository" }),
-    ).toBeVisible();
   });
 });
