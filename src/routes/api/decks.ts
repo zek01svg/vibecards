@@ -12,7 +12,7 @@ import logger from "@/lib/pino";
 import { GeminiResponseSchema, GenerateDeckRequestSchema } from "@/lib/validations/generate-deck-schema";
 
 const MAX_OUTPUT_TOKENS = 8192;
-const modelHierarchy = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash", "gemini-1.5-flash-lite"] as const;
+const modelHierarchy = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-lite"] as const;
 
 async function getUserId(request: Request) {
   const session = await auth.api.getSession({ headers: request.headers });

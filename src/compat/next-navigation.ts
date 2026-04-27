@@ -5,7 +5,7 @@ export function useRouter() {
   const navigate = useNavigate();
   return {
     push: (to: string) => navigate({ to }),
-    replace: (to: string) => navigate({ to, replace: true })
+    replace: (to: string, _options?: Record<string, unknown>) => navigate({ to, replace: true })
   };
 }
 
