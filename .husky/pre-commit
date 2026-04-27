@@ -1,3 +1,7 @@
 echo "🚧 Running static analyses..."
-bunx lint-staged
+if node -e "const [major]=process.versions.node.split('.').map(Number); process.exit(major<22?0:1)"; then
+  echo "Skipping lint-staged: Node >=22 required for oxlint ts config"
+  exit 0
+fi
+npx lint-staged
 echo "✅ Static analyses completed."

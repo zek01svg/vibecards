@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Card as CardType } from "@/lib/validations/generate-deck-schema";
+import type { Card as CardType } from "@/lib/validations/generate-deck-schema";
 import { Calendar, ChevronRight, Star, Trash2 } from "lucide-react";
 
 import {

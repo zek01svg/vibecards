@@ -54,3 +54,9 @@ coverage
 
 # Turborepo
 .turbo
+
+# vite/tanstack start
+/dist
+/.vite
+/.output
+/.tanstack

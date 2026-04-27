@@ -7,7 +7,7 @@ import { Flashcard } from "@/components/deck/flashcard";
 import { KeyboardHint } from "@/components/deck/keyboard-hint";
 import { StudyControls } from "@/components/deck/study-controls";
 import { StudyProgress } from "@/components/deck/study-progress";
-import { Card as CardType } from "@/lib/validations/generate-deck-schema";
+import type { Card as CardType } from "@/lib/validations/generate-deck-schema";
 
 interface StudyModeProps {
   deck: {

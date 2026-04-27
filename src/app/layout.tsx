@@ -6,7 +6,6 @@ import "./globals.css";
 import { Footer } from "@/components/footer/footer";
 import { Header } from "@/components/header/header";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -33,7 +32,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider defaultTheme="dark" storageKey="vibecards-theme">
-          <Analytics />
           <div>
             <Header />
             <main>{children}</main>

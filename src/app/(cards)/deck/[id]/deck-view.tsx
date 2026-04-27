@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Card as CardType } from "@/lib/validations/generate-deck-schema";
+import type { Card as CardType } from "@/lib/validations/generate-deck-schema";
 import { HelpCircle, MessageSquareQuote } from "lucide-react";
 
 interface DeckViewProps {

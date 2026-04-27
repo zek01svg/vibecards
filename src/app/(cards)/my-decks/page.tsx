@@ -1,10 +1,10 @@
-import { Suspense } from "react";
-import { redirect } from "next/navigation";
-import db from "@/database/db";
-import { decks } from "@/database/schema";
-import { Card } from "@/lib/validations/generate-deck-schema";
-import authenticate from "@/utils/authenticate";
-import { desc, eq } from "drizzle-orm";
+"use client";
+
+import { Suspense, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { authClient } from "@/lib/auth-client";
+import type { Card } from "@/lib/validations/generate-deck-schema";
 
 import { DeckList } from "./deck-list";
 import { EmptyDeckList } from "./empty-deck-list";
@@ -19,39 +19,34 @@ interface Deck {
   isFavorite: boolean;
 }
 
-/**
- * Server Component responsible for securely querying the database for a specific user's decks.
- * If no decks are found, it falls back to the `EmptyDeckList` view.
- *
- * @param props - Component properties
- * @param props.userId - The authenticated user's ID
- * @returns The populated `DeckList` component or the `EmptyDeckList` fallback
- */
-async function DecksFetcher({ userId }: { userId: string }) {
-  // Query MUST filter by owner_id to only show current user's decks
-  const userDecks = await db.query.decks.findMany({
-    where: eq(decks.ownerId, userId),
-    orderBy: [desc(decks.createdAt)],
-  });
+export default function MyDecksPage() {
+  const router = useRouter();
+  const session = authClient.useSession();
+  const [items, setItems] = useState<Deck[] | null>(null);
 
-  if (!userDecks || userDecks.length === 0) {
-    return <EmptyDeckList />;
-  }
+  useEffect(() => {
+    if (!session.isPending && !session.data?.session) {
+      router.push("/sign-in");
+      return;
+    }
 
-  return <DeckList decks={userDecks as Deck[]} />;
-}
+    const load = async () => {
+      const response = await fetch("/api/decks");
+      const data = (await response.json()) as { success: boolean; decks?: Deck[] };
+      if (data.success) setItems(data.decks ?? []);
+    };
 
-/**
- * The main "My Decks" page structural layout.
- * Ensures the user is authenticated, provides the header UI, and utilizes React Suspense
- * to stream the database deck fetching process for better perceived performance.
- *
- * @returns The Next.js page layout
- */
-export default async function MyDecksPage() {
-  const userId = await authenticate();
-  if (userId === "Unauthorized") {
-    redirect("/sign-in");
+    if (session.data?.session) {
+      void load();
+    }
+  }, [router, session.data?.session, session.isPending]);
+
+  if (session.isPending || !items) {
+    return (
+      <div className="flex h-32 items-center justify-center">
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+      </div>
+    );
   }
 
   return (
@@ -61,12 +56,8 @@ export default async function MyDecksPage() {
           <section className="animate-fade-in">
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
-                  Your Decks
-                </h2>
-                <p className="text-muted-foreground mt-2">
-                  Browse and manage your personalized study collections.
-                </p>
+                <h2 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">Your Decks</h2>
+                <p className="text-muted-foreground mt-2">Browse and manage your personalized study collections.</p>
               </div>
             </div>
 
@@ -74,14 +65,8 @@ export default async function MyDecksPage() {
               <SearchBar />
             </div>
 
-            <Suspense
-              fallback={
-                <div className="flex h-32 items-center justify-center">
-                  <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-                </div>
-              }
-            >
-              <DecksFetcher userId={userId} />
+            <Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" /></div>}>
+              {items.length === 0 ? <EmptyDeckList /> : <DeckList decks={items} />}
             </Suspense>
           </section>
         </div>

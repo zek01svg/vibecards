@@ -1,15 +1,13 @@
-import {
-  getPasswordResetOTPEmail,
-  getSignInOTPEmail,
-  getVerificationOTPEmail,
-} from "@/components/email-templates/templates";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
+import { emailOTP } from "better-auth/plugins";
+
+import { getPasswordResetOTPEmail, getSignInOTPEmail, getVerificationOTPEmail } from "@/components/email-templates/templates";
 import db from "@/database/db";
 import { account, session, user, verification } from "@/database/schema";
 import { env } from "@/lib/env";
 import logger from "@/lib/pino";
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { emailOTP } from "better-auth/plugins";
 
 import { sendEmail } from "./mailer";
 
@@ -18,12 +16,13 @@ const auth = betterAuth({
     provider: "pg",
     schema: { user, session, account, verification },
   }),
-  baseURL: env.NEXT_PUBLIC_APP_URL,
+  baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
   },
   plugins: [
+    tanstackStartCookies(),
     emailOTP({
       overrideDefaultEmailVerification: true,
       sendVerificationOnSignUp: true,
@@ -58,14 +57,11 @@ const auth = betterAuth({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       getUserInfo: async (token) => {
-        const response = await fetch(
-          "https://www.googleapis.com/oauth2/v2/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${token.accessToken}`,
-            },
+        const response = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+          headers: {
+            Authorization: `Bearer ${token.accessToken}`,
           },
-        );
+        });
         const profile = await response.json();
         return {
           user: {

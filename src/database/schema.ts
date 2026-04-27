@@ -1,4 +1,4 @@
-import { Card } from "@/lib/validations/generate-deck-schema";
+import type { Card } from "@/lib/validations/generate-deck-schema";
 import { sql } from "drizzle-orm";
 import {
   boolean,
