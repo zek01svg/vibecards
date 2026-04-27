@@ -1,3 +1,5 @@
+import { fileURLToPath, URL } from "node:url";
+
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -6,15 +8,15 @@ import { defineConfig } from "vite";
 export default defineConfig({
   resolve: {
     alias: {
-      "@": "/home/runner/work/vibecards/vibecards/src",
-      "next/link": "/home/runner/work/vibecards/vibecards/src/compat/next-link.tsx",
-      "next/navigation": "/home/runner/work/vibecards/vibecards/src/compat/next-navigation.ts",
-      "next/headers": "/home/runner/work/vibecards/vibecards/src/compat/next-headers.ts",
-      "next/cache": "/home/runner/work/vibecards/vibecards/src/compat/next-cache.ts",
-      "next/dynamic": "/home/runner/work/vibecards/vibecards/src/compat/next-dynamic.tsx",
-      "next/font/google": "/home/runner/work/vibecards/vibecards/src/compat/next-font-google.ts",
-      "next/server": "/home/runner/work/vibecards/vibecards/src/compat/next-server.ts"
-    }
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "next/link": fileURLToPath(new URL("./src/compat/next-link.tsx", import.meta.url)),
+      "next/navigation": fileURLToPath(new URL("./src/compat/next-navigation.ts", import.meta.url)),
+      "next/headers": fileURLToPath(new URL("./src/compat/next-headers.ts", import.meta.url)),
+      "next/cache": fileURLToPath(new URL("./src/compat/next-cache.ts", import.meta.url)),
+      "next/dynamic": fileURLToPath(new URL("./src/compat/next-dynamic.tsx", import.meta.url)),
+      "next/font/google": fileURLToPath(new URL("./src/compat/next-font-google.ts", import.meta.url)),
+      "next/server": fileURLToPath(new URL("./src/compat/next-server.ts", import.meta.url)),
+    },
   },
-  plugins: [tanstackStart(), tailwindcss(), viteReact()]
+  plugins: [tanstackStart(), tailwindcss(), viteReact()],
 });

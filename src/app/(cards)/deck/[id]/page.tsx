@@ -35,14 +35,19 @@ export default function DeckPage() {
     }
 
     const load = async () => {
-      const response = await fetch(`/api/decks/${id}`);
-      if (!response.ok) {
+      try {
+        const response = await fetch(`/api/decks/${id}`);
+        if (!response.ok) {
+          router.push("/my-decks");
+          return;
+        }
+
+        const data = (await response.json()) as { success: boolean; deck?: Deck };
+        if (data.success && data.deck) setDeck(data.deck);
+        else router.push("/my-decks");
+      } catch {
         router.push("/my-decks");
-        return;
       }
-      const data = (await response.json()) as { success: boolean; deck?: Deck };
-      if (data.success && data.deck) setDeck(data.deck);
-      else router.push("/my-decks");
     };
 
     if (session.data?.session) void load();

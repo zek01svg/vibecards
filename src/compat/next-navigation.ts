@@ -18,8 +18,12 @@ export function useSearchParams() {
 }
 
 export function redirect(to: string) {
-  if (typeof window !== "undefined") window.location.assign(to);
-  throw new Error(`Redirect to ${to}`);
+  if (typeof window !== "undefined") {
+    window.location.assign(to);
+    return;
+  }
+
+  throw Response.redirect(to, 302);
 }
 
 export function notFound() {

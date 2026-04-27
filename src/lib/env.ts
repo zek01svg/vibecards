@@ -13,9 +13,9 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
     BETTER_AUTH_SECRET: z.string(),
-    RESEND_API_KEY: z.string().default(""),
-    TEST_EMAIL: z.string().default(""),
-    TEST_PASSWORD: z.string().default(""),
+    RESEND_API_KEY: z.string().optional(),
+    TEST_EMAIL: z.string().optional(),
+    TEST_PASSWORD: z.string().optional(),
   },
   clientPrefix: "NEXT_PUBLIC_",
   runtimeEnv: {

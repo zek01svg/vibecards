@@ -31,9 +31,19 @@ export default function MyDecksPage() {
     }
 
     const load = async () => {
-      const response = await fetch("/api/decks");
-      const data = (await response.json()) as { success: boolean; decks?: Deck[] };
-      if (data.success) setItems(data.decks ?? []);
+      try {
+        const response = await fetch("/api/decks");
+        if (!response.ok) {
+          setItems([]);
+          return;
+        }
+
+        const data = (await response.json()) as { success: boolean; decks?: Deck[] };
+        if (data.success) setItems(data.decks ?? []);
+        else setItems([]);
+      } catch {
+        setItems([]);
+      }
     };
 
     if (session.data?.session) {

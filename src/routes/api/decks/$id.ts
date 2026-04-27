@@ -18,7 +18,8 @@ export const Route = createFileRoute("/api/decks/$id")({
         const userId = await getUserId(request);
         if (!userId) return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
         const deck = await db.query.decks.findFirst({ where: eq(decks.id, params.id) });
-        if (!deck || deck.ownerId !== userId) return Response.json({ success: false, error: "Deck not found" }, { status: 404 });
+        if (!deck) return Response.json({ success: false, error: "Deck not found" }, { status: 404 });
+        if (deck.ownerId !== userId) return Response.json({ success: false, error: "Forbidden" }, { status: 403 });
         return Response.json({ success: true, deck });
       },
       DELETE: async ({ request, params }) => {
@@ -43,7 +44,7 @@ export const Route = createFileRoute("/api/decks/$id")({
           if (!deck) return Response.json({ success: false, error: "Deck not found" }, { status: 404 });
           if (deck.ownerId !== userId) return Response.json({ success: false, error: "Forbidden" }, { status: 403 });
           const body = (await request.json()) as { isFavorite?: boolean };
-          await db.update(decks).set({ isFavorite: Boolean(body.isFavorite) }).where(eq(decks.id, params.id));
+          await db.update(decks).set({ isFavorite: body.isFavorite ?? false }).where(eq(decks.id, params.id));
           return Response.json({ success: true });
         } catch (error) {
           logger.error({ err: error, deckId: params.id }, "Error toggling favorite deck");

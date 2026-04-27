@@ -64,7 +64,8 @@ export const Route = createFileRoute("/api/decks")({
             return Response.json({ success: false, error: "No response from Gemini after trying all models" }, { status: 502 });
           }
 
-          const validatedDeck = GeminiResponseSchema.parse(generated);
+          const normalizedGenerated = (generated as any)?.output ?? (generated as any)?.content ?? generated;
+          const validatedDeck = GeminiResponseSchema.parse(normalizedGenerated);
           const deck = await db.insert(decks).values({ ownerId: userId, title: validatedDeck.title, topic: validatedDeck.topic, cards: validatedDeck.cards }).returning();
           const createdDeck = deck[0];
           if (!createdDeck) return Response.json({ success: false, error: "Failed to save deck" }, { status: 500 });

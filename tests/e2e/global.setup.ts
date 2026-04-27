@@ -5,6 +5,7 @@ const authFile = "playwright/.auth/user.json";
 
 setup("authenticate", async ({ request }) => {
   if (!env.TEST_EMAIL || !env.TEST_PASSWORD) {
+    console.warn("TEST_EMAIL/TEST_PASSWORD not set; skipping authenticated setup state");
     await request.storageState({ path: authFile });
     return;
   }

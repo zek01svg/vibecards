@@ -6,7 +6,13 @@
     "module": "esnext",
     "paths": {
       "@/*": ["./src/*"],
-      "next/*": ["./src/compat/next-*.ts", "./src/compat/next-*.tsx"]
+      "next/link": ["./src/compat/next-link.tsx"],
+      "next/navigation": ["./src/compat/next-navigation.ts"],
+      "next/headers": ["./src/compat/next-headers.ts"],
+      "next/cache": ["./src/compat/next-cache.ts"],
+      "next/dynamic": ["./src/compat/next-dynamic.tsx"],
+      "next/font/google": ["./src/compat/next-font-google.ts"],
+      "next/server": ["./src/compat/next-server.ts"]
     },
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "node"],

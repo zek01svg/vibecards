@@ -13,8 +13,12 @@ interface SendEmailOptions {
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
   if (!mailer) {
-    logger.warn({ to, subject }, "Resend API key not set, skipping email send");
-    return { id: "mock-email" };
+    if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
+      logger.warn({ to, subject }, "Resend API key not set, skipping email send in non-production environment");
+      return { id: "mock-email" };
+    }
+
+    throw new Error("Resend API key is required in production");
   }
 
   try {
