@@ -38,6 +38,12 @@ export function DeckList({ decks }: DeckListProps) {
   const q = searchParams.get("q")?.toLowerCase() || "";
   const filter = searchParams.get("filter") || "all";
 
+  let sevenDaysAgo: Date | null = null;
+  if (filter === "recent") {
+    sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  }
+
   const filteredDecks = decks.filter((deck) => {
     if (
       q &&
@@ -46,9 +52,7 @@ export function DeckList({ decks }: DeckListProps) {
     )
       return false;
     if (filter === "favorites" && !deck.isFavorite) return false;
-    if (filter === "recent") {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    if (filter === "recent" && sevenDaysAgo) {
       if (new Date(deck.createdAt) < sevenDaysAgo) return false;
     }
     return true;
