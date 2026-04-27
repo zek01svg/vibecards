@@ -1,6 +1,6 @@
 # 🃏 VibeCards
 
-> AI-powered flashcard generator that turns any topic into personalized study decks using Google Gemini, built with Next.js 16 and deployed on Vercel.
+> AI-powered flashcard generator that turns any topic into personalized study decks using Google Gemini, built with TanStack Start (Vite) and deployed as a full-stack TanStack Start app.
 
 ## 💡 Why This Exists
 
@@ -12,7 +12,7 @@ Users simply type a topic (e.g., "Photosynthesis"), select a difficulty level, a
 
 ```mermaid
 flowchart TD
-    subgraph NextJS["Next.js 16 (App Router)"]
+    subgraph NextJS["TanStack Start + TanStack Router"]
         direction TB
 
         subgraph Pages["Client UI"]
@@ -51,14 +51,14 @@ flowchart TD
 
 | Category        | Technology                                                                                                |
 | --------------- | --------------------------------------------------------------------------------------------------------- |
-| Framework       | [Next.js](https://nextjs.org/) 16 (App Router) with [React](https://react.dev/) 19                        |
+| Framework       | [TanStack Start](https://tanstack.com/start) + [TanStack Router](https://tanstack.com/router) with [React](https://react.dev/) 19 |
 | Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                      |
-| Runtime         | [Node.js](https://bun.sh/) ≥ 24.14                                                                        |
+| Runtime         | [Node.js](https://nodejs.org/) ≥ 24.14                                                                      |
 | Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                  |
 | UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons |
 | Authentication  | [better-auth](https://www.better-auth.com/) (Email OTP + Google OAuth)                                    |
 | Database        | [Supabase](https://supabase.com/) (PostgreSQL) via [Drizzle ORM](https://orm.drizzle.team/)               |
-| AI              | [Google Gemini](https://ai.google.dev/) (structured output)                                               |
+| AI              | [TanStack AI](https://tanstack.com/ai) + Google Gemini provider (structured output)                        |
 | Forms           | [TanStack Form](https://tanstack.com/form) with [Zod](https://zod.dev/) validation                        |
 | Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                   |
 | Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                    |
@@ -124,7 +124,7 @@ pnpm run db:push
 
 ## 🧑‍💻 Usage
 
-**Run the development server** (uses Bun runtime):
+**Run the development server**:
 
 ```bash
 pnpm run dev
@@ -174,12 +174,12 @@ End-to-end tests use [Playwright](https://playwright.dev/) and run against the b
 ```
 vibecards/
 ├── src/
-│   ├── app/
+│   ├── routes/
 │   │   ├── (auth)/                   # Authentication route group
 │   │   │   ├── sign-in/
 │   │   │   ├── sign-up/
 │   │   │   └── verify-otp/
-│   │   ├── (cards)/                  # Main application route group
+│   │   ├── dashboard.tsx            # Generator route
 │   │   │   ├── dashboard/            # Generator and stats
 │   │   │   │   ├── _components/      # Dashboard-specific components
 │   │   │   │   ├── generate-deck.ts  # Server Action for generation
@@ -188,12 +188,12 @@ vibecards/
 │   │   │   └── my-decks/             # User's deck collection
 │   │   │       ├── delete-deck.ts    # Server Action for deletion
 │   │   │       └── page.tsx
-│   │   ├── (legal)/                  # Legal pages (TOS, privacy)
-│   │   ├── api/
-│   │   │   └── auth/[...all]/        # better-auth catch-all route
-│   │   ├── layout.tsx                # Root layout
-│   │   ├── page.tsx                  # Landing page
-│   │   └── globals.css               # Tailwind v4 styles
+│   │   ├── my-decks.tsx             # User decks route
+│   │   ├── deck/$id.tsx             # Individual deck route
+│   │   ├── sign-in.tsx              # Auth sign-in route
+│   │   ├── sign-up.tsx              # Auth sign-up route
+│   │   ├── verify-otp.tsx           # OTP verification route
+│   │   └── __root.tsx               # Root document/layout route
 │   ├── components/
 │   │   ├── auth/                     # Reusable auth forms (TanStack Form)
 │   │   ├── deck/                     # Deck-related UI components
@@ -216,7 +216,7 @@ vibecards/
 ├── playwright.config.ts              # Playwright configuration
 ├── vitest.config.ts                  # Vitest configuration
 ├── drizzle.config.ts                 # Drizzle configuration
-├── next.config.js                    # Next.js configuration
+├── vite.config.ts                    # TanStack Start + Vite configuration
 ├── package.json
 └── .env.example                      # Environment template
 ```
