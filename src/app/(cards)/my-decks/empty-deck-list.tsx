@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -31,7 +31,7 @@ export function EmptyDeckList() {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="mt-6">
-          <Link href="/dashboard">
+          <Link to="/dashboard">
             <Button className="shadow-primary/20 rounded-xl font-bold shadow-lg transition-all active:scale-95">
               Generate Your First Deck
             </Button>

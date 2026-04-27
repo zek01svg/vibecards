@@ -1,4 +1,3 @@
-"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { CompletionState } from "@/components/deck/completion-state";

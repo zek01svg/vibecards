@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const env = createEnv({
   client: {
-    NEXT_PUBLIC_APP_URL: z.url().default("http://localhost:3000"),
+    VITE_APP_URL: z.url().default("http://localhost:3000"),
   },
   server: {
     GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
@@ -17,11 +17,11 @@ export const env = createEnv({
     TEST_EMAIL: z.string().optional(),
     TEST_PASSWORD: z.string().optional(),
   },
-  clientPrefix: "NEXT_PUBLIC_",
+  clientPrefix: "VITE_",
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    VITE_APP_URL: process.env.VITE_APP_URL,
     GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,

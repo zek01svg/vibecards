@@ -1,6 +1,5 @@
-"use client";
 
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import GoogleLoginButton from "@/components/auth/google-login-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -137,7 +136,7 @@ export function LoginForm({
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
         <Link
-          href="/sign-up"
+          to="/sign-up"
           className="text-primary font-semibold underline-offset-4 hover:underline"
         >
           Sign up
@@ -147,14 +146,14 @@ export function LoginForm({
       <p className="text-muted-foreground px-8 text-center text-xs leading-relaxed">
         By clicking continue, you agree to our{" "}
         <Link
-          href="/terms"
+          to="/terms"
           className="hover:text-primary underline underline-offset-4"
         >
           Terms of Service
         </Link>{" "}
         and{" "}
         <Link
-          href="/privacy"
+          to="/privacy"
           className="hover:text-primary underline underline-offset-4"
         >
           Privacy Policy

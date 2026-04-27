@@ -1,6 +1,5 @@
-"use client";
 
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -21,7 +20,7 @@ import { DeckDifficulty } from "./deck-difficulty";
 
 export function GenerateDeckForm() {
   const difficulties = ["beginner", "intermediate", "advanced"] as const;
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: {
@@ -48,7 +47,7 @@ export function GenerateDeckForm() {
         throw new Error(result.error || "Failed to generate deck");
       }
 
-      router.push(`/deck/${result.deckId}`);
+      await navigate({ to: `/deck/${result.deckId}` });
     },
   });
 

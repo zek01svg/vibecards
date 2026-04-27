@@ -1,7 +1,6 @@
-"use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -9,13 +8,13 @@ import { GenerateDeckForm } from "./_components/generate-deck-form";
 
 export default function DashboardPage() {
   const session = authClient.useSession();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!session.isPending && !session.data?.session) {
-      router.push("/sign-in");
+      void navigate({ to: "/sign-in" });
     }
-  }, [router, session.data?.session, session.isPending]);
+  }, [navigate, session.data?.session, session.isPending]);
 
   if (session.isPending || !session.data?.session) {
     return null;

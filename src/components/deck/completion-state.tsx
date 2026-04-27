@@ -1,6 +1,5 @@
-"use client";
 
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RotateCcw, Trophy } from "lucide-react";
@@ -20,7 +19,7 @@ export function CompletionState({
   totalCards,
   onRestart,
 }: CompletionStateProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const accuracy =
     totalCards > 0 ? Math.round((correctCount / totalCards) * 100) : 0;
 
@@ -76,7 +75,7 @@ export function CompletionState({
           </Button>
           <Button
             variant="outline"
-            onClick={() => router.push("/my-decks")}
+            onClick={() => void navigate({ to: "/my-decks" })}
             className="border-border/50 bg-background/50 hover:bg-background h-12 w-full rounded-2xl font-bold"
           >
             Back to Library

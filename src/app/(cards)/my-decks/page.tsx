@@ -1,7 +1,6 @@
-"use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 
 import { authClient } from "@/lib/auth-client";
 import type { Card } from "@/lib/validations/generate-deck-schema";
@@ -20,13 +19,13 @@ interface Deck {
 }
 
 export default function MyDecksPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const session = authClient.useSession();
   const [items, setItems] = useState<Deck[] | null>(null);
 
   useEffect(() => {
     if (!session.isPending && !session.data?.session) {
-      router.push("/sign-in");
+      void navigate({ to: "/sign-in" });
       return;
     }
 
@@ -49,7 +48,7 @@ export default function MyDecksPage() {
     if (session.data?.session) {
       void load();
     }
-  }, [router, session.data?.session, session.isPending]);
+  }, [navigate, session.data?.session, session.isPending]);
 
   if (session.isPending || !items) {
     return (

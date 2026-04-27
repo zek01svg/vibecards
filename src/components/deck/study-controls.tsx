@@ -1,4 +1,3 @@
-"use client";
 
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight, RotateCw, X } from "lucide-react";

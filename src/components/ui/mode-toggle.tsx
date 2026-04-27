@@ -1,6 +1,5 @@
-"use client";
 
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { GraduationCap, List } from "lucide-react";
 
@@ -25,7 +24,9 @@ export function ModeToggle({
       )}
     >
       <Link
-        href={`/deck/${id}?mode=study`}
+        to="/deck/$id"
+        params={{ id }}
+        search={{ mode: "study" }}
         className={cn(
           "flex items-center gap-2 rounded-lg font-bold transition-all",
           mobile ? "px-6 py-2 text-xs" : "px-4 py-1.5 text-xs",
@@ -38,7 +39,8 @@ export function ModeToggle({
         {mobile ? "Study" : "Study Mode"}
       </Link>
       <Link
-        href={`/deck/${id}`}
+        to="/deck/$id"
+        params={{ id }}
         className={cn(
           "flex items-center gap-2 rounded-lg font-bold transition-all",
           mobile ? "px-6 py-2 text-xs" : "px-4 py-1.5 text-xs",

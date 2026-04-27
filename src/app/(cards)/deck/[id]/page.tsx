@@ -1,8 +1,6 @@
-"use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "@tanstack/react-router";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useNavigate, useParams, useRouterState } from "@tanstack/react-router";
 
 import { DeckHeader } from "@/components/deck/deck-header";
 import { ModeToggle } from "@/components/ui/mode-toggle";
@@ -22,15 +20,15 @@ interface Deck {
 
 export default function DeckPage() {
   const session = authClient.useSession();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const searchStr = useRouterState({ select: (s) => s.location.searchStr });
   const { id } = useParams({ strict: false }) as { id: string };
   const [deck, setDeck] = useState<Deck | null>(null);
-  const isStudyMode = searchParams.get("mode") === "study";
+  const isStudyMode = new URLSearchParams(searchStr.startsWith("?") ? searchStr.slice(1) : searchStr).get("mode") === "study";
 
   useEffect(() => {
     if (!session.isPending && !session.data?.session) {
-      router.push("/sign-in");
+      void navigate({ to: "/sign-in" });
       return;
     }
 
@@ -38,20 +36,20 @@ export default function DeckPage() {
       try {
         const response = await fetch(`/api/decks/${id}`);
         if (!response.ok) {
-          router.push("/my-decks");
+          void navigate({ to: "/my-decks" });
           return;
         }
 
         const data = (await response.json()) as { success: boolean; deck?: Deck };
         if (data.success && data.deck) setDeck(data.deck);
-        else router.push("/my-decks");
+        else void navigate({ to: "/my-decks" });
       } catch {
-        router.push("/my-decks");
+        void navigate({ to: "/my-decks" });
       }
     };
 
     if (session.data?.session) void load();
-  }, [id, router, session.data?.session, session.isPending]);
+  }, [id, navigate, session.data?.session, session.isPending]);
 
   if (!deck) return null;
 

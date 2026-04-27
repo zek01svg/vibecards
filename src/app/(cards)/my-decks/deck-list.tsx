@@ -1,7 +1,6 @@
-"use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "@/hooks/use-search-params";
 /**
  * Renders a grid of flashcard deck summary cards.
  * Manages the delete state for individual decks to ensure appropriate UI feedback during deletion.

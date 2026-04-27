@@ -1,4 +1,3 @@
-"use client";
 
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import {

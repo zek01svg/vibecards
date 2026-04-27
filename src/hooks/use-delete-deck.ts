@@ -1,4 +1,3 @@
-"use client";
 
 import { useTransition } from "react";
 import { deleteDeckAction } from "@/app/(cards)/my-decks/delete-deck";
