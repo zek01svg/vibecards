@@ -56,8 +56,10 @@ export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
           await verifyEmail(email, value.otp);
         }
         toast.success("Verified successfully");
-      } catch (error: any) {
-        toast.error(error.message);
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Verification failed",
+        );
       }
     },
   });
@@ -71,8 +73,10 @@ export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
     try {
       await resendOTP(email, type);
       toast.success("Code resent successfully");
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to resend OTP",
+      );
     }
   };
 
