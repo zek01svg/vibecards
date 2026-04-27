@@ -136,8 +136,12 @@ export function useAuthActions() {
       router.push(
         `/verify-otp?email=${encodeURIComponent(email)}&type=email-verification`,
       );
-    } catch (error: any) {
-      throw new Error(error.message || "Failed to sign up");
+    } catch (error: unknown) {
+      throw new Error(
+        error instanceof Error && error.message
+          ? error.message
+          : "Failed to sign up",
+      );
     }
   }
 
