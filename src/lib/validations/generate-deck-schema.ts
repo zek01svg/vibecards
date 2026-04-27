@@ -35,22 +35,11 @@ export const GenerateDeckRequestSchema = z.object({
     .min(1, "Topic is required")
     .max(500, "Topic must be 500 characters or fewer"),
   difficulty: z.enum(difficulties).default("intermediate"),
-  cardCount: z
-    .union([
-      z.number().refine((n) => cardCounts.includes(n as any), {
-        message: "Invalid card count",
-      }),
-      z
-        .string()
-        .transform((val) => {
-          const parsed = parseInt(val, 10);
-          if (isNaN(parsed)) return val;
-          return parsed;
-        })
-        .refine((n) => typeof n === "number" && cardCounts.includes(n as any), {
-          message: "Invalid card count",
-        }),
-    ])
+  cardCount: z.coerce
+    .number()
+    .refine((n) => cardCounts.includes(n as any), {
+      message: "Invalid card count",
+    })
     .default(10),
 });
 
