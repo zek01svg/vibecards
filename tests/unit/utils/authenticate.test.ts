@@ -1,11 +1,11 @@
-import { headers } from "next/headers";
+import { getRequestHeaders } from "@tanstack/start-server-core";
 import auth from "@/lib/auth";
 import logger from "@/lib/pino";
 import authenticate from "@/utils/authenticate";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("next/headers", () => ({
-  headers: vi.fn(),
+vi.mock("@tanstack/start-server-core", () => ({
+  getRequestHeaders: vi.fn(),
 }));
 
 vi.mock("@/lib/auth", () => ({
@@ -23,11 +23,9 @@ vi.mock("@/lib/pino", () => ({
 }));
 
 describe("authenticate", () => {
-  const mockHeaders = new Map();
-
   beforeEach(() => {
     vi.clearAllMocks();
-    (headers as any).mockResolvedValue(mockHeaders);
+    (getRequestHeaders as any).mockReturnValue({});
   });
 
   it("should return Unauthorized and log warning when no session is found", async () => {

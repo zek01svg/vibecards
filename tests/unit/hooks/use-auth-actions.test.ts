@@ -1,11 +1,11 @@
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useAuthActions } from "@/hooks/use-auth-actions";
 import { authClient } from "@/lib/auth-client";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("next/navigation", () => ({
-  useRouter: vi.fn(),
+vi.mock("@tanstack/react-router", () => ({
+  useNavigate: vi.fn(),
 }));
 
 vi.mock("@/lib/auth-client", () => ({
@@ -26,11 +26,11 @@ vi.mock("@/lib/auth-client", () => ({
 }));
 
 describe("useAuthActions", () => {
-  const mockPush = vi.fn();
+  const mockNavigate = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useRouter as any).mockReturnValue({ push: mockPush });
+    (useNavigate as any).mockReturnValue(mockNavigate);
   });
 
   it("should handle handleSignout", async () => {
@@ -39,7 +39,7 @@ describe("useAuthActions", () => {
       await result.current.handleSignout();
     });
     expect(authClient.signOut).toHaveBeenCalled();
-    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(mockNavigate).toHaveBeenCalledWith({ to: "/" });
   });
 
   it("should handle handleGoogleSignIn", async () => {
@@ -62,9 +62,9 @@ describe("useAuthActions", () => {
       email: "test@example.com",
       type: "sign-in",
     });
-    expect(mockPush).toHaveBeenCalledWith(
-      "/verify-otp?email=test%40example.com&type=sign-in",
-    );
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/verify-otp?email=test%40example.com&type=sign-in",
+    });
   });
 
   it("should verify verifySignInOTP and redirect on success", async () => {
@@ -80,7 +80,7 @@ describe("useAuthActions", () => {
       email: "test@example.com",
       otp: "123456",
     });
-    expect(mockPush).toHaveBeenCalledWith("/dashboard");
+    expect(mockNavigate).toHaveBeenCalledWith({ to: "/dashboard" });
   });
 
   it("should handle verifySignInOTP throwing error on fail", async () => {
@@ -92,7 +92,7 @@ describe("useAuthActions", () => {
     await expect(
       result.current.verifySignInOTP("test@example.com", "123456"),
     ).rejects.toThrow("Wrong OTP");
-    expect(mockPush).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("should verify email and redirect on success", async () => {
@@ -105,7 +105,7 @@ describe("useAuthActions", () => {
       email: "test@example.com",
       otp: "123456",
     });
-    expect(mockPush).toHaveBeenCalledWith("/dashboard");
+    expect(mockNavigate).toHaveBeenCalledWith({ to: "/dashboard" });
   });
 
   it("should handle verifyEmail throwing error on fail", async () => {
@@ -156,9 +156,9 @@ describe("useAuthActions", () => {
       email: "new@example.com",
       type: "email-verification",
     });
-    expect(mockPush).toHaveBeenCalledWith(
-      "/verify-otp?email=new%40example.com&type=email-verification",
-    );
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/verify-otp?email=new%40example.com&type=email-verification",
+    });
   });
 
   it("should handle handleSignUp throwing error on fail", async () => {
