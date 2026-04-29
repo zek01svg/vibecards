@@ -1,25 +1,24 @@
-import { useRouter, useSearchParams } from "next/navigation";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useDeckSearch } from "@/hooks/use-deck-search";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("next/navigation", () => ({
-  useSearchParams: vi.fn(),
-  useRouter: vi.fn(),
+vi.mock("@tanstack/react-router", () => ({
+  useNavigate: vi.fn(),
+  useRouterState: vi.fn(),
 }));
 
 describe("useDeckSearch", () => {
-  const mockReplace = vi.fn();
-  let mockSearchParams: URLSearchParams;
+  const mockNavigate = vi.fn();
+  let mockSearchStr: string;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockSearchParams = new URLSearchParams();
-    (useRouter as any).mockReturnValue({ replace: mockReplace });
-    (useSearchParams as any).mockReturnValue({
-      get: (key: string) => mockSearchParams.get(key),
-      toString: () => mockSearchParams.toString(),
-    });
+    mockSearchStr = "";
+    (useNavigate as any).mockReturnValue(mockNavigate);
+    (useRouterState as any).mockImplementation(({ select }: any) =>
+      select({ location: { searchStr: mockSearchStr } }),
+    );
   });
 
   it("should initialize with default values when search params are empty", () => {
@@ -29,15 +28,14 @@ describe("useDeckSearch", () => {
   });
 
   it("should initialize with values from search params", () => {
-    mockSearchParams.set("q", "science");
-    mockSearchParams.set("filter", "recent");
+    mockSearchStr = "?q=science&filter=recent";
 
     const { result } = renderHook(() => useDeckSearch());
     expect(result.current.searchQuery).toBe("science");
     expect(result.current.activeFilter).toBe("recent");
   });
 
-  it("should update search and call router.replace", () => {
+  it("should update search and call navigate with replace", () => {
     const { result } = renderHook(() => useDeckSearch());
     act(() => {
       result.current.handleSearch({
@@ -45,25 +43,26 @@ describe("useDeckSearch", () => {
       } as React.ChangeEvent<HTMLInputElement>);
     });
     expect(result.current.searchQuery).toBe("math");
-    expect(mockReplace).toHaveBeenCalledWith("/my-decks?q=math", {
-      scroll: false,
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/my-decks?q=math",
+      replace: true,
     });
   });
 
-  it("should update filter and call router.replace", () => {
+  it("should update filter and call navigate with replace", () => {
     const { result } = renderHook(() => useDeckSearch());
     act(() => {
       result.current.handleFilter("favorites");
     });
     expect(result.current.activeFilter).toBe("favorites");
-    expect(mockReplace).toHaveBeenCalledWith("/my-decks?filter=favorites", {
-      scroll: false,
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/my-decks?filter=favorites",
+      replace: true,
     });
   });
 
   it("should remove query param when search is cleared", () => {
-    mockSearchParams.set("q", "science");
-    mockSearchParams.set("filter", "recent");
+    mockSearchStr = "?q=science&filter=recent";
     const { result } = renderHook(() => useDeckSearch());
 
     act(() => {
@@ -72,22 +71,23 @@ describe("useDeckSearch", () => {
       } as React.ChangeEvent<HTMLInputElement>);
     });
     expect(result.current.searchQuery).toBe("");
-    expect(mockReplace).toHaveBeenCalledWith("/my-decks?filter=recent", {
-      scroll: false,
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/my-decks?filter=recent",
+      replace: true,
     });
   });
 
   it("should remove filter param when filter is set to all", () => {
-    mockSearchParams.set("q", "science");
-    mockSearchParams.set("filter", "recent");
+    mockSearchStr = "?q=science&filter=recent";
     const { result } = renderHook(() => useDeckSearch());
 
     act(() => {
       result.current.handleFilter("all");
     });
     expect(result.current.activeFilter).toBe("all");
-    expect(mockReplace).toHaveBeenCalledWith("/my-decks?q=science", {
-      scroll: false,
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/my-decks?q=science",
+      replace: true,
     });
   });
 });

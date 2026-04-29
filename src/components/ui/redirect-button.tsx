@@ -1,8 +1,7 @@
-"use client";
 
 import * as React from "react";
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
@@ -41,7 +40,7 @@ export function RedirectButton({
           <Spinner className="ml-2" />
         </>
       ) : (
-        <Link href={href} onClick={handleClick}>
+        <Link to={href} onClick={handleClick}>
           {children}
         </Link>
       )}

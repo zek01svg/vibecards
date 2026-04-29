@@ -1,6 +1,5 @@
-"use client";
 
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 
 /**
@@ -10,14 +9,14 @@ import { authClient } from "@/lib/auth-client";
  * @returns An object containing authentication handler functions.
  */
 export function useAuthActions() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   /**
    * Signs the current user out and redirects to the home page.
    */
   async function handleSignout() {
     await authClient.signOut();
-    router.push("/");
+    await navigate({ to: "/" });
   }
 
   /**
@@ -45,7 +44,7 @@ export function useAuthActions() {
     });
 
     // redirect to the verify otp page
-    router.push(`/verify-otp?email=${encodeURIComponent(email)}&type=sign-in`);
+    await navigate({ to: `/verify-otp?email=${encodeURIComponent(email)}&type=sign-in` });
   }
 
   /**
@@ -64,7 +63,7 @@ export function useAuthActions() {
     });
 
     if (data?.user) {
-      router.push("/dashboard");
+      await navigate({ to: "/dashboard" });
     } else {
       throw new Error(error?.message || "Invalid OTP");
     }
@@ -88,7 +87,7 @@ export function useAuthActions() {
       throw new Error(error.message || "Invalid OTP");
     }
 
-    router.push("/dashboard");
+    await navigate({ to: "/dashboard" });
   }
 
   /**
@@ -133,9 +132,7 @@ export function useAuthActions() {
         type: "email-verification",
       });
 
-      router.push(
-        `/verify-otp?email=${encodeURIComponent(email)}&type=email-verification`,
-      );
+      await navigate({ to: `/verify-otp?email=${encodeURIComponent(email)}&type=email-verification` });
     } catch (error: any) {
       throw new Error(error.message || "Failed to sign up");
     }

@@ -1,6 +1,5 @@
-"use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "@/hooks/use-search-params";
 import { Button } from "@/components/ui/button";
 import {
   Card,

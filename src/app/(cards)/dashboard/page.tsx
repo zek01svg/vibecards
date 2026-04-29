@@ -1,17 +1,23 @@
-import { redirect } from "next/navigation";
-import authenticate from "@/utils/authenticate";
+
+import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
+
+import { authClient } from "@/lib/auth-client";
 
 import { GenerateDeckForm } from "./_components/generate-deck-form";
 
-/**
- * Dashboard page for generating new decks.
- * @returns The dashboard page.
- */
-export default async function DashboardPage() {
-  const userId = await authenticate();
+export default function DashboardPage() {
+  const session = authClient.useSession();
+  const navigate = useNavigate();
 
-  if (userId === "Unauthorized") {
-    redirect("/sign-in");
+  useEffect(() => {
+    if (!session.isPending && !session.data?.session) {
+      void navigate({ to: "/sign-in" });
+    }
+  }, [navigate, session.data?.session, session.isPending]);
+
+  if (session.isPending || !session.data?.session) {
+    return null;
   }
 
   return (
@@ -24,9 +30,7 @@ export default async function DashboardPage() {
                 <h2 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
                   Generate New Deck
                 </h2>
-                <p className="text-muted-foreground mt-2">
-                  Transform any topic into a study deck.
-                </p>
+                <p className="text-muted-foreground mt-2">Transform any topic into a study deck.</p>
               </div>
             </div>
 

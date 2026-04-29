@@ -1,7 +1,7 @@
-"use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
+import { useSearchParams } from "@/hooks/use-search-params";
 
 /**
  * Custom hook for deck search functionality.
@@ -9,7 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
  */
 export const useDeckSearch = () => {
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [activeFilter, setActiveFilter] = useState(
     searchParams.get("filter") || "all",
@@ -35,7 +35,7 @@ export const useDeckSearch = () => {
       params.delete("filter");
     }
 
-    router.replace(`/my-decks?${params.toString()}`, { scroll: false });
+    void navigate({ to: `/my-decks?${params.toString()}`, replace: true });
   };
 
   /**

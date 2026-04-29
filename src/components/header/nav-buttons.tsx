@@ -1,16 +1,16 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 
 import { Button } from "../ui/button";
 
 export function NavButtons() {
   return (
     <>
-      <Link href="/dashboard">
+      <Link to="/dashboard">
         <Button variant="ghost" className="text-sm font-medium">
           Generate
         </Button>
       </Link>
-      <Link href="/my-decks">
+      <Link to="/my-decks">
         <Button variant="ghost" className="text-sm font-medium">
           My Decks
         </Button>

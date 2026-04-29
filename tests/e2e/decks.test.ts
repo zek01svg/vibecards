@@ -1,6 +1,8 @@
+import { env } from "@/lib/env";
 import { expect, test } from "@playwright/test";
 
 test.describe("Dashboard", () => {
+  test.skip(!env.TEST_EMAIL || !env.TEST_PASSWORD, "Requires TEST_EMAIL and TEST_PASSWORD for authenticated deck flows");
   test("Generation, Study, and Deletion Flow", async ({ page }) => {
     await test.step("Navigate to Dashboard and check form elements", async () => {
       await page.goto("/dashboard");

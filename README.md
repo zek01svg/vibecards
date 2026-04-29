@@ -1,6 +1,6 @@
 # 🃏 VibeCards
 
-> AI-powered flashcard generator that turns any topic into personalized study decks using Google Gemini, built with Next.js 16 and deployed on Vercel.
+> AI-powered flashcard generator that turns any topic into personalized study decks using Google Gemini, built with TanStack Start (Vite) and deployed as a full-stack TanStack Start app.
 
 ## 💡 Why This Exists
 
@@ -12,7 +12,7 @@ Users simply type a topic (e.g., "Photosynthesis"), select a difficulty level, a
 
 ```mermaid
 flowchart TD
-    subgraph NextJS["Next.js 16 (App Router)"]
+    subgraph TanStack["TanStack Start + TanStack Router"]
         direction TB
 
         subgraph Pages["Client UI"]
@@ -40,7 +40,7 @@ flowchart TD
 
 | Layer              | Component                     | Purpose                                                                                                                                      |
 | ------------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend**       | Next.js 16 App Router         | Server-rendered pages with React 19, CSS Modules, and Tailwind CSS v4                                                                        |
+| **Frontend**       | TanStack Start (Vite)         | File-based routing with React 19, Tailwind CSS v4, server functions                                                                          |
 | **Authentication** | better-auth                   | Email/password + OTP verification + Google OAuth, session management                                                                         |
 | **AI Generation**  | Google Gemini                 | Structured JSON output with Zod schema validation, utilizing an automatic 8-model fallback hierarchy (3.1 down to 1.5) for high reliability. |
 | **Database**       | Supabase PostgreSQL + Drizzle | Type-safe ORM with Row-Level Security policies on decks                                                                                      |
@@ -51,14 +51,14 @@ flowchart TD
 
 | Category        | Technology                                                                                                |
 | --------------- | --------------------------------------------------------------------------------------------------------- |
-| Framework       | [Next.js](https://nextjs.org/) 16 (App Router) with [React](https://react.dev/) 19                        |
+| Framework       | [TanStack Start](https://tanstack.com/start) + [TanStack Router](https://tanstack.com/router) with [React](https://react.dev/) 19 |
 | Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                      |
-| Runtime         | [Node.js](https://bun.sh/) ≥ 24.14                                                                        |
+| Runtime         | [Node.js](https://nodejs.org/) ≥ 24.14                                                                      |
 | Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                  |
 | UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons |
 | Authentication  | [better-auth](https://www.better-auth.com/) (Email OTP + Google OAuth)                                    |
 | Database        | [Supabase](https://supabase.com/) (PostgreSQL) via [Drizzle ORM](https://orm.drizzle.team/)               |
-| AI              | [Google Gemini](https://ai.google.dev/) (structured output)                                               |
+| AI              | [TanStack AI](https://tanstack.com/ai) + Google Gemini provider (structured output)                        |
 | Forms           | [TanStack Form](https://tanstack.com/form) with [Zod](https://zod.dev/) validation                        |
 | Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                   |
 | Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                    |
@@ -99,7 +99,7 @@ cp .env.example .env.local
 
 | Variable                       | Description                                                        |
 | ------------------------------ | ------------------------------------------------------------------ |
-| `NEXT_PUBLIC_APP_URL`          | Public-facing URL of the app (defaults to `http://localhost:3000`) |
+| `VITE_APP_URL`                 | Public-facing URL of the app (defaults to `http://localhost:3000`) |
 | `NODE_ENV`                     | `development` or `production`                                      |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | API key for Google Gemini                                          |
 | `BETTER_AUTH_SECRET`           | Secret key for better-auth session encryption                      |
@@ -124,7 +124,7 @@ pnpm run db:push
 
 ## 🧑‍💻 Usage
 
-**Run the development server** (uses Bun runtime):
+**Run the development server**:
 
 ```bash
 pnpm run dev
@@ -174,49 +174,49 @@ End-to-end tests use [Playwright](https://playwright.dev/) and run against the b
 ```
 vibecards/
 ├── src/
-│   ├── app/
-│   │   ├── (auth)/                   # Authentication route group
-│   │   │   ├── sign-in/
-│   │   │   ├── sign-up/
-│   │   │   └── verify-otp/
-│   │   ├── (cards)/                  # Main application route group
-│   │   │   ├── dashboard/            # Generator and stats
-│   │   │   │   ├── _components/      # Dashboard-specific components
-│   │   │   │   ├── generate-deck.ts  # Server Action for generation
-│   │   │   │   └── page.tsx
-│   │   │   ├── deck/[id]/            # Individual deck viewer
-│   │   │   └── my-decks/             # User's deck collection
-│   │   │       ├── delete-deck.ts    # Server Action for deletion
-│   │   │       └── page.tsx
-│   │   ├── (legal)/                  # Legal pages (TOS, privacy)
-│   │   ├── api/
-│   │   │   └── auth/[...all]/        # better-auth catch-all route
-│   │   ├── layout.tsx                # Root layout
-│   │   ├── page.tsx                  # Landing page
-│   │   └── globals.css               # Tailwind v4 styles
+│   ├── routes/
+│   │   ├── __root.tsx               # Root document/layout route
+│   │   ├── index.tsx                # Landing page route
+│   │   ├── dashboard.tsx            # Deck generator route
+│   │   ├── my-decks.tsx             # User decks route
+│   │   ├── deck/$id.tsx             # Individual deck route
+│   │   ├── sign-in.tsx              # Auth sign-in route
+│   │   ├── sign-up.tsx              # Auth sign-up route
+│   │   ├── verify-otp.tsx           # OTP verification route
+│   │   ├── privacy-policy.tsx       # Privacy policy route
+│   │   ├── terms-of-service.tsx     # Terms of service route
+│   │   └── api/                     # API routes
+│   │       ├── auth/$.ts            # better-auth wildcard handler
+│   │       ├── decks.ts             # Deck list + create endpoint
+│   │       └── decks/$id.ts         # Single deck endpoint
+│   ├── app/                         # Page-level components (loaded by routes)
+│   │   ├── (auth)/                  # Auth page components
+│   │   ├── (cards)/                 # Card/deck page components
+│   │   └── (legal)/                 # Legal page components
 │   ├── components/
-│   │   ├── auth/                     # Reusable auth forms (TanStack Form)
-│   │   ├── deck/                     # Deck-related UI components
-│   │   ├── header/                   # App header with NavButtons
-│   │   ├── footer/                   # App footer
-│   │   └── ui/                       # shadcn/ui shared components
+│   │   ├── auth/                    # Reusable auth forms (TanStack Form)
+│   │   ├── deck/                    # Deck-related UI components
+│   │   ├── header/                  # App header with NavButtons
+│   │   ├── footer/                  # App footer
+│   │   └── ui/                      # shadcn/ui shared components
+│   ├── hooks/                       # Custom React hooks
 │   ├── database/
-│   │   ├── schema.ts                 # Drizzle schema definitions
-│   │   ├── relations.ts              # Drizzle table relations
-│   │   └── db.ts                     # Database client
+│   │   ├── schema.ts                # Drizzle schema definitions
+│   │   ├── relations.ts             # Drizzle table relations
+│   │   └── db.ts                    # Database client
 │   ├── lib/
-│   │   ├── auth.ts                   # better-auth configuration
-│   │   ├── env.ts                    # T3 Env validation
-│   │   ├── mailer.ts                 # Resend integration
-│   │   └── pino.ts                   # Structured logger
-│   └── hooks/                        # Custom React hooks
+│   │   ├── auth.ts                  # better-auth configuration
+│   │   ├── env.ts                   # T3 Env validation
+│   │   ├── mailer.ts                # Resend integration
+│   │   └── pino.ts                  # Structured logger
+│   └── utils/                       # Shared server utilities
 ├── tests/
-│   ├── e2e/                          # Playwright tests + global.setup.ts
-│   └── unit/                         # Vitest unit tests
-├── playwright.config.ts              # Playwright configuration
-├── vitest.config.ts                  # Vitest configuration
-├── drizzle.config.ts                 # Drizzle configuration
-├── next.config.js                    # Next.js configuration
+│   ├── e2e/                         # Playwright tests + global.setup.ts
+│   └── unit/                        # Vitest unit tests
+├── playwright.config.ts             # Playwright configuration
+├── vitest.config.ts                 # Vitest configuration
+├── drizzle.config.ts                # Drizzle configuration
+├── vite.config.ts                   # TanStack Start + Vite configuration
 ├── package.json
-└── .env.example                      # Environment template
+└── .env.example                     # Environment template
 ```

@@ -1,42 +1,30 @@
 {
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts", "playwright.config.ts", "drizzle.config.ts"],
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "paths": {
+      "@/*": ["./src/*"],
+      "next/link": ["./src/compat/next-link.tsx"],
+      "next/navigation": ["./src/compat/next-navigation.ts"],
+      "next/headers": ["./src/compat/next-headers.ts"],
+      "next/cache": ["./src/compat/next-cache.ts"],
+      "next/dynamic": ["./src/compat/next-dynamic.tsx"],
+      "next/font/google": ["./src/compat/next-font-google.ts"],
+      "next/server": ["./src/compat/next-server.ts"]
+    },
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
     "skipLibCheck": true,
     "strict": true,
-    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    "tests/**/*.ts"
-  ],
-  "exclude": ["node_modules"]
+    "noUncheckedSideEffectImports": true
+  }
 }

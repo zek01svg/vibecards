@@ -1,7 +1,6 @@
-"use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "@/hooks/use-search-params";
 /**
  * Renders a grid of flashcard deck summary cards.
  * Manages the delete state for individual decks to ensure appropriate UI feedback during deletion.
@@ -10,7 +9,8 @@ import { useSearchParams } from "next/navigation";
  * @param props.decks - Array of deck objects to display
  * @returns A responsive grid layout containing the user's decks
  */
-import { Deck, FlashcardDeck } from "@/components/deck/flashcard-deck";
+import { FlashcardDeck } from "@/components/deck/flashcard-deck";
+import type { Deck } from "@/components/deck/flashcard-deck";
 import { useDeleteDeck } from "@/hooks/use-delete-deck";
 import { useToggleFavorite } from "@/hooks/use-toggle-favorite";
 

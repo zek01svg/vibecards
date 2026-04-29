@@ -1,7 +1,6 @@
-"use client";
 
-import Link from "next/link";
-import { Card as CardType } from "@/lib/validations/generate-deck-schema";
+import { Link } from "@tanstack/react-router";
+import type { Card as CardType } from "@/lib/validations/generate-deck-schema";
 import { Calendar, ChevronRight, Star, Trash2 } from "lucide-react";
 
 import {
@@ -54,7 +53,8 @@ export function FlashcardDeck({
   return (
     <Card className="border-border/50 bg-card/50 hover:border-primary/50 hover:bg-card hover:shadow-primary/5 group relative h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <Link
-        href={`/deck/${deck.id}`}
+        to="/deck/$id"
+        params={{ id: deck.id }}
         className="focus:ring-primary absolute inset-0 z-0 rounded-xl focus:ring-2 focus:ring-offset-2 focus:outline-none"
         aria-label={`Study deck: ${deck.title}`}
       />

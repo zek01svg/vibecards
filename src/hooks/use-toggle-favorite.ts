@@ -1,4 +1,3 @@
-"use client";
 
 import { useTransition } from "react";
 import { toggleFavoriteAction } from "@/app/(cards)/my-decks/toggle-favorite";

@@ -1,4 +1,3 @@
-"use client";
 
 import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
