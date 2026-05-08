@@ -1,10 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useRouterState } from "@tanstack/react-router";
 
 import { DeckHeader } from "@/components/deck/deck-header";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { authClient } from "@/lib/auth-client";
 import type { Card } from "@/lib/validations/generate-deck-schema";
 
 import { DeckView } from "./deck-view";
@@ -19,19 +17,16 @@ interface Deck {
 }
 
 export default function DeckPage() {
-  const session = authClient.useSession();
   const navigate = useNavigate();
   const searchStr = useRouterState({ select: (s) => s.location.searchStr });
   const { id } = useParams({ strict: false }) as { id: string };
   const [deck, setDeck] = useState<Deck | null>(null);
-  const isStudyMode = new URLSearchParams(searchStr.startsWith("?") ? searchStr.slice(1) : searchStr).get("mode") === "study";
+  const isStudyMode =
+    new URLSearchParams(
+      searchStr.startsWith("?") ? searchStr.slice(1) : searchStr,
+    ).get("mode") === "study";
 
   useEffect(() => {
-    if (!session.isPending && !session.data?.session) {
-      void navigate({ to: "/sign-in" });
-      return;
-    }
-
     const load = async () => {
       try {
         const response = await fetch(`/api/decks/${id}`);
@@ -40,7 +35,10 @@ export default function DeckPage() {
           return;
         }
 
-        const data = (await response.json()) as { success: boolean; deck?: Deck };
+        const data = (await response.json()) as {
+          success: boolean;
+          deck?: Deck;
+        };
         if (data.success && data.deck) setDeck(data.deck);
         else void navigate({ to: "/my-decks" });
       } catch {
@@ -48,8 +46,8 @@ export default function DeckPage() {
       }
     };
 
-    if (session.data?.session) void load();
-  }, [id, navigate, session.data?.session, session.isPending]);
+    void load();
+  }, [id, navigate]);
 
   if (!deck) return null;
 
@@ -67,7 +65,9 @@ export default function DeckPage() {
             ) : (
               <div className="space-y-8">
                 <div className="mb-4">
-                  <h2 className="text-2xl font-bold tracking-tight">{deck.title}</h2>
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    {deck.title}
+                  </h2>
                   <p className="text-muted-foreground mt-1">{deck.topic}</p>
                 </div>
                 <DeckView deck={deck} />
