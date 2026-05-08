@@ -49,34 +49,33 @@ flowchart TD
 
 ## 🛠️ Tech Stack
 
-| Category        | Technology                                                                                                |
-| --------------- | --------------------------------------------------------------------------------------------------------- |
-| Framework       | [TanStack Start](https://tanstack.com/start) + [TanStack Router](https://tanstack.com/router) with [React](https://react.dev/) 19 |
-| Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                      |
-| Runtime         | [Node.js](https://nodejs.org/) ≥ 24.14                                                                      |
-| Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                  |
-| UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons |
-| Authentication  | [better-auth](https://www.better-auth.com/) (Email OTP + Google OAuth)                                    |
-| Database        | [Supabase](https://supabase.com/) (PostgreSQL) via [Drizzle ORM](https://orm.drizzle.team/)               |
-| AI              | [TanStack AI](https://tanstack.com/ai) + Google Gemini provider (structured output)                        |
-| Forms           | [TanStack Form](https://tanstack.com/form) with [Zod](https://zod.dev/) validation                        |
-| Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                   |
-| Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                    |
-| Logging         | [Pino](https://getpino.io/) (clean, structured logging)                                                   |
-| Analytics       | [Vercel Analytics](https://vercel.com/analytics)                                                          |
-| Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage)                          |
-| E2E Testing     | [Playwright](https://playwright.dev/) (Chromium, Firefox, WebKit, Mobile Chrome)                          |
-| Code Quality    | ESLint, Prettier, Husky, lint-staged, GitHub Actions (CI/CD), Gitleaks, CodeQL                            |
-| Package Manager | [pnpm](https://pnpm.io/) 10.30.1                                                                          |
+| Category        | Technology                                                                                                                                                                   |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework       | [TanStack Start](https://tanstack.com/start) + [TanStack Router](https://tanstack.com/router) with [React](https://react.dev/) 19                                            |
+| Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                                                                                         |
+| Runtime         | [Node.js](https://nodejs.org/) ≥ 24.14                                                                                                                                       |
+| Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                                                                                     |
+| UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons                                                                    |
+| Authentication  | [better-auth](https://www.better-auth.com/) (Email OTP + Google OAuth)                                                                                                       |
+| Database        | [Supabase](https://supabase.com/) (PostgreSQL) via [Drizzle ORM](https://orm.drizzle.team/)                                                                                  |
+| AI              | [TanStack AI](https://tanstack.com/ai) + Google Gemini provider (structured output)                                                                                          |
+| Forms           | [TanStack Form](https://tanstack.com/form) with [Zod](https://zod.dev/) validation                                                                                           |
+| Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                                                                                      |
+| Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                                                                                       |
+| Logging         | [Pino](https://getpino.io/) (clean, structured logging)                                                                                                                      |
+| Analytics       | [Vercel Analytics](https://vercel.com/analytics)                                                                                                                             |
+| Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage)                                                                                             |
+| E2E Testing     | [Playwright](https://playwright.dev/) (Chromium, Firefox, WebKit, Mobile Chrome)                                                                                             |
+| Code Quality    | [oxlint](https://oxc.rs/docs/guide/usage/linter.html), [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), Husky, lint-staged, GitHub Actions (CI/CD), Gitleaks, CodeQL |
+| Package Manager | [npm](https://docs.npmjs.com/) (Node.js built-in)                                                                                                                            |
 
 ## 🚀 Getting Started
 
 ### ✅ Prerequisites
 
-| Tool                           | Version      |
-| ------------------------------ | ------------ |
-| [pnpm](https://pnpm.io/)       | `>= 10.30.1` |
-| [Node.js](https://nodejs.org/) | `>= 24.14`   |
+| Tool                           | Version    |
+| ------------------------------ | ---------- |
+| [Node.js](https://nodejs.org/) | `>= 24.14` |
 
 ### 📦 Installation
 
@@ -86,7 +85,7 @@ git clone <repository-url>
 cd vibecards
 
 # Install dependencies
-pnpm install --frozen-lockfile
+npm install
 ```
 
 ### ⚙️ Configuration
@@ -119,7 +118,7 @@ cp .env.example .env.local
 Push the Drizzle schema to your Supabase database:
 
 ```bash
-pnpm run db:push
+npm run db:push
 ```
 
 ## 🧑‍💻 Usage
@@ -127,25 +126,25 @@ pnpm run db:push
 **Run the development server**:
 
 ```bash
-pnpm run dev
+npm run dev
 ```
 
 **Build for production:**
 
 ```bash
-pnpm run build
+npm run build
 ```
 
 **Start the production server:**
 
 ```bash
-pnpm run start
+npm run start
 ```
 
 **View the database** (Drizzle Studio):
 
 ```bash
-pnpm run db:view
+npm run db:view
 ```
 
 ## 🧪 Testing
@@ -155,7 +154,7 @@ pnpm run db:view
 Unit tests use [Vitest](https://vitest.dev/) with React Testing Library and Istanbul coverage:
 
 ```bash
-pnpm run test
+npm run test:unit
 ```
 
 ### E2E Tests
