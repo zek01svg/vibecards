@@ -27,6 +27,21 @@ async function getUserId(request: Request) {
   return session?.session?.userId ?? null;
 }
 
+/**
+ * The @tanstack/ai `chat()` response shape varies across adapters and schema
+ * configurations. When a structured `outputSchema` is provided the result is
+ * typically wrapped in an `output` property; some adapters surface it under
+ * `content`; others return the value directly. This helper unwraps the value
+ * so it can be fed straight into the Zod schema parser.
+ */
+function normaliseGeminiResponse(raw: unknown): unknown {
+  if (raw !== null && typeof raw === "object") {
+    if ("output" in raw) return raw.output;
+    if ("content" in raw) return raw.content;
+  }
+  return raw;
+}
+
 export const Route = createFileRoute("/api/decks")({
   server: {
     handlers: {
@@ -103,13 +118,9 @@ export const Route = createFileRoute("/api/decks")({
             );
           }
 
-          const normalizedGenerated =
-            generated !== null && typeof generated === "object"
-              ? (("output" in generated ? generated.output : null) ??
-                ("content" in generated ? generated.content : null) ??
-                generated)
-              : generated;
-          const validatedDeck = GeminiResponseSchema.parse(normalizedGenerated);
+          const validatedDeck = GeminiResponseSchema.parse(
+            normaliseGeminiResponse(generated),
+          );
           const deck = await db
             .insert(decks)
             .values({

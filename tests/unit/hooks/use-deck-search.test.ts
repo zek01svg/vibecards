@@ -8,6 +8,8 @@ vi.mock("@tanstack/react-router", () => ({
   useRouterState: vi.fn(),
 }));
 
+type RouterStateSelector<T> = (state: { location: { searchStr: string } }) => T;
+
 describe("useDeckSearch", () => {
   const mockNavigate = vi.fn();
   let mockSearchStr: string;
@@ -15,9 +17,10 @@ describe("useDeckSearch", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSearchStr = "";
-    (useNavigate as any).mockReturnValue(mockNavigate);
-    (useRouterState as any).mockImplementation(({ select }: any) =>
-      select({ location: { searchStr: mockSearchStr } }),
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
+    vi.mocked(useRouterState).mockImplementation(
+      <T>({ select }: { select: RouterStateSelector<T> }) =>
+        select({ location: { searchStr: mockSearchStr } }),
     );
   });
 
