@@ -11,6 +11,7 @@
     "jsx": "react-jsx",
     "module": "esnext",
     "paths": {
+      "#/*": ["./src/*"],
       "@/*": ["./src/*"]
     },
     "lib": ["ESNext", "DOM", "DOM.Iterable"],

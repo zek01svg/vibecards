@@ -18,7 +18,14 @@
       "Bash(gh pr *)",
       "Bash(gh repo *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(echo \"DEV_PID=$!\")",
+      "Bash(cat C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\b3lc608fk.output)",
+      "mcp__github__get_file_contents",
+      "PowerShell(bun add nitro cross-env @sentry/tanstackstart-react @logtape/logtape @logtape/sentry 2>&1)",
+      "PowerShell(tail -10)",
+      "PowerShell(bun remove pino pino-pretty 2>&1)",
+      "PowerShell(bunx tsc --noEmit 2>&1)"
     ]
   }
 }

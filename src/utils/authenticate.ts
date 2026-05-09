@@ -1,7 +1,7 @@
 import { getRequestHeaders } from "@tanstack/start-server-core";
 
 import auth from "@/lib/auth";
-import logger from "@/lib/pino";
+import { logger } from "@/lib/logger";
 
 async function authenticate() {
   // getRequestHeaders() returns a Record<string, string> which is a valid

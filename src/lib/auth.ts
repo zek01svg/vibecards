@@ -11,7 +11,7 @@ import {
 import db from "@/database/db";
 import { account, session, user, verification } from "@/database/schema";
 import { env } from "@/lib/env";
-import logger from "@/lib/pino";
+import { logger } from "@/lib/logger";
 
 import { sendEmail } from "./mailer";
 
@@ -31,7 +31,7 @@ const auth = betterAuth({
       overrideDefaultEmailVerification: true,
       sendVerificationOnSignUp: true,
       async sendVerificationOTP({ email, otp, type }) {
-        logger.info({ email: email, type: type }, "Sending OTP email");
+        logger.info("Sending OTP email", { email, type });
         if (type === "sign-in") {
           await sendEmail({
             to: email,

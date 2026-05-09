@@ -8,7 +8,7 @@ import db from "@/database/db";
 import { decks } from "@/database/schema";
 import auth from "@/lib/auth";
 import { env } from "@/lib/env";
-import logger from "@/lib/pino";
+import { logger } from "@/lib/logger";
 import {
   GeminiResponseSchema,
   GenerateDeckRequestSchema,
@@ -97,18 +97,19 @@ export const Route = createFileRoute("/api/decks")({
               if (generated) break;
             } catch (error) {
               lastError = error;
-              logger.warn(
-                { modelName, err: error },
-                "Gemini model failed, falling back",
-              );
+              logger.warn("Gemini model failed, falling back", {
+                modelName,
+                err: error,
+              });
             }
           }
 
           if (!generated) {
-            logger.error(
-              { err: lastError, topic, userId },
-              "All Gemini models failed",
-            );
+            logger.error("All Gemini models failed", {
+              err: lastError,
+              topic,
+              userId,
+            });
             return Response.json(
               {
                 success: false,
@@ -149,7 +150,7 @@ export const Route = createFileRoute("/api/decks")({
               { status: 400 },
             );
           }
-          logger.error({ err: error }, "Error generating deck");
+          logger.error("Error generating deck", { err: error });
           return Response.json(
             { success: false, error: "Internal server error" },
             { status: 500 },

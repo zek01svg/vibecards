@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import db from "@/database/db";
 import { decks } from "@/database/schema";
 import auth from "@/lib/auth";
-import logger from "@/lib/pino";
+import { logger } from "@/lib/logger";
 
 async function getUserId(request: Request) {
   const session = await auth.api.getSession({ headers: request.headers });
@@ -60,10 +60,10 @@ export const Route = createFileRoute("/api/decks/$id")({
           await db.delete(decks).where(eq(decks.id, params.id));
           return Response.json({ success: true });
         } catch (error) {
-          logger.error(
-            { err: error, deckId: params.id },
-            "Error deleting deck",
-          );
+          logger.error("Error deleting deck", {
+            err: error,
+            deckId: params.id,
+          });
           return Response.json(
             { success: false, error: "Internal server error" },
             { status: 500 },
@@ -98,10 +98,10 @@ export const Route = createFileRoute("/api/decks/$id")({
             .where(eq(decks.id, params.id));
           return Response.json({ success: true });
         } catch (error) {
-          logger.error(
-            { err: error, deckId: params.id },
-            "Error toggling favorite deck",
-          );
+          logger.error("Error toggling favorite deck", {
+            err: error,
+            deckId: params.id,
+          });
           return Response.json(
             { success: false, error: "Internal server error" },
             { status: 500 },
