@@ -1,7 +1,12 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const difficulties = ["beginner", "intermediate", "advanced"] as const;
 export const cardCounts = [5, 8, 10, 12, 15, 20] as const;
+type CardCount = (typeof cardCounts)[number];
+
+function isCardCount(value: number): value is CardCount {
+  return cardCounts.includes(value as CardCount);
+}
 
 export const CardSchema = z.object({
   front: z
@@ -37,7 +42,7 @@ export const GenerateDeckRequestSchema = z.object({
   difficulty: z.enum(difficulties).default("intermediate"),
   cardCount: z
     .union([
-      z.number().refine((n) => cardCounts.includes(n as any), {
+      z.number().refine(isCardCount, {
         message: "Invalid card count",
       }),
       z
@@ -47,7 +52,7 @@ export const GenerateDeckRequestSchema = z.object({
           if (isNaN(parsed)) return val;
           return parsed;
         })
-        .refine((n) => typeof n === "number" && cardCounts.includes(n as any), {
+        .refine((n) => typeof n === "number" && isCardCount(n), {
           message: "Invalid card count",
         }),
     ])

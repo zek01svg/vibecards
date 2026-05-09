@@ -1,4 +1,3 @@
-
 import { Link } from "@tanstack/react-router";
 import type { Card as CardType } from "@/lib/validations/generate-deck-schema";
 import { Calendar, ChevronRight, Star, Trash2 } from "lucide-react";

@@ -1,4 +1,3 @@
-
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { GraduationCap, List } from "lucide-react";

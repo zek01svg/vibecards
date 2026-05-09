@@ -1,4 +1,3 @@
-
 import { Progress } from "@/components/ui/progress";
 import { Target } from "lucide-react";
 

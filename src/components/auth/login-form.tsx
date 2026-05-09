@@ -1,4 +1,3 @@
-
 import { Link } from "@tanstack/react-router";
 import GoogleLoginButton from "@/components/auth/google-login-button";
 import { Button } from "@/components/ui/button";

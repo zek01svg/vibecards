@@ -1,6 +1,9 @@
-
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Failed to sign up";
+}
 
 /**
  * Custom hook that provides authentication-related actions.
@@ -44,7 +47,9 @@ export function useAuthActions() {
     });
 
     // redirect to the verify otp page
-    await navigate({ to: `/verify-otp?email=${encodeURIComponent(email)}&type=sign-in` });
+    await navigate({
+      to: `/verify-otp?email=${encodeURIComponent(email)}&type=sign-in`,
+    });
   }
 
   /**
@@ -132,9 +137,11 @@ export function useAuthActions() {
         type: "email-verification",
       });
 
-      await navigate({ to: `/verify-otp?email=${encodeURIComponent(email)}&type=email-verification` });
-    } catch (error: any) {
-      throw new Error(error.message || "Failed to sign up");
+      await navigate({
+        to: `/verify-otp?email=${encodeURIComponent(email)}&type=email-verification`,
+      });
+    } catch (error) {
+      throw new Error(getErrorMessage(error), { cause: error });
     }
   }
 

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__linear__list_issues",
+      "Bash(bunx tsc *)",
+      "Bash(bun run *)",
+      "PowerShell(bun run lint 2>&1)",
+      "PowerShell(bun run format:check 2>&1)",
+      "PowerShell(bun run test:unit 2>&1)",
+      "Read(//c/Users/Charles/projects/vibecards/src/routes/**)",
+      "mcp__linear__save_issue",
+      "Skill(qa)",
+      "Skill(qa:*)",
+      "Read(//c/Users/Charles/.claude/skills/gstack/gstack-upgrade/**)",
+      "Read(//c/Users/Charles/.claude/skills/gstack/**)",
+      "Bash(./setup)",
+      "Bash(git remote *)",
+      "Bash(gh pr *)",
+      "Bash(gh repo *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

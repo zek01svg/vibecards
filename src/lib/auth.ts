@@ -3,7 +3,11 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { emailOTP } from "better-auth/plugins";
 
-import { getPasswordResetOTPEmail, getSignInOTPEmail, getVerificationOTPEmail } from "@/components/email-templates/templates";
+import {
+  getPasswordResetOTPEmail,
+  getSignInOTPEmail,
+  getVerificationOTPEmail,
+} from "@/components/email-templates/templates";
 import db from "@/database/db";
 import { account, session, user, verification } from "@/database/schema";
 import { env } from "@/lib/env";
@@ -57,11 +61,14 @@ const auth = betterAuth({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       getUserInfo: async (token) => {
-        const response = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-          headers: {
-            Authorization: `Bearer ${token.accessToken}`,
+        const response = await fetch(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${token.accessToken}`,
+            },
           },
-        });
+        );
         const profile = await response.json();
         return {
           user: {

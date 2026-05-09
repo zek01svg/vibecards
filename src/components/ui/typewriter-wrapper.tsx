@@ -1,4 +1,3 @@
-
 import * as React from "react";
 
 const TypewriterLazy = React.lazy(() => import("typewriter-effect"));

@@ -1,4 +1,3 @@
-
 import { Link } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { Sparkles } from "lucide-react";

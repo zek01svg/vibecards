@@ -9,7 +9,10 @@ export const baseConfig = defineConfig({
     },
     coverage: {
       provider: "istanbul" as const,
-      reporter: [["json", { subdir: "json" }], ["html", { subdir: "html" }]] as const,
+      reporter: [
+        ["json", { subdir: "json" }],
+        ["html", { subdir: "html" }],
+      ] as const,
       enabled: true,
     },
     reporters: ["dot"],

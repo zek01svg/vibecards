@@ -4,23 +4,31 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@tanstack/react-router", () => ({
-  useNavigate: vi.fn(),
-  useRouterState: vi.fn(),
+  useNavigate:
+    vi.fn<() => (options: { to: string; replace: boolean }) => void>(),
+  useRouterState:
+    vi.fn<(options?: { select?: RouterStateSelector<unknown> }) => unknown>(),
 }));
 
 type RouterStateSelector<T> = (state: { location: { searchStr: string } }) => T;
 
 describe("useDeckSearch", () => {
-  const mockNavigate = vi.fn();
+  const mockNavigate =
+    vi.fn<(options: { to: string; replace: boolean }) => void>();
   let mockSearchStr: string;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockSearchStr = "";
-    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
+    vi.mocked(useNavigate).mockReturnValue(
+      mockNavigate as unknown as ReturnType<typeof useNavigate>,
+    );
     vi.mocked(useRouterState).mockImplementation(
-      <T>({ select }: { select: RouterStateSelector<T> }) =>
-        select({ location: { searchStr: mockSearchStr } }),
+      ((options?: { select?: RouterStateSelector<unknown> }) =>
+        options?.select?.({ location: { searchStr: mockSearchStr } }) ??
+        ({
+          location: { searchStr: mockSearchStr },
+        } as unknown)) as typeof useRouterState,
     );
   });
 

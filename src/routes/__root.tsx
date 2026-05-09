@@ -1,5 +1,10 @@
 import * as React from "react";
-import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from "@tanstack/react-router";
 
 import { Footer } from "@/components/footer/footer";
 import { Header } from "@/components/header/header";
@@ -13,13 +18,15 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "VibeCards" },
-      { name: "description", content: "AI-powered flashcards for learning" }
+      { name: "description", content: "AI-powered flashcards for learning" },
     ],
-    links: [{ rel: "icon", href: "/favicon.ico" }]
+    links: [{ rel: "icon", href: "/favicon.ico" }],
   }),
   component: RootComponent,
   notFoundComponent: () => <RootDocument>Page not found.</RootDocument>,
-  errorComponent: ({ error }) => <RootDocument>{String(error?.message ?? error)}</RootDocument>
+  errorComponent: ({ error }) => (
+    <RootDocument>{String(error?.message ?? error)}</RootDocument>
+  ),
 });
 
 function RootComponent() {

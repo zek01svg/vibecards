@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -13,7 +12,11 @@ interface FlashcardProps {
 
 export function Flashcard({ front, back, isFlipped, onFlip }: FlashcardProps) {
   return (
-    <div className="perspective-1000 group cursor-pointer" onClick={onFlip}>
+    <button
+      type="button"
+      className="perspective-1000 group w-full cursor-pointer text-left"
+      onClick={onFlip}
+    >
       <div
         className={cn(
           "relative h-[400px] w-full transition-all duration-700 transform-3d",
@@ -51,6 +54,6 @@ export function Flashcard({ front, back, isFlipped, onFlip }: FlashcardProps) {
           </Card>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

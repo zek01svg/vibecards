@@ -13,8 +13,11 @@ interface SendEmailOptions {
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
   if (!mailer) {
-    if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
-      logger.warn({ to, subject }, "Resend API key not set, skipping email send in non-production environment");
+    if (env.NODE_ENV === "development" || env.NODE_ENV === "test") {
+      logger.warn(
+        { to, subject },
+        "Resend API key not set, skipping email send in non-production environment",
+      );
       return { id: "mock-email" };
     }
 

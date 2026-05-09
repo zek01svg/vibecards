@@ -1,6 +1,5 @@
-
 import { useTransition } from "react";
-import { toggleFavoriteAction } from "@/app/(cards)/my-decks/toggle-favorite";
+import { toggleFavoriteAction } from "@/lib/deck-actions";
 import { toast } from "sonner";
 
 /**
@@ -27,7 +26,7 @@ export const useToggleFavorite = () => {
         } else {
           toast.error(result.error || `Failed to toggle favorite status`);
         }
-      } catch (error) {
+      } catch {
         toast.error(`Error toggling favorite status`);
       }
     });

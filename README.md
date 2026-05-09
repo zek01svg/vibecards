@@ -49,33 +49,34 @@ flowchart TD
 
 ## 🛠️ Tech Stack
 
-| Category        | Technology                                                                                                                                                                   |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework       | [TanStack Start](https://tanstack.com/start) + [TanStack Router](https://tanstack.com/router) with [React](https://react.dev/) 19                                            |
-| Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                                                                                         |
-| Runtime         | [Node.js](https://nodejs.org/) ≥ 24.14                                                                                                                                       |
-| Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                                                                                     |
-| UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons                                                                    |
-| Authentication  | [better-auth](https://www.better-auth.com/) (Email OTP + Google OAuth)                                                                                                       |
-| Database        | [Supabase](https://supabase.com/) (PostgreSQL) via [Drizzle ORM](https://orm.drizzle.team/)                                                                                  |
-| AI              | [TanStack AI](https://tanstack.com/ai) + Google Gemini provider (structured output)                                                                                          |
-| Forms           | [TanStack Form](https://tanstack.com/form) with [Zod](https://zod.dev/) validation                                                                                           |
-| Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                                                                                      |
-| Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                                                                                       |
-| Logging         | [Pino](https://getpino.io/) (clean, structured logging)                                                                                                                      |
-| Analytics       | [Vercel Analytics](https://vercel.com/analytics)                                                                                                                             |
-| Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage)                                                                                             |
-| E2E Testing     | [Playwright](https://playwright.dev/) (Chromium, Firefox, WebKit, Mobile Chrome)                                                                                             |
-| Code Quality    | [oxlint](https://oxc.rs/docs/guide/usage/linter.html), [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), Husky, lint-staged, GitHub Actions (CI/CD), Gitleaks, CodeQL |
-| Package Manager | [npm](https://docs.npmjs.com/) (Node.js built-in)                                                                                                                            |
+| Category        | Technology                                                                                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Framework       | [TanStack Start](https://tanstack.com/start) + [TanStack Router](https://tanstack.com/router) with [React](https://react.dev/) 19                                  |
+| Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                                                                               |
+| Runtime         | [Bun](https://bun.sh/) `>= 24.14` as declared in `package.json`                                                                                                    |
+| Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                                                                           |
+| UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons                                                          |
+| Authentication  | [better-auth](https://www.better-auth.com/) (Email OTP + Google OAuth)                                                                                             |
+| Database        | [Supabase](https://supabase.com/) (PostgreSQL) via [Drizzle ORM](https://orm.drizzle.team/)                                                                        |
+| AI              | [TanStack AI](https://tanstack.com/ai) + Google Gemini provider (structured output)                                                                                |
+| Forms           | [TanStack Form](https://tanstack.com/form) with [Zod](https://zod.dev/) validation                                                                                 |
+| Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                                                                            |
+| Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                                                                             |
+| Logging         | [Pino](https://getpino.io/) (clean, structured logging)                                                                                                            |
+| Analytics       | [Vercel Analytics](https://vercel.com/analytics)                                                                                                                   |
+| Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage)                                                                                   |
+| E2E Testing     | [Playwright](https://playwright.dev/) (Chromium, Firefox, WebKit, Mobile Chrome)                                                                                   |
+| Code Quality    | [oxlint](https://oxc.rs/docs/guide/usage/linter.html), [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), Lefthook, GitHub Actions (CI/CD), Gitleaks, CodeQL |
+| Package Manager | [Bun](https://bun.sh/) `bun@1.3.13`                                                                                                                                |
 
 ## 🚀 Getting Started
 
 ### ✅ Prerequisites
 
-| Tool                           | Version    |
-| ------------------------------ | ---------- |
-| [Node.js](https://nodejs.org/) | `>= 24.14` |
+| Tool                   | Version                          |
+| ---------------------- | -------------------------------- |
+| [Bun](https://bun.sh/) | `bun@1.3.13` package manager     |
+| Runtime declaration    | `bun >= 24.14` in `package.json` |
 
 ### 📦 Installation
 
@@ -85,16 +86,18 @@ git clone <repository-url>
 cd vibecards
 
 # Install dependencies
-npm install
+bun install
 ```
 
 ### ⚙️ Configuration
 
-Copy the example environment file and fill in the required values:
+Copy the example environment file for local development and fill in the required values:
 
 ```bash
 cp .env.example .env.local
 ```
+
+Local database, auth, and Playwright workflows load `.env.local`. CI copies `.env.example` to `.env` for automated checks.
 
 | Variable                       | Description                                                        |
 | ------------------------------ | ------------------------------------------------------------------ |
@@ -118,7 +121,7 @@ cp .env.example .env.local
 Push the Drizzle schema to your Supabase database:
 
 ```bash
-npm run db:push
+bun run db:push
 ```
 
 ## 🧑‍💻 Usage
@@ -126,25 +129,25 @@ npm run db:push
 **Run the development server**:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 **Build for production:**
 
 ```bash
-npm run build
+bun run build
 ```
 
 **Start the production server:**
 
 ```bash
-npm run start
+bun run start
 ```
 
 **View the database** (Drizzle Studio):
 
 ```bash
-npm run db:view
+bun run db:view
 ```
 
 ## 🧪 Testing
@@ -154,7 +157,7 @@ npm run db:view
 Unit tests use [Vitest](https://vitest.dev/) with React Testing Library and Istanbul coverage:
 
 ```bash
-npm run test:unit
+bun run test:unit
 ```
 
 ### E2E Tests

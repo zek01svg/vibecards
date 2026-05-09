@@ -2,7 +2,7 @@ import { chat } from "@tanstack/ai";
 import { createGeminiChat } from "@tanstack/ai-gemini";
 import { createFileRoute } from "@tanstack/react-router";
 import { desc, eq } from "drizzle-orm";
-import { ZodError } from "zod";
+import { ZodError } from "zod/v4";
 
 import db from "@/database/db";
 import { decks } from "@/database/schema";

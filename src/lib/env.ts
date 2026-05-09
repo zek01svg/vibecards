@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const env = createEnv({
   client: {
@@ -7,7 +7,9 @@ export const env = createEnv({
   },
   server: {
     GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
-    NODE_ENV: z.enum(["development", "production"]).default("development"),
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
     DATABASE_URL: z.string(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
@@ -31,7 +33,8 @@ export const env = createEnv({
     TEST_EMAIL: process.env.TEST_EMAIL,
     TEST_PASSWORD: process.env.TEST_PASSWORD,
   },
-  skipValidation: !!process.env.CI || process.env.npm_lifecycle_event === "lint",
+  skipValidation:
+    !!process.env.CI || process.env.npm_lifecycle_event === "lint",
 });
 
 export type Env = {

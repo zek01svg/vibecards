@@ -17,10 +17,8 @@ describe("GenerateDeckRequestSchema", () => {
       topic: "TypeScript Basics",
     });
     expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.difficulty).toBe("intermediate");
-      expect(result.data.cardCount).toBe(10);
-    }
+    expect(result.data?.difficulty).toBe("intermediate");
+    expect(result.data?.cardCount).toBe(10);
   });
 
   it("should accept valid string cardCounts", () => {
@@ -29,9 +27,7 @@ describe("GenerateDeckRequestSchema", () => {
       cardCount: "12",
     });
     expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.cardCount).toBe(12);
-    }
+    expect(result.data?.cardCount).toBe(12);
   });
 
   it("should fail on invalid difficulties", () => {

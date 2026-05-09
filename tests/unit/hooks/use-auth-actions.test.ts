@@ -5,32 +5,61 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@tanstack/react-router", () => ({
-  useNavigate: vi.fn(),
+  useNavigate: vi.fn<() => (options: { to: string }) => Promise<void>>(),
 }));
 
 vi.mock("@/lib/auth-client", () => ({
   authClient: {
-    signOut: vi.fn(),
+    signOut: vi.fn<() => Promise<void>>(),
     signIn: {
-      social: vi.fn(),
-      emailOtp: vi.fn(),
+      social:
+        vi.fn<
+          (options: { provider: string; callbackURL: string }) => Promise<void>
+        >(),
+      emailOtp: vi.fn<
+        (options: { email: string; otp: string }) => Promise<{
+          data: { user: object } | null;
+          error: { message: string } | null;
+        }>
+      >(),
     },
     emailOtp: {
-      sendVerificationOtp: vi.fn(),
-      verifyEmail: vi.fn(),
+      sendVerificationOtp:
+        vi.fn<
+          (options: {
+            email: string;
+            type: "sign-in" | "email-verification" | "forget-password";
+          }) => Promise<{ error: { message: string } | null }>
+        >(),
+      verifyEmail:
+        vi.fn<
+          (options: {
+            email: string;
+            otp: string;
+          }) => Promise<{ error: { message: string } | null }>
+        >(),
     },
     signUp: {
-      email: vi.fn(),
+      email:
+        vi.fn<
+          (options: {
+            email: string;
+            password: string;
+            name: string;
+          }) => Promise<void>
+        >(),
     },
   },
 }));
 
 describe("useAuthActions", () => {
-  const mockNavigate = vi.fn();
+  const mockNavigate = vi.fn<(options: { to: string }) => Promise<void>>();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useNavigate as any).mockReturnValue(mockNavigate);
+    vi.mocked(useNavigate).mockReturnValue(
+      mockNavigate as unknown as ReturnType<typeof useNavigate>,
+    );
   });
 
   it("should handle handleSignout", async () => {
@@ -68,7 +97,7 @@ describe("useAuthActions", () => {
   });
 
   it("should verify verifySignInOTP and redirect on success", async () => {
-    (authClient.signIn.emailOtp as any).mockResolvedValue({
+    vi.mocked(authClient.signIn.emailOtp).mockResolvedValue({
       data: { user: {} },
       error: null,
     });
@@ -84,7 +113,7 @@ describe("useAuthActions", () => {
   });
 
   it("should handle verifySignInOTP throwing error on fail", async () => {
-    (authClient.signIn.emailOtp as any).mockResolvedValue({
+    vi.mocked(authClient.signIn.emailOtp).mockResolvedValue({
       data: null,
       error: { message: "Wrong OTP" },
     });
@@ -96,7 +125,9 @@ describe("useAuthActions", () => {
   });
 
   it("should verify email and redirect on success", async () => {
-    (authClient.emailOtp.verifyEmail as any).mockResolvedValue({ error: null });
+    vi.mocked(authClient.emailOtp.verifyEmail).mockResolvedValue({
+      error: null,
+    });
     const { result } = renderHook(() => useAuthActions());
     await act(async () => {
       await result.current.verifyEmail("test@example.com", "123456");
@@ -109,7 +140,7 @@ describe("useAuthActions", () => {
   });
 
   it("should handle verifyEmail throwing error on fail", async () => {
-    (authClient.emailOtp.verifyEmail as any).mockResolvedValue({
+    vi.mocked(authClient.emailOtp.verifyEmail).mockResolvedValue({
       error: { message: "Invalid code" },
     });
     const { result } = renderHook(() => useAuthActions());
@@ -119,7 +150,7 @@ describe("useAuthActions", () => {
   });
 
   it("should handle resendOTP", async () => {
-    (authClient.emailOtp.sendVerificationOtp as any).mockResolvedValue({
+    vi.mocked(authClient.emailOtp.sendVerificationOtp).mockResolvedValue({
       error: null,
     });
     const { result } = renderHook(() => useAuthActions());
@@ -133,7 +164,7 @@ describe("useAuthActions", () => {
   });
 
   it("should handle resendOTP throwing error on fail", async () => {
-    (authClient.emailOtp.sendVerificationOtp as any).mockResolvedValue({
+    vi.mocked(authClient.emailOtp.sendVerificationOtp).mockResolvedValue({
       error: { message: "Failed resend" },
     });
     const { result } = renderHook(() => useAuthActions());
@@ -162,7 +193,7 @@ describe("useAuthActions", () => {
   });
 
   it("should handle handleSignUp throwing error on fail", async () => {
-    (authClient.signUp.email as any).mockRejectedValue(
+    vi.mocked(authClient.signUp.email).mockRejectedValue(
       new Error("Email taken"),
     );
     const { result } = renderHook(() => useAuthActions());
