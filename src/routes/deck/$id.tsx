@@ -1,4 +1,7 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
+import { eq } from "drizzle-orm";
+
 import { CompletionState } from "@/components/deck/completion-state";
 import { DeckHeader } from "@/components/deck/deck-header";
 import { EmptyState } from "@/components/deck/empty-state";
@@ -6,66 +9,46 @@ import { Flashcard } from "@/components/deck/flashcard";
 import { KeyboardShortcutsHint } from "@/components/deck/keyboard-shortcuts-hint";
 import { StudyControls } from "@/components/deck/study-controls";
 import { StudyProgress } from "@/components/deck/study-progress";
+import db from "@/database/db";
+import { decks } from "@/database/schema";
 import { authClient } from "@/lib/auth-client";
 import type { Card as FlashcardData } from "@/lib/validations/generate-deck-schema";
-import { useEffect, useMemo, useState } from "react";
+import authenticate from "@/utils/authenticate";
+import { useMemo, useState } from "react";
+
+const getDeck = createServerFn({ method: "GET" })
+  .validator((deckId: string) => deckId)
+  .handler(async ({ data: deckId }) => {
+    const userId = await authenticate();
+    if (userId === "Unauthorized") throw redirect({ to: "/sign-in" });
+    const deck = await db.query.decks.findFirst({
+      where: eq(decks.id, deckId),
+    });
+    if (!deck) throw notFound();
+    if (deck.ownerId !== userId) throw redirect({ to: "/my-decks" });
+    return deck as { id: string; title: string; cards: FlashcardData[] };
+  });
 
 export const Route = createFileRoute("/deck/$id")({
   beforeLoad: async () => {
     const { data: session } = await authClient.getSession();
     if (!session) throw redirect({ to: "/sign-in" });
   },
+  loader: ({ params }) => getDeck({ data: params.id }),
   component: DeckPage,
 });
 
-type DeckResponse = {
-  id: string;
-  title: string;
-  cards: FlashcardData[];
-};
-
 function DeckPage() {
+  const deck = Route.useLoaderData();
   const { id } = Route.useParams();
-  const [deck, setDeck] = useState<DeckResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
-  useEffect(() => {
-    async function loadDeck() {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(`/api/decks/${id}`);
-        const result = (await response.json()) as {
-          success: boolean;
-          deck?: DeckResponse;
-          error?: string;
-        };
-
-        if (!response.ok || !result.success || !result.deck) {
-          setError(result.error ?? "Failed to load deck");
-          return;
-        }
-
-        setDeck(result.deck);
-      } catch {
-        setError("Failed to load deck");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    void loadDeck();
-  }, [id]);
-
-  const currentCard = deck?.cards[currentCardIndex] ?? null;
-  const totalCards = deck?.cards.length ?? 0;
+  const currentCard = deck.cards[currentCardIndex] ?? null;
+  const totalCards = deck.cards.length;
   const progressValue = useMemo(() => {
     if (totalCards === 0) return 0;
     return ((currentCardIndex + 1) / totalCards) * 100;
@@ -102,20 +85,6 @@ function DeckPage() {
     setCorrectCount(0);
     setIncorrectCount(0);
     setIsComplete(false);
-  }
-
-  if (isLoading) {
-    return (
-      <main className="container mx-auto px-6 py-12">Loading deck...</main>
-    );
-  }
-
-  if (error || !deck) {
-    return (
-      <main className="container mx-auto px-6 py-12">
-        <p className="text-destructive">{error ?? "Deck not found"}</p>
-      </main>
-    );
   }
 
   if (totalCards === 0 || !currentCard) {
