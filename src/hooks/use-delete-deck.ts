@@ -1,7 +1,5 @@
-"use client";
-
 import { useTransition } from "react";
-import { deleteDeckAction } from "@/app/(cards)/my-decks/delete-deck";
+import { deleteDeckAction } from "@/lib/deck-actions";
 import { toast } from "sonner";
 
 /**
@@ -25,7 +23,7 @@ export const useDeleteDeck = () => {
         } else {
           toast.error(result.error || `Failed to delete deck`);
         }
-      } catch (error) {
+      } catch {
         toast.error(`Error deleting deck`);
       }
     });
