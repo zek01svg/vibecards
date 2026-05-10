@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
   return {
     customLogger: logger,
     resolve: { tsconfigPaths: true },
+    optimizeDeps: {
+      exclude: ["@tanstack/start-server-core", "@tanstack/react-start"],
+    },
     plugins: [
       nitro({ rollupConfig: { external: [/^@sentry\//] } }),
       tailwindcss(),
