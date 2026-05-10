@@ -1,7 +1,7 @@
 import { env } from "@/lib/env";
 import { Resend } from "resend";
 
-import logger from "./pino";
+import { logger } from "./logger";
 
 const mailer = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
@@ -13,8 +13,15 @@ interface SendEmailOptions {
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
   if (!mailer) {
-    logger.warn({ to, subject }, "Resend API key not set, skipping email send");
-    return { id: "mock-email" };
+    if (env.NODE_ENV === "development" || env.NODE_ENV === "test") {
+      logger.warn(
+        "Resend API key not set, skipping email send in non-production environment",
+        { to, subject },
+      );
+      return { id: "mock-email" };
+    }
+
+    throw new Error("Resend API key is required in production");
   }
 
   try {
@@ -25,11 +32,11 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
       html,
     });
 
-    logger.info({ data, to, subject }, "Email sent successfully");
+    logger.info("Email sent successfully", { data, to, subject });
 
     return data;
   } catch (error) {
-    logger.error({ error, to, subject }, "Failed to send email");
+    logger.error("Failed to send email", { error, to, subject });
     throw error;
   }
 }
