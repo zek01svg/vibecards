@@ -46,17 +46,25 @@ export const Route = createFileRoute("/api/decks")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const userId = await getUserId(request);
-        if (!userId)
+        try {
+          const userId = await getUserId(request);
+          if (!userId)
+            return Response.json(
+              { success: false, error: "Unauthorized" },
+              { status: 401 },
+            );
+          const userDecks = await db.query.decks.findMany({
+            where: eq(decks.ownerId, userId),
+            orderBy: [desc(decks.createdAt)],
+          });
+          return Response.json({ success: true, decks: userDecks });
+        } catch (error) {
+          logger.error("Error fetching decks", { err: error });
           return Response.json(
-            { success: false, error: "Unauthorized" },
-            { status: 401 },
+            { success: false, error: "Internal server error" },
+            { status: 500 },
           );
-        const userDecks = await db.query.decks.findMany({
-          where: eq(decks.ownerId, userId),
-          orderBy: [desc(decks.createdAt)],
-        });
-        return Response.json({ success: true, decks: userDecks });
+        }
       },
       POST: async ({ request }) => {
         try {
