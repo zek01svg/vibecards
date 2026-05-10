@@ -32,7 +32,10 @@
       "Bash(cat C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\b4fu7zdge.output)",
       "Read(//c/tmp/**)",
       "Read(//c/Users/Charles/.gstack/**)",
-      "Bash(cat \"C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\bz4ps822n.output\")"
+      "Bash(cat \"C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\bz4ps822n.output\")",
+      "mcp__6189e86a-8d66-4aa7-81ad-e67eace4497e__get_issue",
+      "mcp__6189e86a-8d66-4aa7-81ad-e67eace4497e__list_issues",
+      "mcp__6189e86a-8d66-4aa7-81ad-e67eace4497e__save_issue"
     ]
   }
 }
