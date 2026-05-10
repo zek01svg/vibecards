@@ -60,3 +60,4 @@ coverage
 /.vite
 /.output
 /.tanstack
+.gstack/

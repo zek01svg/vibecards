@@ -29,7 +29,10 @@
       "Bash(cat C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\biwdz6uib.output)",
       "PowerShell(node -e \"const n = require\\('./node_modules/nitro/vite'\\); console.log\\(Object.keys\\(n\\)\\)\" 2>&1)",
       "PowerShell(bun -e \"import\\('nitro/vite'\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\)\" 2>&1)",
-      "Bash(cat C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\b4fu7zdge.output)"
+      "Bash(cat C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\b4fu7zdge.output)",
+      "Read(//c/tmp/**)",
+      "Read(//c/Users/Charles/.gstack/**)",
+      "Bash(cat \"C:\\\\\\\\Users\\\\\\\\Charles\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-Charles-projects-vibecards\\\\\\\\5614eb1c-0807-4265-a9af-1d2f4961e1c7\\\\\\\\tasks\\\\\\\\bz4ps822n.output\")"
     ]
   }
 }
