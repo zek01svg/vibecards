@@ -54,7 +54,7 @@ const auth = betterAuth({
       },
     }),
   ],
-  trustedOrigins: ["http://localhost:3000", "https://vibecards-v2.vercel.app"],
+  trustedOrigins: [env.BETTER_AUTH_URL],
   socialProviders: {
     google: {
       prompt: "select_account consent",
