@@ -1,20 +1,39 @@
+import { sentryTanstackStart } from "@sentry/tanstackstart-react/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { nitro } from "nitro/vite";
+import { createLogger, defineConfig, loadEnv } from "vite";
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      "@": "/home/runner/work/vibecards/vibecards/src",
-      "next/link": "/home/runner/work/vibecards/vibecards/src/compat/next-link.tsx",
-      "next/navigation": "/home/runner/work/vibecards/vibecards/src/compat/next-navigation.ts",
-      "next/headers": "/home/runner/work/vibecards/vibecards/src/compat/next-headers.ts",
-      "next/cache": "/home/runner/work/vibecards/vibecards/src/compat/next-cache.ts",
-      "next/dynamic": "/home/runner/work/vibecards/vibecards/src/compat/next-dynamic.tsx",
-      "next/font/google": "/home/runner/work/vibecards/vibecards/src/compat/next-font-google.ts",
-      "next/server": "/home/runner/work/vibecards/vibecards/src/compat/next-server.ts"
-    }
-  },
-  plugins: [tanstackStart(), tailwindcss(), viteReact()]
+const logger = createLogger();
+const originalWarn = logger.warn;
+logger.warn = (msg, options) => {
+  if (msg.includes("Failed to load source map")) return;
+  originalWarn(msg, options);
+};
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    customLogger: logger,
+    resolve: { tsconfigPaths: true },
+    optimizeDeps: {
+      exclude: ["@tanstack/start-server-core", "@tanstack/react-start"],
+    },
+    plugins: [
+      nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+      tailwindcss(),
+      tanstackStart(),
+      ...(env.SENTRY_AUTH_TOKEN &&
+      env.SENTRY_AUTH_TOKEN !== "your-sentry-auth-token"
+        ? sentryTanstackStart({
+            org: env.VITE_SENTRY_ORG,
+            project: env.VITE_SENTRY_PROJECT,
+            authToken: env.SENTRY_AUTH_TOKEN,
+          })
+        : []),
+      viteReact(),
+    ],
+  };
 });

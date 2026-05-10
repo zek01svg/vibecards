@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -21,13 +21,13 @@ export function Footer() {
           <div className="flex items-center gap-6">
             <div className="flex gap-4 text-xs font-bold tracking-widest uppercase">
               <Link
-                href="/terms-of-service"
+                to="/terms-of-service"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Terms
               </Link>
               <Link
-                href="/privacy-policy"
+                to="/privacy-policy"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Privacy

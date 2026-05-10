@@ -1,6 +1,4 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "@/hooks/use-search-params";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,6 +25,10 @@ import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 
 import { Spinner } from "../ui/spinner";
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Something went wrong";
+}
 
 export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
   const searchParams = useSearchParams();
@@ -56,8 +58,8 @@ export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
           await verifyEmail(email, value.otp);
         }
         toast.success("Verified successfully");
-      } catch (error: any) {
-        toast.error(error.message);
+      } catch (error) {
+        toast.error(getErrorMessage(error));
       }
     },
   });
@@ -71,8 +73,8 @@ export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
     try {
       await resendOTP(email, type);
       toast.success("Code resent successfully");
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
     }
   };
 

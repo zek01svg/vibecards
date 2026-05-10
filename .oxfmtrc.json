@@ -25,6 +25,7 @@
     "node_modules",
     "coverage",
     ".next",
-    "*.yml"
+    "*.yml",
+    "src/routeTree.gen.ts"
   ]
 }
