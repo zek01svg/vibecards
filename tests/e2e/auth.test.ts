@@ -136,6 +136,7 @@ test.describe("Authentication", () => {
       // Test Name validation
       await page.getByRole("textbox", { name: "Full Name" }).click();
       await page.getByRole("textbox", { name: "Full Name" }).fill("C");
+      await page.keyboard.press("Tab");
       await expect(page.locator("form")).toContainText(
         "Name must be at least 2 characters",
       );
@@ -144,6 +145,7 @@ test.describe("Authentication", () => {
       // Test Email validation
       await page.getByRole("textbox", { name: "Email" }).click();
       await page.getByRole("textbox", { name: "Email" }).fill("hello.com");
+      await page.keyboard.press("Tab");
       await expect(page.locator("form")).toContainText(
         "Please enter a valid email address",
       );
@@ -158,6 +160,7 @@ test.describe("Authentication", () => {
       await page
         .getByRole("textbox", { name: "Password", exact: true })
         .fill("hello");
+      await page.keyboard.press("Tab");
       await expect(page.locator("form")).toContainText(
         "Must be at least 8 characters",
       );
@@ -165,6 +168,7 @@ test.describe("Authentication", () => {
       // Test Password Match validation
       await page.getByRole("textbox", { name: "Confirm Password" }).click();
       await page.getByRole("textbox", { name: "Confirm Password" }).fill("hi");
+      await page.keyboard.press("Tab");
       await expect(page.locator("form")).toContainText(
         "Passwords do not match",
       );

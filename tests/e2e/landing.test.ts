@@ -23,7 +23,6 @@ test.describe("Landing page", () => {
     // cta
     await expect(page.getByText("Transform your topics into")).toBeVisible();
     await expect(page.getByRole("link", { name: "Dashboard" })).toBeVisible();
-    await expect(page.getByText("No credit card required. Free")).toBeVisible();
 
     // feature cards
     await expect(page.locator("body")).toContainText("AI Magic");

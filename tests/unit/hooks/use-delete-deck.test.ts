@@ -1,26 +1,28 @@
-import { deleteDeckAction } from "@/app/(cards)/my-decks/delete-deck";
+import { deleteDeckAction } from "@/lib/deck-actions";
 import { useDeleteDeck } from "@/hooks/use-delete-deck";
 import { act, renderHook } from "@testing-library/react";
+import type * as React from "react";
 import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("react", async () => {
-  const actual: any = await vi.importActual("react");
+  const actual = await vi.importActual<typeof React>("react");
   return {
     ...actual,
-    useTransition: () => [false, (cb: any) => cb()],
+    useTransition: () => [false, (cb: () => void) => cb()],
   };
 });
 
 vi.mock("sonner", () => ({
   toast: {
-    success: vi.fn(),
-    error: vi.fn(),
+    success: vi.fn<(message: string) => void>(),
+    error: vi.fn<(message: string) => void>(),
   },
 }));
 
-vi.mock("@/app/(cards)/my-decks/delete-deck", () => ({
-  deleteDeckAction: vi.fn(),
+vi.mock("@/lib/deck-actions", () => ({
+  deleteDeckAction:
+    vi.fn<(deckId: string) => Promise<{ success: boolean; error?: string }>>(),
 }));
 
 describe("useDeleteDeck", () => {
@@ -29,7 +31,7 @@ describe("useDeleteDeck", () => {
   });
 
   it("should show success toast on successful delete", async () => {
-    (deleteDeckAction as any).mockResolvedValue({ success: true });
+    vi.mocked(deleteDeckAction).mockResolvedValue({ success: true });
 
     const { result } = renderHook(() => useDeleteDeck());
 
@@ -42,7 +44,7 @@ describe("useDeleteDeck", () => {
   });
 
   it("should show error toast with custom message on failed delete", async () => {
-    (deleteDeckAction as any).mockResolvedValue({
+    vi.mocked(deleteDeckAction).mockResolvedValue({
       success: false,
       error: "Not authorized",
     });
@@ -58,7 +60,7 @@ describe("useDeleteDeck", () => {
   });
 
   it("should show default error toast on failed delete without message", async () => {
-    (deleteDeckAction as any).mockResolvedValue({ success: false });
+    vi.mocked(deleteDeckAction).mockResolvedValue({ success: false });
 
     const { result } = renderHook(() => useDeleteDeck());
 
@@ -71,7 +73,7 @@ describe("useDeleteDeck", () => {
   });
 
   it("should show error toast on thrown exception", async () => {
-    (deleteDeckAction as any).mockRejectedValue(new Error("Network error"));
+    vi.mocked(deleteDeckAction).mockRejectedValue(new Error("Network error"));
 
     const { result } = renderHook(() => useDeleteDeck());
 
