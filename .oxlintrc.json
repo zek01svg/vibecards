@@ -84,7 +84,9 @@
         "src/lib/env.ts",
         "src/env.ts",
         "playwright.config.ts",
-        "instrument.server.mjs"
+        "instrument.server.mjs",
+        "tests/e2e/global-setup.ts",
+        "tests/e2e/global.setup.ts"
       ],
       "rules": {
         "node/no-process-env": "off"

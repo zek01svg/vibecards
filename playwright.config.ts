@@ -6,6 +6,7 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.local"), quiet: true });
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  globalSetup: "./tests/e2e/global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,

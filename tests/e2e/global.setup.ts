@@ -1,10 +1,12 @@
-import { env } from "@/lib/env";
 import { expect, test as setup } from "@playwright/test";
 
 const authFile = "playwright/.auth/user.json";
 
 setup("authenticate", async ({ request }) => {
-  if (!env.TEST_EMAIL || !env.TEST_PASSWORD) {
+  const email = process.env.TEST_EMAIL;
+  const password = process.env.TEST_PASSWORD;
+
+  if (!email || !password) {
     console.warn(
       "TEST_EMAIL/TEST_PASSWORD not set; skipping authenticated setup state",
     );
@@ -12,11 +14,13 @@ setup("authenticate", async ({ request }) => {
     return;
   }
 
+  // Sign up first — testcontainer starts with a fresh DB
+  await request.post("/api/auth/sign-up/email", {
+    data: { name: "Test User", email, password },
+  });
+
   const response = await request.post("/api/auth/sign-in/email", {
-    data: {
-      email: env.TEST_EMAIL,
-      password: env.TEST_PASSWORD,
-    },
+    data: { email, password },
   });
 
   expect(response.ok()).toBeTruthy();
