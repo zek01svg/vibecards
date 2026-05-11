@@ -1,10 +1,10 @@
-import authenticate from "@/utils/authenticate";
+import { authClient } from "@/lib/auth-client";
 
 import { RedirectButton } from "../ui/redirect-button";
 
-export default async function LandingPageButton() {
-  const authResult = await authenticate();
-  const isLoggedIn = authResult !== "Unauthorized";
+export default function LandingPageButton() {
+  const { data: session } = authClient.useSession();
+  const isLoggedIn = Boolean(session?.session);
 
   if (!isLoggedIn) {
     return (

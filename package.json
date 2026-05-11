@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--import=./instrument.server.mjs vite dev --port 3000",
-    "build": "vite build",
+    "build": "cross-env NODE_ENV=production vite build",
     "clean": "bunx rimraf .output .vite .turbo node_modules coverage playwright .tanstack src/routeTree.gen.ts",
     "start": "vite preview --port 3000",
     "lint": "oxlint",
