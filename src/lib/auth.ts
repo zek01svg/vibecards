@@ -32,24 +32,28 @@ const auth = betterAuth({
       sendVerificationOnSignUp: true,
       async sendVerificationOTP({ email, otp, type }) {
         logger.info("Sending OTP email", { email, type });
-        if (type === "sign-in") {
-          await sendEmail({
-            to: email,
-            subject: "Sign in to VibeCards",
-            html: getSignInOTPEmail({ otp }),
-          });
-        } else if (type === "email-verification") {
-          await sendEmail({
-            to: email,
-            subject: "Welcome to VibeCards! Please verify your email",
-            html: getVerificationOTPEmail({ otp }),
-          });
-        } else {
-          await sendEmail({
-            to: email,
-            subject: "Reset your password",
-            html: getPasswordResetOTPEmail({ otp, email }),
-          });
+        try {
+          if (type === "sign-in") {
+            await sendEmail({
+              to: email,
+              subject: "Sign in to VibeCards",
+              html: getSignInOTPEmail({ otp }),
+            });
+          } else if (type === "email-verification") {
+            await sendEmail({
+              to: email,
+              subject: "Welcome to VibeCards! Please verify your email",
+              html: getVerificationOTPEmail({ otp }),
+            });
+          } else {
+            await sendEmail({
+              to: email,
+              subject: "Reset your password",
+              html: getPasswordResetOTPEmail({ otp, email }),
+            });
+          }
+        } catch (error) {
+          logger.error("Failed to send OTP email", { email, type, error });
         }
       },
     }),

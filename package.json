@@ -13,8 +13,8 @@
     "start": "vite preview --port 3000",
     "lint": "oxlint",
     "format:check": "oxfmt --check",
-    "test:unit": "vitest run",
-    "test:e2e": "playwright test",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
     "prepare": "lefthook install",
     "load-env": "dotenv -e .env.local --",
     "auth:generate": "bun run load-env -- bunx @better-auth/cli generate --output src/database/auth-schema.ts --config src/lib/auth.ts",
@@ -61,11 +61,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.3.0",
     "@tanstack/react-devtools": "^0.10.2",
     "@tanstack/react-form-devtools": "^0.2.24",
-    "@testcontainers/postgresql": "^11.14.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
