@@ -17,9 +17,16 @@ describe("cn utility", () => {
   });
 
   it("should handle conditional truthy/falsy values", () => {
-    expect(cn("flex", false && "items-center", true && "justify-center")).toBe(
-      "flex justify-center",
-    );
+    const shouldCenterItems = false;
+    const shouldJustifyCenter = true;
+
+    expect(
+      cn(
+        "flex",
+        shouldCenterItems && "items-center",
+        shouldJustifyCenter && "justify-center",
+      ),
+    ).toBe("flex justify-center");
     expect(cn("flex", undefined, null, "text-sm")).toBe("flex text-sm");
   });
 });

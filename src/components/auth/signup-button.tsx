@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 
 import { Button } from "../ui/button";
 import { FieldDescription } from "../ui/field";
@@ -22,7 +22,7 @@ export default function SignupButton({ isSubmitting }: SignupButtonProps) {
         )}
       </Button>
       <FieldDescription className="text-center">
-        Already have an account? <Link href="/sign-in">Sign in</Link>
+        Already have an account? <Link to="/sign-in">Sign in</Link>
       </FieldDescription>
     </>
   );

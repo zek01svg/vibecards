@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { useTheme } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
@@ -35,7 +33,7 @@ export default function ThemeToggle() {
         return (
           <button
             key={t.id}
-            onClick={() => setTheme(t.id as any)}
+            onClick={() => setTheme(t.id)}
             className={cn(
               "relative flex h-7 w-7 items-center justify-center rounded-full transition-all duration-200 outline-none",
               isActive

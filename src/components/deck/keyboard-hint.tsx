@@ -1,5 +1,3 @@
-"use client";
-
 import { Keyboard } from "lucide-react";
 
 export function KeyboardHint() {

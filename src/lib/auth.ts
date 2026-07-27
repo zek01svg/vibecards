@@ -1,3 +1,8 @@
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
+import { emailOTP } from "better-auth/plugins";
+
 import {
   getPasswordResetOTPEmail,
   getSignInOTPEmail,
@@ -6,10 +11,7 @@ import {
 import db from "@/database/db";
 import { account, session, user, verification } from "@/database/schema";
 import { env } from "@/lib/env";
-import logger from "@/lib/pino";
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { emailOTP } from "better-auth/plugins";
+import { logger } from "@/lib/logger";
 
 import { sendEmail } from "./mailer";
 
@@ -18,40 +20,45 @@ const auth = betterAuth({
     provider: "pg",
     schema: { user, session, account, verification },
   }),
-  baseURL: env.NEXT_PUBLIC_APP_URL,
+  baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
   },
   plugins: [
+    tanstackStartCookies(),
     emailOTP({
       overrideDefaultEmailVerification: true,
       sendVerificationOnSignUp: true,
       async sendVerificationOTP({ email, otp, type }) {
-        logger.info({ email: email, type: type }, "Sending OTP email");
-        if (type === "sign-in") {
-          await sendEmail({
-            to: email,
-            subject: "Sign in to VibeCards",
-            html: getSignInOTPEmail({ otp }),
-          });
-        } else if (type === "email-verification") {
-          await sendEmail({
-            to: email,
-            subject: "Welcome to VibeCards! Please verify your email",
-            html: getVerificationOTPEmail({ otp }),
-          });
-        } else {
-          await sendEmail({
-            to: email,
-            subject: "Reset your password",
-            html: getPasswordResetOTPEmail({ otp, email }),
-          });
+        logger.info("Sending OTP email", { email, type });
+        try {
+          if (type === "sign-in") {
+            await sendEmail({
+              to: email,
+              subject: "Sign in to VibeCards",
+              html: getSignInOTPEmail({ otp }),
+            });
+          } else if (type === "email-verification") {
+            await sendEmail({
+              to: email,
+              subject: "Welcome to VibeCards! Please verify your email",
+              html: getVerificationOTPEmail({ otp }),
+            });
+          } else {
+            await sendEmail({
+              to: email,
+              subject: "Reset your password",
+              html: getPasswordResetOTPEmail({ otp, email }),
+            });
+          }
+        } catch (error) {
+          logger.error("Failed to send OTP email", { email, type, error });
         }
       },
     }),
   ],
-  trustedOrigins: ["http://localhost:3000", "https://vibecards-v2.vercel.app"],
+  trustedOrigins: [env.BETTER_AUTH_URL],
   socialProviders: {
     google: {
       prompt: "select_account consent",

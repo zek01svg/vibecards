@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 
@@ -14,7 +14,7 @@ export function DeckHeader({ id, title, isStudyMode }: DeckHeaderProps) {
   return (
     <header className="border-border bg-background/80 sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b px-6 backdrop-blur-md">
       <div className="flex items-center gap-4">
-        <Link href="/my-decks">
+        <Link to="/my-decks">
           <Button
             variant="ghost"
             size="icon"

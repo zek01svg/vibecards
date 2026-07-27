@@ -1,9 +1,9 @@
 import { env } from "@/lib/env";
 import { Resend } from "resend";
 
-import logger from "./pino";
+import { logger } from "./logger";
 
-const mailer = new Resend(env.RESEND_API_KEY);
+const mailer = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 interface SendEmailOptions {
   to: string;
@@ -11,36 +11,32 @@ interface SendEmailOptions {
   html: string;
 }
 
-/**
- * Sends an email using Resend with raw HTML content.
- * @param to - The recipient's email address.
- * @param subject - The subject line of the email.
- * @param html - The HTML body of the email.
- */
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
   if (!mailer) {
-    throw new Error("Mailer not initialized. Check API key");
+    if (env.NODE_ENV === "development" || env.NODE_ENV === "test") {
+      logger.warn(
+        "Resend API key not set, skipping email send in non-production environment",
+        { to, subject },
+      );
+      return { id: "mock-email" };
+    }
+
+    throw new Error("Resend API key is required in production");
   }
 
   try {
     const { data } = await mailer.emails.send({
       from: "VibeCards <vibecards@resend.dev>",
       to: [to],
-      subject: subject,
-      html: html,
+      subject,
+      html,
     });
 
-    logger.info(
-      { data: data, to: to, subject: subject },
-      "Email sent successfully",
-    );
+    logger.info("Email sent successfully", { data, to, subject });
 
     return data;
   } catch (error) {
-    logger.error(
-      { error: error, to: to, subject: subject },
-      "Failed to send email",
-    );
+    logger.error("Failed to send email", { error, to, subject });
     throw error;
   }
 }

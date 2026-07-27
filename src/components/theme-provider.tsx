@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -44,9 +42,9 @@ export function ThemeProvider({
   }, [theme]);
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (nextTheme: Theme) => {
+      localStorage.setItem(storageKey, nextTheme);
+      setTheme(nextTheme);
     },
   };
   return (
