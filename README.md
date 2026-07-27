@@ -63,8 +63,8 @@ flowchart TD
 | Email           | [Resend](https://resend.com/) (transactional OTP & verification emails)                                                                                            |
 | Env Validation  | [T3 Env](https://env.t3.gg/) + [Zod](https://zod.dev/)                                                                                                             |
 | Logging         | [LogTape](https://logtape.org/) + [Sentry](https://sentry.io/) (structured logging with error tracking)                                                            |
-| Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage)                                                                                   |
-| E2E Testing     | [Playwright](https://playwright.dev/) (Chromium, Firefox, WebKit, Mobile Chrome)                                                                                   |
+| Unit Testing    | [Vitest](https://vitest.dev/) + React Testing Library (jsdom, Istanbul coverage, 70% threshold)                                                                    |
+| Integration     | [Vitest](https://vitest.dev/) + Docker Compose (PostgreSQL 16 on port 5433)                                                                                        |
 | Code Quality    | [oxlint](https://oxc.rs/docs/guide/usage/linter.html), [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), Lefthook, GitHub Actions (CI/CD), Gitleaks, CodeQL |
 | Package Manager | [Bun](https://bun.sh/) `bun@1.3.13`                                                                                                                                |
 
@@ -95,7 +95,7 @@ Copy the example environment file for local development and fill in the required
 cp .env.example .env.local
 ```
 
-Local database, auth, and Playwright workflows load `.env.local`. CI copies `.env.example` to `.env` for automated checks.
+Local database, auth, and integration test workflows load `.env.local`. CI copies `.env.example` to `.env` for automated checks.
 
 | Variable                       | Description                                                        |
 | ------------------------------ | ------------------------------------------------------------------ |
@@ -109,8 +109,8 @@ Local database, auth, and Playwright workflows load `.env.local`. CI copies `.en
 | `GOOGLE_CLIENT_ID`             | Google OAuth client ID                                             |
 | `GOOGLE_CLIENT_SECRET`         | Google OAuth client secret                                         |
 | `RESEND_API_KEY`               | API key for Resend transactional email                             |
-| `TEST_EMAIL`                   | Verified email address used by Playwright for E2E testing          |
-| `TEST_PASSWORD`                | Password for the test email account used in E2E testing            |
+| `TEST_EMAIL`                   | Verified email address for testing (optional)                      |
+| `TEST_PASSWORD`                | Password for the test email account used in testing (optional)     |
 
 > [!NOTE]
 > Environment variables are validated at startup using [T3 Env](https://env.t3.gg/) with Zod schemas (see [`env.ts`](src/lib/env.ts)). Missing or invalid values will cause an immediate, descriptive error.
@@ -153,22 +153,29 @@ bun run db:view
 
 ### Unit Tests
 
-Unit tests use [Vitest](https://vitest.dev/) with React Testing Library and Istanbul coverage:
+Unit tests use [Vitest](https://vitest.dev/) with React Testing Library and Istanbul coverage (70% thresholds):
 
 ```bash
 bun run test:unit
 ```
 
-### E2E Tests
+### Integration Tests
 
-End-to-end tests use [Playwright](https://playwright.dev/) and run against the built application on Chromium:
+Integration tests use [Vitest](https://vitest.dev/) and run against an isolated PostgreSQL database managed by Docker Compose (`compose.yml` on port `5433`):
 
-**Playwright configuration** ([`playwright.config.ts`](playwright.config.ts)):
+```bash
+# Start test database (if not running)
+docker compose up -d
 
-- Parallel: Fully parallel execution
-- Retries: 2 on CI, 0 locally
-- Artifacts: Screenshots on failure, video retained on failure, traces on first retry
-- Viewport: 1280 × 720 (desktop)
+# Run integration tests
+bun run test:integration
+```
+
+**Vitest Configuration** ([`vitest.config.ts`](vitest.config.ts)):
+
+- **Unit project**: Runs in `jsdom` environment covering frontend and UI components.
+- **Integration project**: Runs in `node` environment against local PostgreSQL on port 5433 with global database reset and seeding ([`tests/integration/setup.ts`](tests/integration/setup.ts)).
+- **Coverage thresholds**: Enforces 70% minimum coverage across lines, branches, and functions using the Istanbul provider.
 
 ## 📂 Project Structure
 
@@ -222,11 +229,11 @@ vibecards/
 │   └── utils/
 │       └── authenticate.ts          # Server-side session helper (createServerFn context)
 ├── tests/
-│   ├── e2e/                         # Playwright E2E tests + global.setup.ts
+│   ├── integration/                 # Vitest integration tests + database setup
 │   └── unit/                        # Vitest unit tests
-├── playwright.config.ts             # Playwright configuration
-├── vitest.config.ts                 # Vitest configuration
+├── vitest.config.ts                 # Vitest configuration (unit + integration projects)
 ├── vite.config.ts                   # TanStack Start + Nitro + Sentry Vite plugin
+├── compose.yml                      # Docker Compose PostgreSQL service for integration testing
 ├── package.json
 └── .env.example                     # Environment variable template
 ```

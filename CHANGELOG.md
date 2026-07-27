@@ -7,6 +7,37 @@ in git history, not public release dates.
 
 ---
 
+## [2.3.0] - 2026-05-12
+
+Vitest integration testing migration, SSR/client bundle boundary hardening, and auth OTP error recovery fixes.
+
+Representative commits: `42fc46f`, `f92aa7a`, `40ec113`, `e08944e`, `f416a81`, `4db8385`, `0cf68cb`
+
+### Added
+
+- Added Vitest integration test suite (`tests/integration/`) against Docker Compose PostgreSQL (`compose.yml` on port 5433), replacing Playwright E2E tests.
+- Added `test:integration` script to `package.json` (`vitest run --project integration`).
+- Added `compose.yml` with a `postgres:16-alpine` service and healthcheck for local test database isolation.
+- Added 70% code coverage thresholds (lines, branches, functions) in `vitest.config.ts` using the Istanbul provider.
+
+### Changed
+
+- Migrated CI/CD workflows (`.github/workflows/ci.yml`, `.github/workflows/cd.yml`) from Playwright E2E execution to Vitest integration tests against Docker Compose PostgreSQL.
+- Replaced server-only `authenticate()` call in `LandingPageButton` (`src/components/landing/landing-page-button.tsx`) with client-side `authClient.useSession()` hook, preventing `@tanstack/start-server-core` from leaking into the client bundle and fixing `[plugin:vite:import-analysis]` errors on virtual module `tanstack-start-injected-head-scripts:v`.
+- Updated `build` script in `package.json` to prefix `cross-env NODE_ENV=production` so `.env.local` (`NODE_ENV=development`) cannot override Vite's JSX transform in SSR bundles (fixing `TypeError: jsxDEV is not a function` during server rendering).
+
+### Removed
+
+- Removed Playwright E2E test suite (`tests/e2e/`), `playwright.config.ts`, and E2E-related scripts and dependencies.
+
+### Fixed
+
+- Fixed `sendVerificationOTP` in `src/lib/auth.ts`: added error handling for Resend email delivery failures so user sign-up succeeds even if OTP email delivery fails (preventing 500 errors on sign-up).
+- Fixed API route handler validator method calls in `src/routes/deck/$id.tsx`: replaced `.validator()` with `.inputValidator()` to match `@tanstack/react-start@1.167.65` and prevent route tree generation crashes on dev server startup and build.
+- Restored `src/routes/deck/$id.tsx` full page component and `getDeck` handler after accidental truncation during validator renaming.
+
+---
+
 ## [2.2.0] - 2026-05-10
 
 Observability migration and post-migration QA hardening pass.

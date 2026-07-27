@@ -40,7 +40,10 @@ export const Route = createFileRoute("/api/decks/$id")({
             );
           return Response.json({ success: true, deck });
         } catch (error) {
-          logger.error("Error fetching deck", { err: error, deckId: params.id });
+          logger.error("Error fetching deck", {
+            err: error,
+            deckId: params.id,
+          });
           return Response.json(
             { success: false, error: "Internal server error" },
             { status: 500 },
