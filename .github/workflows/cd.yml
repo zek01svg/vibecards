@@ -3,7 +3,8 @@ name: Deploy VibeCards to Vercel
 on:
     workflow_run:
         workflows: ["VibeCards CI"]
-        branches: [main, staging]
+        branches: 
+          [main, staging]
         types:
             - completed
     workflow_dispatch:

@@ -7,6 +7,6 @@ pre-commit:
       stage_fixed: true
 
     - name: oxfmt
-      glob: "*.{js,ts,jsx,tsx,md,css,yml,yaml,json}"
+      glob: "*.{js,ts,jsx,tsx,md,css,json}"
       run: bun oxfmt --write {staged_files}
       stage_fixed: true
