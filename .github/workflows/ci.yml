@@ -71,6 +71,8 @@ jobs:
 
             - name: Copy .env.example to .env
               run: cp .env.example .env
+            - name: Start test database
+              run: docker compose up -d
 
             - name: Install bun
               uses: oven-sh/setup-bun@v2
