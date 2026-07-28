@@ -35,25 +35,8 @@ const uiConfig = mergeConfig(
   }),
 );
 
-const integrationConfig = mergeConfig(
-  baseConfig,
-  defineProject({
-    test: {
-      name: "integration",
-      environment: "node",
-      include: ["tests/integration/**/*.test.ts"],
-      globalSetup: ["tests/integration/setup.ts"],
-      testTimeout: 30_000,
-      env: {
-        DATABASE_URL: "postgresql://postgres:postgres@localhost:5433/testdb",
-        CI: "1",
-      },
-    },
-  }),
-);
-
 export default defineConfig({
   test: {
-    projects: [uiConfig, integrationConfig],
+    projects: [uiConfig],
   },
 });

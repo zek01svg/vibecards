@@ -5,6 +5,31 @@ All notable changes to VibeCards are documented here.
 This file follows a semver-based structure. Dates reflect when the work landed
 in git history, not public release dates.
 
+## [3.0.0] - 2026-07-28
+
+Stateless local-first architecture migration: removed authentication and server database in favor of client-side local storage and unauthenticated Gemini deck generation.
+
+Representative commits: `2c85b72`, `42fc46f`, `f92aa7a`, `40ec113`, `e08944e`
+
+### Breaking Changes
+
+- **Removed Auth & Server DB**: Removed Better Auth, PostgreSQL database, Drizzle ORM, server session management, authentication components (`login-form`, `signup-form`, `otp-form`), and auth routes (`/sign-in`, `/sign-up`, `/verify-otp`, `/api/auth/$`).
+- **Client-First Deck Storage**: Migrated deck persistence from PostgreSQL to browser `localStorage` using UUID-indexed keys (`vibecards_deck_<uuid>`) and a master index (`vibecards_deck_index`).
+- **Stateless Generation Route**: Converted `POST /api/decks` into an unauthenticated, stateless endpoint powered by Gemini AI with Upstash Redis IP rate-limiting. Removed server deck CRUD endpoints (`/api/decks/$id`).
+- **Environment Schema Update**: Removed database and authentication environment variables (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `SMTP_*`).
+
+### Added
+
+- Added `src/lib/local-deck-store.ts` for synchronous, local-first deck index and item storage.
+- Added `src/hooks/use-local-decks.ts` for reactive deck listing, search, favoriting, and deck deletion.
+- Added `docs/adr/0001-stateless-localstorage-architecture.md` detailing the architectural pivot and operational trade-offs.
+- Added comprehensive unit tests for local storage layer (`tests/unit/lib/local-deck-store.test.ts` and `tests/unit/hooks/use-local-decks.test.ts`).
+
+### Changed
+
+- Updated `/dashboard`, `/my-decks`, and `/deck/$id` routes to operate directly on `localStorage` state without auth guards or server loaders.
+- Updated application header to provide direct navigation without login/signup prompts.
+
 ---
 
 ## [2.3.0] - 2026-05-12

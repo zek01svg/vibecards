@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,23 +10,44 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { authClient } from "@/lib/auth-client";
-import type { cardCounts } from "@/lib/validations/generate-deck-schema";
-import { difficulties } from "@/lib/validations/generate-deck-schema";
+import { useLocalDecks } from "@/hooks/use-local-decks";
+import {
+  cardCounts,
+  difficulties,
+} from "@/lib/validations/generate-deck-schema";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard")({
-  beforeLoad: async () => {
-    const { data: session } = await authClient.getSession();
-    if (!session) throw redirect({ to: "/sign-in" });
-  },
   component: DashboardPage,
 });
 
+type GenerateDeckResponse = {
+  success: boolean;
+  deck?: {
+    title: string;
+    topic: string;
+    cards: { front: string; back: string }[];
+  };
+  error?: string;
+};
+
+function isDifficulty(val: string): val is (typeof difficulties)[number] {
+  return (difficulties as readonly string[]).includes(val);
+}
+
+function isCardCount(val: number): val is (typeof cardCounts)[number] {
+  return (cardCounts as readonly number[]).includes(val);
+}
+
+function isGenerateDeckResponse(val: unknown): val is GenerateDeckResponse {
+  return typeof val === "object" && val !== null && "success" in val;
+}
+
 function DashboardPage() {
   const navigate = useNavigate();
+  const { createDeck } = useLocalDecks();
   const [topic, setTopic] = useState("");
   const [difficulty, setDifficulty] =
     useState<(typeof difficulties)[number]>("intermediate");
@@ -43,19 +64,22 @@ function DashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic, difficulty, cardCount }),
       });
-      const result = (await response.json()) as {
-        success: boolean;
-        deckId?: string;
-        error?: string;
-      };
+      const data: unknown = await response.json();
 
-      if (!response.ok || !result.success || !result.deckId) {
-        toast.error(result.error ?? "Failed to generate deck");
+      if (
+        !isGenerateDeckResponse(data) ||
+        !response.ok ||
+        !data.success ||
+        !data.deck
+      ) {
+        const errorMsg = isGenerateDeckResponse(data) ? data.error : undefined;
+        toast.error(errorMsg ?? "Failed to generate deck");
         return;
       }
 
+      const newDeck = createDeck(data.deck);
       toast.success("Deck generated");
-      await navigate({ to: "/deck/$id", params: { id: result.deckId } });
+      await navigate({ to: "/deck/$id", params: { id: newDeck.id } });
     } catch {
       toast.error("Failed to generate deck");
     } finally {
@@ -75,7 +99,11 @@ function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={(event) => {
+              void handleSubmit(event);
+            }}
+          >
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="topic">Topic or notes</FieldLabel>
@@ -95,11 +123,10 @@ function DashboardPage() {
                   <select
                     id="difficulty"
                     value={difficulty}
-                    onChange={(event) =>
-                      setDifficulty(
-                        event.target.value as (typeof difficulties)[number],
-                      )
-                    }
+                    onChange={(event) => {
+                      const val = event.target.value;
+                      if (isDifficulty(val)) setDifficulty(val);
+                    }}
                     className="border-input bg-background ring-offset-background focus-visible:ring-ring h-9 w-full rounded-md border px-3 py-1 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                   >
                     {difficulties.map((value) => (
@@ -118,13 +145,10 @@ function DashboardPage() {
                     min={5}
                     max={20}
                     value={cardCount}
-                    onChange={(event) =>
-                      setCardCount(
-                        Number(
-                          event.target.value,
-                        ) as (typeof cardCounts)[number],
-                      )
-                    }
+                    onChange={(event) => {
+                      const val = Number(event.target.value);
+                      if (isCardCount(val)) setCardCount(val);
+                    }}
                   />
                 </Field>
               </div>

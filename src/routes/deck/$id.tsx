@@ -1,6 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
-import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import { eq } from "drizzle-orm";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 import { CompletionState } from "@/components/deck/completion-state";
 import { DeckHeader } from "@/components/deck/deck-header";
@@ -9,50 +7,81 @@ import { Flashcard } from "@/components/deck/flashcard";
 import { KeyboardShortcutsHint } from "@/components/deck/keyboard-shortcuts-hint";
 import { StudyControls } from "@/components/deck/study-controls";
 import { StudyProgress } from "@/components/deck/study-progress";
-import db from "@/database/db";
-import { decks } from "@/database/schema";
-import { authClient } from "@/lib/auth-client";
-import type { Card as FlashcardData } from "@/lib/validations/generate-deck-schema";
-import authenticate from "@/utils/authenticate";
-import { useMemo, useState } from "react";
-
-const getDeck = createServerFn({ method: "GET" })
-  .inputValidator((deckId: string) => deckId)
-  .handler(async ({ data: deckId }) => {
-    const userId = await authenticate();
-    if (userId === "Unauthorized") throw redirect({ to: "/sign-in" });
-    const deck = await db.query.decks.findFirst({
-      where: eq(decks.id, deckId),
-    });
-    if (!deck) throw notFound();
-    if (deck.ownerId !== userId) throw redirect({ to: "/my-decks" });
-    return deck as { id: string; title: string; cards: FlashcardData[] };
-  });
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { useLocalDecks } from "@/hooks/use-local-decks";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/deck/$id")({
-  beforeLoad: async () => {
-    const { data: session } = await authClient.getSession();
-    if (!session) throw redirect({ to: "/sign-in" });
-  },
-  loader: ({ params }) => getDeck({ data: params.id }),
   component: DeckPage,
 });
 
 function DeckPage() {
-  const deck = Route.useLoaderData();
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const { getDeck, toggleFavorite, deleteDeck } = useLocalDecks();
+
+  const [deck, setDeck] = useState(() => getDeck(id));
+
+  useEffect(() => {
+    setDeck(getDeck(id));
+  }, [id, getDeck]);
+
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
-  const currentCard = deck.cards[currentCardIndex] ?? null;
+  if (!deck) {
+    return (
+      <main className="container mx-auto max-w-3xl px-6 py-12">
+        <Empty className="border-border rounded-xl border py-12">
+          <EmptyHeader>
+            <EmptyTitle className="text-2xl font-bold">
+              Deck Not Found
+            </EmptyTitle>
+            <EmptyDescription>
+              The deck you are looking for does not exist or has been deleted.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button asChild>
+              <Link to="/my-decks">Back to My Decks</Link>
+            </Button>
+          </EmptyContent>
+        </Empty>
+      </main>
+    );
+  }
+
+  const currentCard = deck.cards[currentCardIndex];
   const totalCards = deck.cards.length;
+  const isStudyMode = totalCards > 0;
   const progressValue = useMemo(() => {
     if (totalCards === 0) return 0;
     return ((currentCardIndex + 1) / totalCards) * 100;
   }, [currentCardIndex, totalCards]);
+
+  function handleToggleFavorite() {
+    if (!deck) return;
+    const updated = toggleFavorite(deck.id);
+    if (updated) setDeck({ ...updated });
+  }
+
+  function handleDelete() {
+    if (!deck) return;
+    deleteDeck(deck.id);
+    toast.success("Deck deleted successfully");
+    void navigate({ to: "/my-decks" });
+  }
 
   function goNext() {
     setCurrentCardIndex((index) => Math.min(index + 1, totalCards - 1));
@@ -87,10 +116,21 @@ function DeckPage() {
     setIsComplete(false);
   }
 
-  if (totalCards === 0 || !currentCard) {
+  const deckHeader = (
+    <DeckHeader
+      id={id}
+      title={deck.title}
+      isStudyMode={isStudyMode}
+      isFavorite={deck.isFavorite}
+      onToggleFavorite={handleToggleFavorite}
+      onDelete={handleDelete}
+    />
+  );
+
+  if (totalCards === 0) {
     return (
       <>
-        <DeckHeader id={id} title={deck.title} isStudyMode={false} />
+        {deckHeader}
         <main className="container mx-auto px-6 py-12">
           <EmptyState />
         </main>
@@ -101,7 +141,7 @@ function DeckPage() {
   if (isComplete) {
     return (
       <>
-        <DeckHeader id={id} title={deck.title} isStudyMode />
+        {deckHeader}
         <main className="container mx-auto px-6 py-12">
           <CompletionState
             title={deck.title}
@@ -117,7 +157,7 @@ function DeckPage() {
 
   return (
     <>
-      <DeckHeader id={id} title={deck.title} isStudyMode />
+      {deckHeader}
       <main className="container mx-auto max-w-3xl space-y-8 px-6 py-12">
         <StudyProgress
           currentCard={currentCardIndex + 1}

@@ -1,0 +1,37 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true,
+    "**/drizzle/meta/*": true,
+    "bun.lock": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true,
+    "**/drizzle/meta/*": true,
+    "bun.lock": true
+  },
+  // --- Search & File Explorer ---
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/tanstack": true,
+    "**/output": true,
+    "**/routeTree.gen.ts": true,
+    "bun.lock": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/tanstack": true,
+    "**/output": true,
+    "**/routeTree.gen.ts": true,
+    "bun.lock": true
+  },
+
+  // --- JavaScript / TypeScript Configuration (React/Node) ---
+  "js/ts.updateImportsOnFileMove.enabled": "always",
+
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "npm.packageManager": "bun",
+  "git.ignoreLimitWarning": true
+}

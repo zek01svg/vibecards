@@ -15,6 +15,9 @@
     "correctness": "error",
     "suspicious": "error"
   },
+  "options": {
+    "typeAware": true
+  },
   "rules": {
     "no-alert": "error",
     "no-console": "error",
@@ -96,6 +99,14 @@
       "rules": {
         "import/no-unassigned-import": "off"
       }
+    },
+    {
+      "files": ["tests/**"],
+      "rules": {
+        "typescript/unbound-method": "off",
+        "typescript/no-unsafe-type-assertion": "off",
+        "typescript/no-unnecessary-condition": "off"
+      }
     }
   ],
   "env": {
@@ -104,6 +115,7 @@
     "browser": true
   },
   "ignorePatterns": [
+    "test-app",
     ".output/**",
     ".nitro/**",
     "node_modules/**",

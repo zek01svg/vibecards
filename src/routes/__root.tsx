@@ -24,9 +24,7 @@ export const Route = createRootRoute({
   }),
   component: RootComponent,
   notFoundComponent: () => <RootDocument>Page not found.</RootDocument>,
-  errorComponent: ({ error }) => (
-    <RootDocument>{String(error?.message ?? error)}</RootDocument>
-  ),
+  errorComponent: ({ error }) => <RootDocument>{error.message}</RootDocument>,
 });
 
 function RootComponent() {
