@@ -1,13 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { authClient } from "@/lib/auth-client";
 import { Sparkles } from "lucide-react";
 
 import ThemeToggle from "../ui/theme-toggle";
 import { NavButtons } from "./nav-buttons";
 
 export function Header() {
-  const session = authClient.useSession();
-
   return (
     <header className="border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center px-4">
@@ -24,11 +21,9 @@ export function Header() {
             </span>
           </Link>
 
-          {session.data?.session && (
-            <div className="hidden items-center gap-2 md:flex">
-              <NavButtons />
-            </div>
-          )}
+          <div className="hidden items-center gap-2 md:flex">
+            <NavButtons />
+          </div>
 
           <div className="ml-auto flex items-center gap-4">
             <ThemeToggle />

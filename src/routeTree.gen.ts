@@ -9,59 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
-import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SignUpRouteImport } from './routes/sign-up'
-import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as MyDecksRouteImport } from './routes/my-decks'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DeckIdRouteImport } from './routes/deck/$id'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as MyDecksRouteImport } from './routes/my-decks'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as ApiDecksRouteImport } from './routes/api/decks'
-import { Route as ApiDecksIdRouteImport } from './routes/api/decks/$id'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as DeckIdRouteImport } from './routes/deck/$id'
 
-const VerifyOtpRoute = VerifyOtpRouteImport.update({
-  id: '/verify-otp',
-  path: '/verify-otp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
-  id: '/terms-of-service',
-  path: '/terms-of-service',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignUpRoute = SignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignInRoute = SignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
-  id: '/privacy-policy',
-  path: '/privacy-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyDecksRoute = MyDecksRouteImport.update({
-  id: '/my-decks',
-  path: '/my-decks',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -69,14 +29,29 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const MyDecksRoute = MyDecksRouteImport.update({
+  id: '/my-decks',
+  path: '/my-decks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DeckIdRoute = DeckIdRouteImport.update({
-  id: '/deck/$id',
-  path: '/deck/$id',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDecksRoute = ApiDecksRouteImport.update({
@@ -84,14 +59,9 @@ const ApiDecksRoute = ApiDecksRouteImport.update({
   path: '/api/decks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDecksIdRoute = ApiDecksIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ApiDecksRoute,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
+const DeckIdRoute = DeckIdRouteImport.update({
+  id: '/deck/$id',
+  path: '/deck/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -101,15 +71,10 @@ export interface FileRoutesByFullPath {
   '/my-decks': typeof MyDecksRoute
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/verify-otp': typeof VerifyOtpRoute
-  '/api/decks': typeof ApiDecksRouteWithChildren
+  '/api/decks': typeof ApiDecksRoute
   '/deck/$id': typeof DeckIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/decks/$id': typeof ApiDecksIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -117,15 +82,10 @@ export interface FileRoutesByTo {
   '/my-decks': typeof MyDecksRoute
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/verify-otp': typeof VerifyOtpRoute
-  '/api/decks': typeof ApiDecksRouteWithChildren
+  '/api/decks': typeof ApiDecksRoute
   '/deck/$id': typeof DeckIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/decks/$id': typeof ApiDecksIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -134,15 +94,10 @@ export interface FileRoutesById {
   '/my-decks': typeof MyDecksRoute
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/verify-otp': typeof VerifyOtpRoute
-  '/api/decks': typeof ApiDecksRouteWithChildren
+  '/api/decks': typeof ApiDecksRoute
   '/deck/$id': typeof DeckIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/decks/$id': typeof ApiDecksIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,15 +107,10 @@ export interface FileRouteTypes {
     | '/my-decks'
     | '/privacy'
     | '/privacy-policy'
-    | '/sign-in'
-    | '/sign-up'
     | '/terms'
     | '/terms-of-service'
-    | '/verify-otp'
     | '/api/decks'
     | '/deck/$id'
-    | '/api/auth/$'
-    | '/api/decks/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -168,15 +118,10 @@ export interface FileRouteTypes {
     | '/my-decks'
     | '/privacy'
     | '/privacy-policy'
-    | '/sign-in'
-    | '/sign-up'
     | '/terms'
     | '/terms-of-service'
-    | '/verify-otp'
     | '/api/decks'
     | '/deck/$id'
-    | '/api/auth/$'
-    | '/api/decks/$id'
   id:
     | '__root__'
     | '/'
@@ -184,15 +129,10 @@ export interface FileRouteTypes {
     | '/my-decks'
     | '/privacy'
     | '/privacy-policy'
-    | '/sign-in'
-    | '/sign-up'
     | '/terms'
     | '/terms-of-service'
-    | '/verify-otp'
     | '/api/decks'
     | '/deck/$id'
-    | '/api/auth/$'
-    | '/api/decks/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -201,72 +141,19 @@ export interface RootRouteChildren {
   MyDecksRoute: typeof MyDecksRoute
   PrivacyRoute: typeof PrivacyRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  SignInRoute: typeof SignInRoute
-  SignUpRoute: typeof SignUpRoute
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
-  VerifyOtpRoute: typeof VerifyOtpRoute
-  ApiDecksRoute: typeof ApiDecksRouteWithChildren
+  ApiDecksRoute: typeof ApiDecksRoute
   DeckIdRoute: typeof DeckIdRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/verify-otp': {
-      id: '/verify-otp'
-      path: '/verify-otp'
-      fullPath: '/verify-otp'
-      preLoaderRoute: typeof VerifyOtpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms-of-service': {
-      id: '/terms-of-service'
-      path: '/terms-of-service'
-      fullPath: '/terms-of-service'
-      preLoaderRoute: typeof TermsOfServiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-up': {
-      id: '/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof SignUpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-in': {
-      id: '/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy-policy': {
-      id: '/privacy-policy'
-      path: '/privacy-policy'
-      fullPath: '/privacy-policy'
-      preLoaderRoute: typeof PrivacyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-decks': {
-      id: '/my-decks'
-      path: '/my-decks'
-      fullPath: '/my-decks'
-      preLoaderRoute: typeof MyDecksRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -276,18 +163,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/my-decks': {
+      id: '/my-decks'
+      path: '/my-decks'
+      fullPath: '/my-decks'
+      preLoaderRoute: typeof MyDecksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/deck/$id': {
-      id: '/deck/$id'
-      path: '/deck/$id'
-      fullPath: '/deck/$id'
-      preLoaderRoute: typeof DeckIdRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/decks': {
@@ -297,34 +205,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDecksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/decks/$id': {
-      id: '/api/decks/$id'
-      path: '/$id'
-      fullPath: '/api/decks/$id'
-      preLoaderRoute: typeof ApiDecksIdRouteImport
-      parentRoute: typeof ApiDecksRoute
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
+    '/deck/$id': {
+      id: '/deck/$id'
+      path: '/deck/$id'
+      fullPath: '/deck/$id'
+      preLoaderRoute: typeof DeckIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface ApiDecksRouteChildren {
-  ApiDecksIdRoute: typeof ApiDecksIdRoute
-}
-
-const ApiDecksRouteChildren: ApiDecksRouteChildren = {
-  ApiDecksIdRoute: ApiDecksIdRoute,
-}
-
-const ApiDecksRouteWithChildren = ApiDecksRoute._addFileChildren(
-  ApiDecksRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -332,14 +221,10 @@ const rootRouteChildren: RootRouteChildren = {
   MyDecksRoute: MyDecksRoute,
   PrivacyRoute: PrivacyRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
-  SignInRoute: SignInRoute,
-  SignUpRoute: SignUpRoute,
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
-  VerifyOtpRoute: VerifyOtpRoute,
-  ApiDecksRoute: ApiDecksRouteWithChildren,
+  ApiDecksRoute: ApiDecksRoute,
   DeckIdRoute: DeckIdRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

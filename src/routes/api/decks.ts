@@ -1,12 +1,10 @@
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 import { chat } from "@tanstack/ai";
 import { createGeminiChat } from "@tanstack/ai-gemini";
 import { createFileRoute } from "@tanstack/react-router";
-import { desc, eq } from "drizzle-orm";
 import { ZodError } from "zod/v4";
 
-import db from "@/database/db";
-import { decks } from "@/database/schema";
-import auth from "@/lib/auth";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import {
@@ -16,15 +14,40 @@ import {
 
 const MAX_OUTPUT_TOKENS = 8192;
 const modelHierarchy = [
+  "gemini-3.5-flash",
+  "gemini-3.1-flash-lite",
   "gemini-2.5-flash",
   "gemini-2.5-flash-lite",
-  "gemini-2.0-flash",
-  "gemini-2.0-flash-lite",
 ] as const;
 
-async function getUserId(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return session?.session?.userId ?? null;
+let ratelimit: Ratelimit | null | undefined;
+
+function getRatelimit(): Ratelimit | null {
+  if (ratelimit !== undefined) return ratelimit;
+
+  const url = env.UPSTASH_REDIS_REST_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN;
+  ratelimit =
+    url && token
+      ? new Ratelimit({
+          redis: new Redis({ url, token }),
+          limiter: Ratelimit.slidingWindow(10, "1 m"),
+        })
+      : null;
+  return ratelimit;
+}
+
+/** @internal Reset cached ratelimit singleton — test use only. */
+export function resetRatelimitForTest(): void {
+  ratelimit = undefined;
+}
+
+function getClientIp(request: Request): string {
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip")?.trim() ??
+    "127.0.0.1"
+  );
 }
 
 /**
@@ -45,35 +68,19 @@ function normaliseGeminiResponse(raw: unknown): unknown {
 export const Route = createFileRoute("/api/decks")({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        try {
-          const userId = await getUserId(request);
-          if (!userId)
-            return Response.json(
-              { success: false, error: "Unauthorized" },
-              { status: 401 },
-            );
-          const userDecks = await db.query.decks.findMany({
-            where: eq(decks.ownerId, userId),
-            orderBy: [desc(decks.createdAt)],
-          });
-          return Response.json({ success: true, decks: userDecks });
-        } catch (error) {
-          logger.error("Error fetching decks", { err: error });
-          return Response.json(
-            { success: false, error: "Internal server error" },
-            { status: 500 },
-          );
-        }
-      },
       POST: async ({ request }) => {
         try {
-          const userId = await getUserId(request);
-          if (!userId)
-            return Response.json(
-              { success: false, error: "Unauthorized" },
-              { status: 401 },
-            );
+          const limiter = getRatelimit();
+          if (limiter) {
+            const ip = getClientIp(request);
+            const { success: rateLimitSuccess } = await limiter.limit(ip);
+            if (!rateLimitSuccess) {
+              return Response.json(
+                { success: false, error: "Too Many Requests" },
+                { status: 429 },
+              );
+            }
+          }
 
           const body = await request.json();
           const validatedRequest = GenerateDeckRequestSchema.parse(body);
@@ -99,8 +106,10 @@ export const Route = createFileRoute("/api/decks")({
                 ],
                 outputSchema: GeminiResponseSchema,
                 stream: false,
-                maxTokens: MAX_OUTPUT_TOKENS,
-                temperature: 0.7,
+                modelOptions: {
+                  maxOutputTokens: MAX_OUTPUT_TOKENS,
+                  temperature: 0.7,
+                },
               });
               if (generated) break;
             } catch (error) {
@@ -116,7 +125,6 @@ export const Route = createFileRoute("/api/decks")({
             logger.error("All Gemini models failed", {
               err: lastError,
               topic,
-              userId,
             });
             return Response.json(
               {
@@ -130,23 +138,15 @@ export const Route = createFileRoute("/api/decks")({
           const validatedDeck = GeminiResponseSchema.parse(
             normaliseGeminiResponse(generated),
           );
-          const deck = await db
-            .insert(decks)
-            .values({
-              ownerId: userId,
+
+          return Response.json({
+            success: true,
+            deck: {
               title: validatedDeck.title,
               topic: validatedDeck.topic,
               cards: validatedDeck.cards,
-            })
-            .returning();
-          const createdDeck = deck[0];
-          if (!createdDeck)
-            return Response.json(
-              { success: false, error: "Failed to save deck" },
-              { status: 500 },
-            );
-
-          return Response.json({ success: true, deckId: createdDeck.id });
+            },
+          });
         } catch (error) {
           if (error instanceof ZodError) {
             return Response.json(

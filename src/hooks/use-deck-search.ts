@@ -1,18 +1,17 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useSearchParams } from "@/hooks/use-search-params";
 
 /**
  * Custom hook for deck search functionality.
+ * Derives searchQuery and activeFilter directly from search params to stay in sync with the URL.
  * @returns {Object} An object containing search query, active filter, and search handlers.
  */
 export const useDeckSearch = () => {
   const searchParams = useSearchParams();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-  const [activeFilter, setActiveFilter] = useState(
-    searchParams.get("filter") || "all",
-  );
+
+  const searchQuery = searchParams.get("q") || "";
+  const activeFilter = searchParams.get("filter") || "all";
 
   /**
    * Updates the URL path with the search query and filter.
@@ -34,7 +33,19 @@ export const useDeckSearch = () => {
       params.delete("filter");
     }
 
-    void navigate({ to: `/my-decks?${params.toString()}`, replace: true });
+    const searchStr = params.toString();
+    const to = searchStr ? `/my-decks?${searchStr}` : "/my-decks";
+
+    void navigate({ to, replace: true });
+  };
+
+  /**
+   * Directly sets the search query and updates URL path.
+   * @param {string | ((prev: string) => string)} query - The new search query or updater function.
+   */
+  const setSearchQuery = (query: string | ((prev: string) => string)) => {
+    const nextQuery = typeof query === "function" ? query(searchQuery) : query;
+    updatePath(nextQuery, activeFilter);
   };
 
   /**
@@ -43,7 +54,6 @@ export const useDeckSearch = () => {
    */
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
-    setSearchQuery(query);
     updatePath(query, activeFilter);
   };
 
@@ -52,7 +62,6 @@ export const useDeckSearch = () => {
    * @param {string} filter - The active filter.
    */
   const handleFilter = (filter: string) => {
-    setActiveFilter(filter);
     updatePath(searchQuery, filter);
   };
 

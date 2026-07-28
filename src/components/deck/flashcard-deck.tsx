@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import type { Card as CardType } from "@/lib/validations/generate-deck-schema";
 import { Calendar, ChevronRight, Star, Trash2 } from "lucide-react";
+import type { DeckIndexItem } from "@/lib/local-deck-store";
 
 import {
   AlertDialog,
@@ -23,32 +23,25 @@ import {
   CardTitle,
 } from "../ui/card";
 
-export interface Deck {
-  id: string;
-  title: string;
-  topic: string;
-  cards: CardType[];
-  createdAt: string;
-  isFavorite: boolean;
-}
+export type DeckSummary = DeckIndexItem;
 
 interface FlashcardProps {
-  deck: Deck;
-  onDelete: (id: string, e: React.MouseEvent) => Promise<void>;
+  deck: DeckSummary;
+  onDelete: (id: string, e: React.MouseEvent) => Promise<void> | void;
   onToggleFavorite: (
     id: string,
     isFavorite: boolean,
     e: React.MouseEvent,
-  ) => Promise<void>;
+  ) => Promise<void> | void;
 }
 
 export function FlashcardDeck({
   deck,
   onDelete,
   onToggleFavorite,
-  isPending,
-  isPendingFavorite,
-}: FlashcardProps & { isPending?: boolean; isPendingFavorite?: boolean }) {
+}: FlashcardProps) {
+  const cardCount = deck.cardCount;
+
   return (
     <Card className="border-border/50 bg-card/50 hover:border-primary/50 hover:bg-card hover:shadow-primary/5 group relative h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <Link
@@ -64,7 +57,7 @@ export function FlashcardDeck({
               variant="secondary"
               className="bg-primary/10 text-primary hover:bg-primary/20 mb-2 border-none font-bold"
             >
-              {deck.cards?.length || 0} Cards
+              {cardCount} Cards
             </Badge>
             <CardTitle className="group-hover:text-primary line-clamp-1 transition-colors">
               {deck.title}
@@ -76,8 +69,9 @@ export function FlashcardDeck({
               variant="ghost"
               size="icon"
               className={`relative z-10 shrink-0 transition-colors hover:bg-yellow-500/10 hover:text-yellow-500 ${deck.isFavorite ? "text-yellow-500" : "text-muted-foreground"}`}
-              onClick={(e) => onToggleFavorite(deck.id, !deck.isFavorite, e)}
-              disabled={isPendingFavorite}
+              onClick={(e) => {
+                void onToggleFavorite(deck.id, !deck.isFavorite, e);
+              }}
             >
               <Star
                 className={`h-4 w-4 ${deck.isFavorite ? "fill-current" : ""}`}
@@ -89,7 +83,6 @@ export function FlashcardDeck({
                   variant="ghost"
                   size="icon"
                   className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive relative z-10 shrink-0 transition-colors"
-                  disabled={isPending}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -105,15 +98,14 @@ export function FlashcardDeck({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel disabled={isPending}>
-                    Cancel
-                  </AlertDialogCancel>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    onClick={(e) => onDelete(deck.id, e)}
-                    disabled={isPending}
+                    onClick={(e) => {
+                      void onDelete(deck.id, e);
+                    }}
                   >
-                    {isPending ? "Deleting..." : "Delete"}
+                    Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

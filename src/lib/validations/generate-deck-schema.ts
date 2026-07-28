@@ -5,7 +5,7 @@ export const cardCounts = [5, 8, 10, 12, 15, 20] as const;
 type CardCount = (typeof cardCounts)[number];
 
 function isCardCount(value: number): value is CardCount {
-  return cardCounts.includes(value as CardCount);
+  return (cardCounts as readonly number[]).includes(value);
 }
 
 export const CardSchema = z.object({
