@@ -10,6 +10,7 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select } from "#/components/ui/select";
 import { useLocalDecks } from "@/hooks/use-local-decks";
 import {
   cardCounts,
@@ -120,10 +121,9 @@ function DashboardPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field>
                   <FieldLabel htmlFor="difficulty">Difficulty</FieldLabel>
-                  <select
-                    id="difficulty"
+                  <Select
                     value={difficulty}
-                    onChange={(event) => {
+                    onValueChange={(event: { target: { value: any } }) => {
                       const val = event.target.value;
                       if (isDifficulty(val)) setDifficulty(val);
                     }}
@@ -134,7 +134,7 @@ function DashboardPage() {
                         {value}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </Field>
 
                 <Field>

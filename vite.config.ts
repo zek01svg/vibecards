@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
       exclude: ["@tanstack/start-server-core", "@tanstack/react-start"],
     },
     plugins: [
-      nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+      nitro(),
       tailwindcss(),
       tanstackStart(),
       ...(env.SENTRY_AUTH_TOKEN &&

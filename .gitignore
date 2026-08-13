@@ -61,3 +61,5 @@ coverage
 /.output
 /.tanstack
 .gstack/
+
+.vercel
