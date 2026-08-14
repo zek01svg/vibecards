@@ -1,8 +1,9 @@
 import { fileURLToPath, URL } from "node:url";
-import { defineConfig, defineProject, mergeConfig } from "vitest/config";
+import { defineConfig } from "vitest/config";
 
-export const baseConfig = defineConfig({
+export default defineConfig({
   test: {
+    environment: "jsdom",
     exclude: ["node_modules", "coverage", "dist", "playwright"],
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -21,22 +22,5 @@ export const baseConfig = defineConfig({
       },
     },
     reporters: ["dot"],
-  },
-});
-
-const uiConfig = mergeConfig(
-  baseConfig,
-  defineProject({
-    test: {
-      name: "unit",
-      environment: "jsdom",
-      include: ["tests/unit/**/*.test.ts", "tests/unit/**/*.test.tsx"],
-    },
-  }),
-);
-
-export default defineConfig({
-  test: {
-    projects: [uiConfig],
   },
 });
