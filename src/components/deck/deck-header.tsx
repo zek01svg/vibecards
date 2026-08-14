@@ -35,7 +35,7 @@ export function DeckHeader({
   return (
     <header className="border-border bg-background/80 sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b px-6 backdrop-blur-md">
       <div className="flex items-center gap-4">
-        <Link to="/my-decks">
+        <Link to="/dashboard">
           <Button
             variant="ghost"
             size="icon"

@@ -60,7 +60,7 @@ describe("useDeckSearch", () => {
     rerender();
     expect(result.current.searchQuery).toBe("math");
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: "/my-decks?q=math",
+      to: "/dashboard?q=math",
       replace: true,
     });
   });
@@ -73,7 +73,7 @@ describe("useDeckSearch", () => {
     rerender();
     expect(result.current.searchQuery).toBe("biology");
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: "/my-decks?q=biology",
+      to: "/dashboard?q=biology",
       replace: true,
     });
   });
@@ -86,7 +86,7 @@ describe("useDeckSearch", () => {
     rerender();
     expect(result.current.activeFilter).toBe("favorites");
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: "/my-decks?filter=favorites",
+      to: "/dashboard?filter=favorites",
       replace: true,
     });
   });
@@ -103,7 +103,7 @@ describe("useDeckSearch", () => {
     rerender();
     expect(result.current.searchQuery).toBe("");
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: "/my-decks?filter=recent",
+      to: "/dashboard?filter=recent",
       replace: true,
     });
   });
@@ -118,7 +118,7 @@ describe("useDeckSearch", () => {
     rerender();
     expect(result.current.activeFilter).toBe("all");
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: "/my-decks?q=science",
+      to: "/dashboard?q=science",
       replace: true,
     });
   });

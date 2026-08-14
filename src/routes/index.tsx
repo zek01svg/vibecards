@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FeatureCards } from "@/components/landing/feature-cards";
 import { HeroSection } from "@/components/landing/hero-section";
 import LandingPageButton from "@/components/landing/landing-page-button";
 
@@ -12,7 +11,6 @@ function HomePage() {
       <div className="mt-10">
         <LandingPageButton />
       </div>
-      <FeatureCards />
     </main>
   );
 }

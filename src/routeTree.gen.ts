@@ -11,11 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as MyDecksRouteImport } from './routes/my-decks'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as ApiDecksRouteImport } from './routes/api/decks'
 import { Route as DeckIdRouteImport } from './routes/deck/$id'
 
@@ -27,31 +22,6 @@ const IndexRoute = IndexRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyDecksRoute = MyDecksRouteImport.update({
-  id: '/my-decks',
-  path: '/my-decks',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
-  id: '/privacy-policy',
-  path: '/privacy-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
-  id: '/terms-of-service',
-  path: '/terms-of-service',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDecksRoute = ApiDecksRouteImport.update({
@@ -68,22 +38,12 @@ const DeckIdRoute = DeckIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/my-decks': typeof MyDecksRoute
-  '/privacy': typeof PrivacyRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms': typeof TermsRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
   '/api/decks': typeof ApiDecksRoute
   '/deck/$id': typeof DeckIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/my-decks': typeof MyDecksRoute
-  '/privacy': typeof PrivacyRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms': typeof TermsRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
   '/api/decks': typeof ApiDecksRoute
   '/deck/$id': typeof DeckIdRoute
 }
@@ -91,58 +51,20 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/my-decks': typeof MyDecksRoute
-  '/privacy': typeof PrivacyRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms': typeof TermsRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
   '/api/decks': typeof ApiDecksRoute
   '/deck/$id': typeof DeckIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/dashboard'
-    | '/my-decks'
-    | '/privacy'
-    | '/privacy-policy'
-    | '/terms'
-    | '/terms-of-service'
-    | '/api/decks'
-    | '/deck/$id'
+  fullPaths: '/' | '/dashboard' | '/api/decks' | '/deck/$id'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/dashboard'
-    | '/my-decks'
-    | '/privacy'
-    | '/privacy-policy'
-    | '/terms'
-    | '/terms-of-service'
-    | '/api/decks'
-    | '/deck/$id'
-  id:
-    | '__root__'
-    | '/'
-    | '/dashboard'
-    | '/my-decks'
-    | '/privacy'
-    | '/privacy-policy'
-    | '/terms'
-    | '/terms-of-service'
-    | '/api/decks'
-    | '/deck/$id'
+  to: '/' | '/dashboard' | '/api/decks' | '/deck/$id'
+  id: '__root__' | '/' | '/dashboard' | '/api/decks' | '/deck/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
-  MyDecksRoute: typeof MyDecksRoute
-  PrivacyRoute: typeof PrivacyRoute
-  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  TermsRoute: typeof TermsRoute
-  TermsOfServiceRoute: typeof TermsOfServiceRoute
   ApiDecksRoute: typeof ApiDecksRoute
   DeckIdRoute: typeof DeckIdRoute
 }
@@ -161,41 +83,6 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-decks': {
-      id: '/my-decks'
-      path: '/my-decks'
-      fullPath: '/my-decks'
-      preLoaderRoute: typeof MyDecksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy-policy': {
-      id: '/privacy-policy'
-      path: '/privacy-policy'
-      fullPath: '/privacy-policy'
-      preLoaderRoute: typeof PrivacyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms-of-service': {
-      id: '/terms-of-service'
-      path: '/terms-of-service'
-      fullPath: '/terms-of-service'
-      preLoaderRoute: typeof TermsOfServiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/decks': {
@@ -218,11 +105,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
-  MyDecksRoute: MyDecksRoute,
-  PrivacyRoute: PrivacyRoute,
-  PrivacyPolicyRoute: PrivacyPolicyRoute,
-  TermsRoute: TermsRoute,
-  TermsOfServiceRoute: TermsOfServiceRoute,
   ApiDecksRoute: ApiDecksRoute,
   DeckIdRoute: DeckIdRoute,
 }

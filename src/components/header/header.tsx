@@ -1,8 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
 
 import ThemeToggle from "../ui/theme-toggle";
-import { NavButtons } from "./nav-buttons";
 
 export function Header() {
   return (
@@ -13,17 +11,10 @@ export function Header() {
             to="/"
             className="mr-8 flex items-center gap-2 transition-opacity hover:opacity-80"
           >
-            <span className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
-              <Sparkles size={18} className="animate-pulse" />
-            </span>
             <span className="from-primary bg-linear-to-r to-purple-400 bg-clip-text text-xl font-bold tracking-tight text-transparent">
               VibeCards
             </span>
           </Link>
-
-          <div className="hidden items-center gap-2 md:flex">
-            <NavButtons />
-          </div>
 
           <div className="ml-auto flex items-center gap-4">
             <ThemeToggle />

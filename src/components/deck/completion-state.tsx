@@ -74,10 +74,10 @@ export function CompletionState({
           </Button>
           <Button
             variant="outline"
-            onClick={() => void navigate({ to: "/my-decks" })}
+            onClick={() => void navigate({ to: "/dashboard" })}
             className="border-border/50 bg-background/50 hover:bg-background h-12 w-full rounded-2xl font-bold"
           >
-            Back to Library
+            Back to Dashboard
           </Button>
         </div>
       </CardContent>

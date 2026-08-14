@@ -14,6 +14,8 @@ import {
 
 const MAX_OUTPUT_TOKENS = 8192;
 const modelHierarchy = [
+  "gemini-3.7-flash",
+  "gemini-3.6-flash",
   "gemini-3.5-flash",
   "gemini-3.1-flash-lite",
   "gemini-2.5-flash",

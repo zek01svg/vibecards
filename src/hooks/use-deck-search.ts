@@ -34,7 +34,7 @@ export const useDeckSearch = () => {
     }
 
     const searchStr = params.toString();
-    const to = searchStr ? `/my-decks?${searchStr}` : "/my-decks";
+    const to = searchStr ? `/dashboard?${searchStr}` : "/dashboard";
 
     void navigate({ to, replace: true });
   };

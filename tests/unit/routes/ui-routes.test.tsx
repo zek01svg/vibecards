@@ -4,14 +4,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { saveDeck } from "@/lib/local-deck-store";
 import { Route as DashboardRoute } from "@/routes/dashboard";
 import { Route as DeckRoute } from "@/routes/deck/$id";
-import { Route as MyDecksRoute } from "@/routes/my-decks";
 
 type RouterStateSelector<T> = (state: { location: { searchStr: string } }) => T;
+
+let mockRouteSearch: { mode?: "study" | "list" } = { mode: "study" };
 
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (options: Record<string, unknown>) => ({
     options,
     useParams: () => ({ id: "test-deck-1" }),
+    useSearch: () => mockRouteSearch,
   }),
   useNavigate: () => vi.fn<() => void>(),
   useRouterState: (options?: { select?: RouterStateSelector<unknown> }) => {
@@ -36,6 +38,7 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    mockRouteSearch = { mode: "study" };
   });
 
   afterEach(() => {
@@ -43,7 +46,7 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
   });
 
   describe("Dashboard Page", () => {
-    it("renders the deck generation interface without authentication state", () => {
+    it("renders the deck generation interface and empty deck state without authentication state", () => {
       // oxlint-disable-next-line typescript/no-non-null-assertion -- Route component is defined in source
       const DashboardComponent = DashboardRoute.options.component!;
       render(<DashboardComponent />);
@@ -59,21 +62,10 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
       expect(
         screen.getByRole("button", { name: /generate deck/i }),
       ).toBeDefined();
-    });
-  });
-
-  describe("My Decks Page", () => {
-    it("renders empty state when no decks exist", () => {
-      // oxlint-disable-next-line typescript/no-non-null-assertion -- Route component is defined in source
-      const MyDecksComponent = MyDecksRoute.options.component!;
-      render(<MyDecksComponent />);
 
       expect(screen.getByRole("heading", { name: /my decks/i })).toBeDefined();
       expect(
         screen.getByRole("button", { name: /export decks/i }),
-      ).toBeDefined();
-      expect(
-        screen.getByRole("button", { name: /import decks/i }),
       ).toBeDefined();
       expect(screen.getByText("No Cards Available")).toBeDefined();
     });
@@ -87,8 +79,8 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
       });
 
       // oxlint-disable-next-line typescript/no-non-null-assertion -- Route component is defined in source
-      const MyDecksComponent = MyDecksRoute.options.component!;
-      render(<MyDecksComponent />);
+      const DashboardComponent = DashboardRoute.options.component!;
+      render(<DashboardComponent />);
 
       expect(screen.getByText("Geography 101")).toBeDefined();
       expect(screen.getByText("Capitals")).toBeDefined();
@@ -105,7 +97,7 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
       render(<DeckComponent />);
 
       expect(screen.getByText("Deck Not Found")).toBeDefined();
-      expect(screen.getByText(/back to my decks/i)).toBeDefined();
+      expect(screen.getByText(/back to dashboard/i)).toBeDefined();
     });
 
     it("renders flashcard deck study view when deck exists in local storage", () => {
@@ -126,6 +118,30 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
       expect(screen.getByText("JavaScript Basics")).toBeDefined();
       expect(screen.getByText("What is JS?")).toBeDefined();
       expect(screen.getByText(/card 1 of 2/i)).toBeDefined();
+    });
+
+    it("renders all flashcards in list view when mode is list", () => {
+      mockRouteSearch = { mode: "list" };
+      saveDeck({
+        id: "test-deck-1",
+        title: "JavaScript Basics",
+        topic: "Programming",
+        cards: [
+          { front: "What is JS?", back: "A programming language" },
+          { front: "What is closure?", back: "Lexical scope function" },
+        ],
+      });
+
+      // oxlint-disable-next-line typescript/no-non-null-assertion -- Route component is defined in source
+      const DeckComponent = DeckRoute.options.component!;
+      render(<DeckComponent />);
+
+      expect(screen.getByText("All Cards")).toBeDefined();
+      expect(screen.getByText("What is JS?")).toBeDefined();
+      expect(screen.getByText("A programming language")).toBeDefined();
+      expect(screen.getByText("What is closure?")).toBeDefined();
+      expect(screen.getByText("Lexical scope function")).toBeDefined();
+      expect(screen.getByText(/start studying/i)).toBeDefined();
     });
   });
 });

@@ -6,7 +6,6 @@ import {
   createRootRoute,
 } from "@tanstack/react-router";
 
-import { Footer } from "@/components/footer/footer";
 import { Header } from "@/components/header/header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -34,7 +33,6 @@ function RootComponent() {
       <main>
         <Outlet />
       </main>
-      <Footer />
     </RootDocument>
   );
 }

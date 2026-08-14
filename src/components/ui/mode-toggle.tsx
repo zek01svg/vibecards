@@ -40,6 +40,7 @@ export function ModeToggle({
       <Link
         to="/deck/$id"
         params={{ id }}
+        search={{ mode: "list" }}
         className={cn(
           "flex items-center gap-2 rounded-lg font-bold transition-all",
           mobile ? "px-6 py-2 text-xs" : "px-4 py-1.5 text-xs",
