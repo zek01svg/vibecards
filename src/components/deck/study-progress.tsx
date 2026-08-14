@@ -1,5 +1,4 @@
 import { Progress } from "@/components/ui/progress";
-import { Target } from "lucide-react";
 
 interface StudyProgressProps {
   currentCard: number;
@@ -13,19 +12,17 @@ export function StudyProgress({
   progressValue,
 }: StudyProgressProps) {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between text-sm font-bold tracking-tight">
-        <div className="text-muted-foreground flex items-center gap-2">
-          <Target className="h-4 w-4" />
+    <div className="space-y-3">
+      <div className="flex items-center justify-between font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
+        <span className="text-muted-foreground">
           Card {currentCard} of {totalCards}
-        </div>
-        <div className="text-primary">
-          {Math.round(progressValue)}% Complete
-        </div>
+        </span>
+        <span className="text-foreground">{Math.round(progressValue)}%</span>
       </div>
       <Progress
         value={progressValue}
-        className="bg-muted/40 h-2 rounded-full"
+        className="bg-primary/15 [&_[data-slot=progress-indicator]]:bg-accent h-1.5 rounded-full"
+        aria-label={`Study progress: ${Math.round(progressValue)} percent`}
       />
     </div>
   );

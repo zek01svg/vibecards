@@ -14,7 +14,7 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="border-border bg-muted/50 flex h-9 w-[110px] items-center rounded-full border p-1 opacity-50" />
+      <div className="border-border bg-muted/40 flex h-9 w-[102px] items-center rounded-md border p-0.5 opacity-50" />
     );
   }
 
@@ -25,7 +25,7 @@ export default function ThemeToggle() {
   ] as const;
 
   return (
-    <div className="border-border bg-muted/50 relative inline-flex items-center gap-1 rounded-full border p-1 shadow-inner">
+    <div className="border-border bg-muted/40 flex items-center gap-0.5 rounded-md border p-0.5">
       {themes.map((t) => {
         const Icon = t.icon;
         const isActive = theme === t.id;
@@ -35,18 +35,15 @@ export default function ThemeToggle() {
             key={t.id}
             onClick={() => setTheme(t.id)}
             className={cn(
-              "relative flex h-7 w-7 items-center justify-center rounded-full transition-all duration-200 outline-none",
+              "flex h-7 w-7 items-center justify-center rounded-sm transition-all duration-200 outline-none",
               isActive
-                ? "bg-background text-primary z-10 scale-110 shadow-sm"
-                : "text-muted-foreground hover:bg-background/40 hover:text-foreground",
+                ? "bg-primary text-primary-foreground shadow-paper"
+                : "text-muted-foreground hover:bg-accent/40 hover:text-foreground",
             )}
             aria-label={`${t.label} theme`}
             title={t.label}
           >
-            <Icon
-              size={14}
-              className={cn("transition-transform", isActive && "scale-110")}
-            />
+            <Icon size={14} />
           </button>
         );
       })}

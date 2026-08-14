@@ -9,6 +9,17 @@ import {
 import { Header } from "@/components/header/header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+
+import "@fontsource/bricolage-grotesque/500.css";
+import "@fontsource/bricolage-grotesque/600.css";
+import "@fontsource/bricolage-grotesque/700.css";
+import "@fontsource/newsreader/400.css";
+import "@fontsource/newsreader/500.css";
+import "@fontsource/newsreader/400-italic.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/600.css";
+
 import "@/globals.css";
 
 export const Route = createRootRoute({

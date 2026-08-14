@@ -1,24 +1,22 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import { GraduationCap, List } from "lucide-react";
 
 interface ModeToggleProps {
   id: string;
   isStudyMode: boolean;
   className?: string;
-  mobile?: boolean;
 }
 
-export function ModeToggle({
-  id,
-  isStudyMode,
-  className,
-  mobile = false,
-}: ModeToggleProps) {
+export function ModeToggle({ id, isStudyMode, className }: ModeToggleProps) {
+  const base =
+    "rounded-sm px-2 sm:px-4 py-1.5 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase transition-all";
+  const active = "bg-primary text-primary-foreground shadow-paper";
+  const idle = "text-muted-foreground hover:text-foreground hover:bg-accent/40";
+
   return (
     <div
       className={cn(
-        "bg-muted/30 border-border/50 flex items-center gap-1.5 rounded-xl border p-1 shadow-inner",
+        "bg-muted/40 border-border flex items-center gap-0.5 rounded-md border p-0.5",
         className,
       )}
     >
@@ -26,31 +24,20 @@ export function ModeToggle({
         to="/deck/$id"
         params={{ id }}
         search={{ mode: "study" }}
-        className={cn(
-          "flex items-center gap-2 rounded-lg font-bold transition-all",
-          mobile ? "px-6 py-2 text-xs" : "px-4 py-1.5 text-xs",
-          isStudyMode
-            ? "bg-background text-primary scale-[1.02] shadow-sm"
-            : "text-muted-foreground hover:text-foreground hover:bg-background/40",
-        )}
+        aria-current={isStudyMode ? "page" : undefined}
+        className={cn(base, isStudyMode ? active : idle)}
       >
-        <GraduationCap className={mobile ? "h-4 w-4" : "h-3.5 w-3.5"} />
-        {mobile ? "Study" : "Study Mode"}
+        Study
       </Link>
       <Link
         to="/deck/$id"
         params={{ id }}
         search={{ mode: "list" }}
-        className={cn(
-          "flex items-center gap-2 rounded-lg font-bold transition-all",
-          mobile ? "px-6 py-2 text-xs" : "px-4 py-1.5 text-xs",
-          !isStudyMode
-            ? "bg-background text-primary scale-[1.02] shadow-sm"
-            : "text-muted-foreground hover:text-foreground hover:bg-background/40",
-        )}
+        aria-current={!isStudyMode ? "page" : undefined}
+        className={cn(base, !isStudyMode ? active : idle)}
       >
-        <List className={mobile ? "h-4 w-4" : "h-3.5 w-3.5"} />
-        {mobile ? "List" : "View All"}
+        <span className="hidden sm:inline">All cards</span>
+        <span className="sm:hidden">List</span>
       </Link>
     </div>
   );

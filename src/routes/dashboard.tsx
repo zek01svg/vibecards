@@ -198,16 +198,19 @@ function DashboardPage() {
       <div className="flex flex-col lg:h-full lg:flex-row lg:items-start lg:gap-8">
         {/* Left Column: Generate Form (stays put) */}
         <section className="w-full shrink-0 lg:w-[380px] xl:w-[420px]">
-          <Card className="border-border/50 shadow-xl">
-            <CardHeader className="p-5 pb-3">
-              <CardTitle className="text-2xl font-black tracking-tight sm:text-3xl">
-                Generate a Deck
+          <Card
+            id="make-a-deck"
+            className="border-border/70 bg-secondary text-secondary-foreground shadow-paper rounded-lg"
+          >
+            <CardHeader className="p-6 pb-4">
+              <CardTitle className="font-display text-2xl font-bold tracking-tight">
+                Make a deck
               </CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Turn a topic or notes into a focused flashcard deck.
+              <CardDescription className="text-secondary-foreground/60">
+                Type a topic or drop in notes. Cards come back ready to study.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-5 pt-0">
+            <CardContent className="p-6 pt-0">
               <form
                 onSubmit={(event) => {
                   event.preventDefault();
@@ -215,7 +218,7 @@ function DashboardPage() {
                   void form.handleSubmit();
                 }}
               >
-                <FieldGroup className="gap-5">
+                <FieldGroup className="gap-6">
                   <form.Field
                     name="topic"
                     validators={{
@@ -227,7 +230,12 @@ function DashboardPage() {
                   >
                     {(field) => (
                       <Field>
-                        <FieldLabel htmlFor="topic">Topic or notes</FieldLabel>
+                        <FieldLabel
+                          htmlFor="topic"
+                          className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase"
+                        >
+                          Topic or notes
+                        </FieldLabel>
                         <Textarea
                           id="topic"
                           name={field.name}
@@ -239,6 +247,7 @@ function DashboardPage() {
                           placeholder="Paste notes or describe what you want to study"
                           required
                           rows={6}
+                          className="dark:bg-card bg-card text-card-foreground placeholder:text-card-foreground/40 border-border/60 shadow-paper rounded-sm"
                         />
                         {field.state.meta.errors.length > 0 &&
                         field.state.meta.isTouched ? (
@@ -256,7 +265,10 @@ function DashboardPage() {
                     <form.Field name="difficulty">
                       {(field) => (
                         <Field>
-                          <FieldLabel htmlFor="difficulty">
+                          <FieldLabel
+                            htmlFor="difficulty"
+                            className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase"
+                          >
                             Difficulty
                           </FieldLabel>
                           <Select
@@ -267,7 +279,10 @@ function DashboardPage() {
                               }
                             }}
                           >
-                            <SelectTrigger id="difficulty" className="w-full">
+                            <SelectTrigger
+                              id="difficulty"
+                              className="dark:hover:bg-card/90 dark:bg-card bg-card text-card-foreground border-border/60 shadow-paper w-full rounded-sm"
+                            >
                               <SelectValue placeholder="Select difficulty" />
                             </SelectTrigger>
                             <SelectContent>
@@ -275,7 +290,7 @@ function DashboardPage() {
                                 <SelectItem
                                   key={value}
                                   value={value}
-                                  className="capitalize"
+                                  className="font-display text-sm font-medium capitalize"
                                 >
                                   {value}
                                 </SelectItem>
@@ -305,7 +320,12 @@ function DashboardPage() {
                     >
                       {(field) => (
                         <Field>
-                          <FieldLabel htmlFor="card-count">Cards</FieldLabel>
+                          <FieldLabel
+                            htmlFor="card-count"
+                            className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase"
+                          >
+                            Cards
+                          </FieldLabel>
                           <Input
                             id="card-count"
                             name={field.name}
@@ -324,6 +344,7 @@ function DashboardPage() {
                                 val === "" ? Number.NaN : Number(val),
                               );
                             }}
+                            className="dark:bg-card bg-card text-card-foreground placeholder:text-card-foreground/40 border-border/60 shadow-paper rounded-sm"
                           />
                           {field.state.meta.errors.length > 0 &&
                           field.state.meta.isTouched ? (
@@ -348,11 +369,12 @@ function DashboardPage() {
                     {([canSubmit, isSubmitting, topic]) => (
                       <Button
                         type="submit"
+                        size="lg"
                         disabled={
                           !canSubmit || Boolean(isSubmitting) || !topic.trim()
                         }
                       >
-                        {isSubmitting ? "Generating..." : "Generate Deck"}
+                        {isSubmitting ? "Generating…" : "Generate deck"}
                       </Button>
                     )}
                   </form.Subscribe>
@@ -364,14 +386,19 @@ function DashboardPage() {
 
         {/* Right Column: User's Decks (Independently scrollable with 3 cards per row) */}
         <section className="mt-8 min-w-0 flex-1 space-y-6 lg:mt-0 lg:h-full lg:overflow-y-auto lg:pr-2">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-2xl font-black tracking-tight sm:text-3xl">
-                My Decks
-              </h2>
-              <p className="text-muted-foreground text-xs sm:text-sm">
-                Study, favorite, and manage your generated flashcards.
-              </p>
+              <div className="flex items-baseline gap-3">
+                <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                  Your decks
+                </h2>
+                {decks.length > 0 && (
+                  <span className="text-muted-foreground font-mono text-[11px] tracking-[0.18em] uppercase">
+                    {decks.length} {decks.length === 1 ? "deck" : "decks"} ·{" "}
+                    {decks.reduce((sum, d) => sum + d.cardCount, 0)} cards
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <input
@@ -386,7 +413,7 @@ function DashboardPage() {
               />
               <Button variant="outline" size="sm" onClick={handleExport}>
                 <Download className="mr-2 h-4 w-4" />
-                Export Decks
+                Export decks
               </Button>
             </div>
           </div>
@@ -397,37 +424,60 @@ function DashboardPage() {
                 <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                 <Input
                   type="text"
-                  placeholder="Search decks by title or topic..."
+                  placeholder="Search decks by title or topic…"
                   value={searchQuery}
                   onChange={handleSearch}
                   className="h-9 pl-9 text-sm"
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={activeFilter === "all" ? "default" : "outline"}
-                  size="sm"
+              <fieldset className="border-border/60 flex items-center gap-6 border-b">
+                <legend className="sr-only">Filter decks</legend>
+                <button
+                  type="button"
                   onClick={() => handleFilter("all")}
+                  aria-pressed={activeFilter === "all"}
+                  className={`relative pb-2 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase transition-colors ${
+                    activeFilter === "all"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
                   All
-                </Button>
-                <Button
-                  variant={activeFilter === "favorites" ? "default" : "outline"}
-                  size="sm"
+                  <span
+                    aria-hidden="true"
+                    className={`bg-accent absolute -bottom-px left-0 h-[3px] w-full transition-opacity ${
+                      activeFilter === "all" ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </button>
+                <button
+                  type="button"
                   onClick={() => handleFilter("favorites")}
+                  aria-pressed={activeFilter === "favorites"}
+                  className={`relative pb-2 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase transition-colors ${
+                    activeFilter === "favorites"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
                   Favorites
-                </Button>
-              </div>
+                  <span
+                    aria-hidden="true"
+                    className={`bg-accent absolute -bottom-px left-0 h-[3px] w-full transition-opacity ${
+                      activeFilter === "favorites" ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </button>
+              </fieldset>
             </div>
           )}
 
           {decks.length === 0 ? (
-            <EmptyState />
+            <EmptyState kind="desk" />
           ) : filteredDecks.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-muted-foreground text-sm sm:text-base">
-                No decks found matching your search.
+                No decks match your search.
               </p>
               <Button
                 variant="ghost"
@@ -441,7 +491,7 @@ function DashboardPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {filteredDecks.map((deck) => (
                 <FlashcardDeck
                   key={deck.id}

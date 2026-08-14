@@ -51,7 +51,7 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
       const DashboardComponent = DashboardRoute.options.component!;
       render(<DashboardComponent />);
 
-      expect(screen.getByText("Generate a Deck")).toBeDefined();
+      expect(screen.getAllByText("Make a deck").length).toBeGreaterThan(0);
       expect(
         screen.getByPlaceholderText(
           /paste notes or describe what you want to study/i,
@@ -63,11 +63,13 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
         screen.getByRole("button", { name: /generate deck/i }),
       ).toBeDefined();
 
-      expect(screen.getByRole("heading", { name: /my decks/i })).toBeDefined();
+      expect(
+        screen.getByRole("heading", { name: /your decks/i }),
+      ).toBeDefined();
       expect(
         screen.getByRole("button", { name: /export decks/i }),
       ).toBeDefined();
-      expect(screen.getByText("No Cards Available")).toBeDefined();
+      expect(screen.getByText("It's quiet in here.")).toBeDefined();
     });
 
     it("renders stored decks when present in local storage", () => {
@@ -136,7 +138,7 @@ describe("UI Route Integration Tests (No Authentication Required)", () => {
       const DeckComponent = DeckRoute.options.component!;
       render(<DeckComponent />);
 
-      expect(screen.getByText("All Cards")).toBeDefined();
+      expect(screen.getAllByText("All cards").length).toBeGreaterThan(0);
       expect(screen.getByText("What is JS?")).toBeDefined();
       expect(screen.getByText("A programming language")).toBeDefined();
       expect(screen.getByText("What is closure?")).toBeDefined();

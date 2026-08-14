@@ -1,5 +1,4 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { GraduationCap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -10,7 +9,6 @@ import { Flashcard } from "@/components/deck/flashcard";
 import { KeyboardShortcutsHint } from "@/components/deck/keyboard-shortcuts-hint";
 import { StudyControls } from "@/components/deck/study-controls";
 import { StudyProgress } from "@/components/deck/study-progress";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -143,7 +141,7 @@ function DeckPage() {
       <>
         {deckHeader}
         <main className="container mx-auto px-6 py-12">
-          <EmptyState />
+          <EmptyState kind="deck" />
         </main>
       </>
     );
@@ -157,30 +155,26 @@ function DeckPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h2 className="text-3xl font-black tracking-tight">
-                  All Cards
+                <h2 className="font-display text-3xl font-bold tracking-tight">
+                  All cards
                 </h2>
-                <Badge
-                  variant="secondary"
-                  className="bg-primary/10 text-primary font-bold"
-                >
-                  {totalCards} Cards
-                </Badge>
+                <span className="bg-secondary text-secondary-foreground rounded-[3px] px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.15em] uppercase">
+                  {totalCards} cards
+                </span>
               </div>
               <p className="text-muted-foreground mt-1 text-sm">
-                Review all flashcards in &quot;{deck.title}&quot; at a glance.
+                Every card in &quot;{deck.title}&quot; at a glance.
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              <Button asChild className="gap-2 font-bold shadow-md">
+              <Button asChild className="shadow-paper">
                 <Link
                   to="/deck/$id"
                   params={{ id: deck.id }}
                   search={{ mode: "study" }}
                 >
-                  <GraduationCap className="h-4 w-4" />
-                  Start Studying
+                  Start studying
                 </Link>
               </Button>
             </div>
@@ -190,26 +184,23 @@ function DeckPage() {
             {deck.cards.map((card, index) => (
               <Card
                 key={index}
-                className="border-border/60 bg-card/60 hover:border-primary/40 flex flex-col justify-between overflow-hidden rounded-2xl shadow-sm transition-all"
+                className="bg-card text-card-foreground border-border/70 hover:border-foreground/30 hover:shadow-card shadow-paper flex flex-col justify-between rounded-sm border transition-all"
               >
-                <CardHeader className="p-4 pb-2">
+                <CardHeader className="p-5 pb-3">
                   <div className="flex items-center justify-between">
-                    <Badge
-                      variant="outline"
-                      className="text-muted-foreground text-xs font-semibold"
-                    >
-                      Card #{index + 1}
-                    </Badge>
+                    <span className="text-card-foreground/40 font-mono text-[10px] font-semibold tracking-[0.18em] uppercase">
+                      № {String(index + 1).padStart(2, "0")}
+                    </span>
                   </div>
-                  <CardTitle className="text-foreground mt-2 text-base font-semibold">
+                  <CardTitle className="font-display mt-2 text-base leading-snug font-semibold tracking-tight">
                     {card.front}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="border-border/40 bg-muted/20 border-t p-4">
-                  <div className="text-muted-foreground mb-1 text-[11px] font-bold tracking-wider uppercase">
+                <CardContent className="border-border/60 bg-secondary/50 border-t p-5">
+                  <div className="text-card-foreground/40 mb-1.5 font-mono text-[10px] font-semibold tracking-[0.18em] uppercase">
                     Answer
                   </div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-card-foreground/70 text-sm leading-relaxed">
                     {card.back}
                   </p>
                 </CardContent>
