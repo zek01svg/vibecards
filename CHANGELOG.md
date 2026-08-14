@@ -5,6 +5,33 @@ All notable changes to VibeCards are documented here.
 This file follows a semver-based structure. Dates reflect when the work landed
 in git history, not public release dates.
 
+## [3.1.0] - 2026-08-14
+
+UI redesign, unified studio dashboard, refined typography design tokens, and SSR serverless deployment hardening.
+
+Representative commits: `9aaa4f4`, `8a63c87`, `542c4b0`, `e2da0f0`
+
+### Added
+
+- Added typography design system with Bricolage Grotesque (display/headings), Newsreader (editorial serif), and JetBrains Mono (code/metadata) via `@fontsource`.
+- Added interactive hero section on the landing page featuring a dynamic card stack preview and direct call-to-action flow.
+- Added `@vitest/coverage-istanbul` coverage provider with configured 70% threshold in Vitest.
+- Added `nitro.config.ts` runtime preset for streamlined SSR builds.
+
+### Changed
+
+- Merged `/dashboard` and `/my-decks` into a unified deck generator and study studio page with integrated search, filtering, and instant study actions.
+- Overhauled study view controls (`src/components/deck/`): redesigned flashcard flip interactions, progress indicator, completion states, and keyboard shortcut guides.
+- Refined design tokens in `src/globals.css` for consistent dark/light themes, warm paper surfaces, and accessible contrast.
+- Updated dependencies across the stack including Vite 8, React 19, Tailwind CSS v4, Oxlint, and Oxfmt.
+
+### Fixed
+
+- Fixed Sentry serverless SSR bundling by disabling externalization in Nitro Vite plugin configuration, resolving runtime missing module errors.
+- Removed deprecated static legal routes (`/privacy-policy`, `/terms-of-service`, `/privacy`, `/terms`) and dead UI shims.
+
+---
+
 ## [3.0.0] - 2026-07-28
 
 Stateless local-first architecture migration: removed authentication and server database in favor of client-side local storage and unauthenticated Gemini deck generation.

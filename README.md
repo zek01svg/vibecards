@@ -17,8 +17,9 @@ flowchart TD
 
         subgraph Pages["Client UI"]
             direction LR
-            Landing["Landing Page<br/>├─ Typewriter<br/>└─ CTA"]
-            Dashboard["Deck Generator<br/>├─ Generate Deck Form<br/>├─ Deck List<br/>└─ Deck Detail (id)"]
+            Landing["Landing Page<br/>├─ Interactive Card Stack<br/>└─ Direct Study CTA"]
+            Dashboard["Studio Dashboard<br/>├─ Deck Generator<br/>├─ Saved Decks Manager<br/>└─ Search & Filters"]
+            DeckView["Deck Study View ($id)<br/>├─ Flashcard Flip<br/>├─ Progress Tracker<br/>└─ Keyboard Navigation"]
         end
 
         subgraph Server["Server Handlers"]
@@ -50,7 +51,7 @@ flowchart TD
 | Framework       | [TanStack Start](https://tanstack.com/start) + [TanStack Router](https://tanstack.com/router) with [React](https://react.dev/) 19                                  |
 | Language        | [TypeScript](https://www.typescriptlang.org/) (ESNext - strict mode)                                                                                               |
 | Runtime         | [Bun](https://bun.sh/) `>= 1.3.14`                                                                                                                                 |
-| Styling         | [Tailwind CSS](https://tailwindcss.com/) v4, CSS Modules                                                                                                           |
+| Styling & Fonts | [Tailwind CSS](https://tailwindcss.com/) v4, `@fontsource` (Bricolage Grotesque, Newsreader, JetBrains Mono)                                                       |
 | UI Components   | [Radix UI](https://www.radix-ui.com/) primitives, [shadcn/ui](https://ui.shadcn.com/), Lucide React icons                                                          |
 | Storage         | Browser [LocalStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) (Local-first deck persistence)                                        |
 | AI              | [TanStack AI](https://tanstack.com/ai) + Google Gemini provider (structured output)                                                                                |
@@ -130,7 +131,7 @@ bun run start
 Unit tests use [Vitest](https://vitest.dev/) with React Testing Library (`jsdom` environment) and Istanbul coverage (70% thresholds):
 
 ```bash
-bun run test:unit
+bun run test
 ```
 
 **Vitest Configuration** ([`vitest.config.ts`](vitest.config.ts)):
@@ -143,40 +144,36 @@ bun run test:unit
 ```
 vibecards/
 ├── instrument.server.mjs            # Sentry + LogTape bootstrap (loaded before app via NODE_OPTIONS)
+├── nitro.config.ts                  # Nitro server configuration
 ├── src/
 │   ├── start.ts                     # TanStack Start instance, Sentry + logger middleware
 │   ├── server.ts                    # Nitro server entry point, Sentry fetch wrapper
 │   ├── router.tsx                   # Router factory, client-side Sentry + LogTape init
 │   ├── routeTree.gen.ts             # Auto-generated route tree (do not edit manually)
-│   ├── globals.css                  # Global styles
+│   ├── globals.css                  # Design tokens, typography variables & global styles
 │   ├── routes/
 │   │   ├── __root.tsx               # Root document/layout route
-│   │   ├── index.tsx                # Landing page
-│   │   ├── dashboard.tsx            # Deck generator studio
-│   │   ├── my-decks.tsx             # Saved deck list
-│   │   ├── deck/$id.tsx             # Individual deck study view
-│   │   ├── privacy-policy.tsx       # Privacy policy
-│   │   ├── terms-of-service.tsx     # Terms of service
-│   │   ├── privacy.tsx              # Redirect → /privacy-policy
-│   │   ├── terms.tsx                # Redirect → /terms-of-service
+│   │   ├── index.tsx                # Landing page with card stack preview & CTA
+│   │   ├── dashboard.tsx            # Unified deck generator & saved decks studio
+│   │   ├── deck/
+│   │   │   └── $id.tsx              # Interactive deck study view
 │   │   └── api/
 │   │       └── decks.ts             # Stateless deck generate server endpoint
 │   ├── components/
-│   │   ├── deck/                    # Deck UI components
-│   │   ├── header/                  # App header + nav buttons
-│   │   ├── footer/                  # App footer
-│   │   ├── landing/                 # Landing page sections
-│   │   ├── legal/                   # Legal policy card component
-│   │   └── ui/                      # shadcn/ui shared components
+│   │   ├── deck/                    # Study view, controls, progress, empty & completion states
+│   │   ├── header/                  # App navigation header
+│   │   ├── ui/                      # shadcn/ui & radix primitives
+│   │   └── theme-provider.tsx       # NextThemes provider
 │   ├── hooks/                       # Custom React hooks (useLocalDecks, useDeckSearch, etc.)
 │   └── lib/
 │       ├── local-deck-store.ts      # LocalStorage persistence & Zod validation
 │       ├── env.ts                   # T3 Env validation
 │       ├── logger.ts                # LogTape structured logger
-│       └── validations/             # Zod schemas
+│       ├── utils.ts                 # Styling & helper utilities
+│       └── validations/             # Zod validation schemas
 ├── tests/
 │   └── unit/                        # Vitest unit test suite
-├── vitest.config.ts                 # Vitest configuration
+├── vitest.config.ts                 # Vitest configuration (Istanbul coverage)
 ├── vite.config.ts                   # TanStack Start + Nitro + Sentry Vite plugin
 ├── package.json
 └── .env.example                     # Environment variable template

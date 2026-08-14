@@ -1,6 +1,6 @@
 {
   "name": "vibecards",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "type": "module",
   "imports": {
@@ -13,7 +13,7 @@
     "start": "vite preview --port 3000",
     "lint": "oxlint",
     "format:check": "oxfmt --check",
-    "test": "vitest run --project unit",
+    "test": "vitest run",
     "prepare": "lefthook install || true"
   },
   "engines": {

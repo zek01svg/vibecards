@@ -21,7 +21,7 @@ An active study interface operating entirely on client-side deck data held in st
 _Avoid_: Server-side study log
 
 **Public Navigation**:
-Direct UI access to Dashboard, My Decks, and Deck Generation without sign-in prompts or session checks.
+Direct UI access to Landing, Dashboard Studio, and Deck Study views without sign-in prompts or session checks.
 _Avoid_: Protected route, auth gate
 
 **Deck Backup**:
