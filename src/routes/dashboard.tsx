@@ -360,19 +360,17 @@ function DashboardPage() {
                   </div>
 
                   <form.Subscribe
-                    selector={(state) => [
-                      state.canSubmit,
-                      state.isSubmitting,
-                      state.values.topic,
-                    ]}
+                    selector={(state) => ({
+                      canSubmit: state.canSubmit,
+                      isSubmitting: state.isSubmitting,
+                      topic: state.values.topic,
+                    })}
                   >
-                    {([canSubmit, isSubmitting, topic]) => (
+                    {({ canSubmit, isSubmitting, topic }) => (
                       <Button
                         type="submit"
                         size="lg"
-                        disabled={
-                          !canSubmit || Boolean(isSubmitting) || !topic.trim()
-                        }
+                        disabled={!canSubmit || isSubmitting || !topic.trim()}
                       >
                         {isSubmitting ? "Generating…" : "Generate deck"}
                       </Button>
