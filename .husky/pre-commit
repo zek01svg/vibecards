@@ -1,3 +1,0 @@
-echo "🚧 Running static analyses..."
-bunx lint-staged
-echo "✅ Static analyses completed."

@@ -1,7 +1,3 @@
-"use client";
-
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { RotateCw } from "lucide-react";
 
@@ -14,44 +10,46 @@ interface FlashcardProps {
 
 export function Flashcard({ front, back, isFlipped, onFlip }: FlashcardProps) {
   return (
-    <div className="perspective-1000 group cursor-pointer" onClick={onFlip}>
+    <button
+      type="button"
+      className="perspective-1000 group w-full cursor-pointer text-left"
+      onClick={onFlip}
+      aria-label={isFlipped ? "Show the prompt" : "Reveal the explanation"}
+    >
       <div
         className={cn(
-          "relative h-[400px] w-full transition-all duration-700 transform-3d",
+          "relative h-[420px] w-full transition-all duration-700 transform-3d",
           isFlipped ? "transform-[rotateY(180deg)]" : "",
         )}
       >
-        {/* Front Side */}
+        {/* Front side — blank paper, marker chip */}
         <div className="absolute inset-0 backface-hidden">
-          <Card className="border-border/50 bg-card shadow-primary/5 flex h-full flex-col items-center justify-center rounded-[2.5rem] border-2 p-12 text-center shadow-2xl">
-            <Badge
-              variant="outline"
-              className="border-primary/20 text-primary absolute top-8 left-8 font-bold"
-            >
-              PROMPT
-            </Badge>
-            <div className="text-foreground/90 custom-scrollbar max-h-[250px] overflow-y-auto pr-2 text-3xl leading-tight font-medium">
+          <div className="bg-card text-card-foreground shadow-card border-border/70 flex h-full flex-col items-center justify-center rounded-sm border p-10 sm:p-12">
+            <div className="bg-accent text-accent-foreground absolute top-7 left-7 rounded-[3px] px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.2em] uppercase">
+              Prompt
+            </div>
+            <div className="max-h-[260px] w-full overflow-y-auto pr-2 text-center text-2xl leading-snug font-medium text-balance sm:text-3xl">
               {front}
             </div>
-            <div className="text-muted-foreground/60 group-hover:text-primary/60 absolute right-0 bottom-10 left-0 flex items-center justify-center gap-2 text-xs font-bold tracking-widest uppercase transition-colors">
-              <RotateCw className="animate-spin-slow h-4 w-4" />
+            <div className="text-card-foreground/40 group-hover:text-card-foreground/70 absolute right-0 bottom-6 left-0 flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.18em] uppercase transition-colors">
+              <RotateCw className="h-3.5 w-3.5" />
               Click to flip
             </div>
-          </Card>
+          </div>
         </div>
 
-        {/* Back Side */}
+        {/* Back side — ink-filled paper, outline chip */}
         <div className="absolute inset-0 transform-[rotateY(180deg)] backface-hidden">
-          <Card className="border-primary/30 bg-primary/3 shadow-primary/10 flex h-full flex-col items-center justify-center rounded-[2.5rem] border-2 p-12 text-center shadow-2xl backdrop-blur-sm">
-            <Badge className="bg-primary text-primary-foreground absolute top-8 left-8 border-none font-bold shadow-md">
-              EXPLANATION
-            </Badge>
-            <div className="text-foreground/80 custom-scrollbar max-h-[250px] overflow-y-auto pr-2 text-2xl leading-relaxed font-medium italic">
+          <div className="bg-card text-card-foreground shadow-card border-border/70 flex h-full flex-col items-center justify-center rounded-sm border p-10 sm:p-12">
+            <div className="border-border text-card-foreground/70 absolute top-7 left-7 rounded-[3px] border px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.2em] uppercase">
+              Explanation
+            </div>
+            <div className="max-h-[260px] w-full overflow-y-auto pr-2 text-center text-xl leading-relaxed text-balance italic sm:text-2xl">
               {back}
             </div>
-          </Card>
+          </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

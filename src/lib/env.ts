@@ -1,46 +1,27 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const env = createEnv({
   client: {
-    NEXT_PUBLIC_APP_URL: z.url().default("http://localhost:3000"),
+    VITE_APP_URL: z.url().default("http://localhost:3000"),
+    VITE_SENTRY_DSN: z.string().optional(),
   },
   server: {
     GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
-    NODE_ENV: z.enum(["development", "production"]).default("development"),
-
-    DATABASE_URL: z.string(),
-
-    GOOGLE_CLIENT_ID: z.string(),
-    GOOGLE_CLIENT_SECRET: z.string(),
-
-    BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
-    BETTER_AUTH_SECRET: z.string(),
-
-    RESEND_API_KEY: z.string(),
-
-    TEST_EMAIL: z.string(),
-    TEST_PASSWORD: z.string(),
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
+    UPSTASH_REDIS_REST_URL: z.string().optional(),
+    UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
   },
-  clientPrefix: "NEXT_PUBLIC_",
+  clientPrefix: "VITE_",
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
-
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-
+    VITE_APP_URL: process.env.VITE_APP_URL,
+    VITE_SENTRY_DSN: process.env.VITE_SENTRY_DSN,
     GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-
-    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-
-    RESEND_API_KEY: process.env.RESEND_API_KEY,
-
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-
-    TEST_EMAIL: process.env.TEST_EMAIL,
-    TEST_PASSWORD: process.env.TEST_PASSWORD,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   },
   skipValidation:
     !!process.env.CI || process.env.npm_lifecycle_event === "lint",

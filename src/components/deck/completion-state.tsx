@@ -1,9 +1,6 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RotateCcw, Trophy } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 interface CompletionStateProps {
   title: string;
@@ -20,69 +17,65 @@ export function CompletionState({
   totalCards,
   onRestart,
 }: CompletionStateProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const accuracy =
     totalCards > 0 ? Math.round((correctCount / totalCards) * 100) : 0;
 
   return (
-    <Card className="border-border/50 bg-card/50 shadow-primary/5 animate-fade-in mx-auto max-w-2xl overflow-hidden rounded-3xl shadow-2xl">
-      <CardHeader className="pt-10 pb-6 text-center">
-        <div className="bg-primary/10 border-primary/20 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full border">
-          <Trophy className="text-primary h-10 w-10 animate-bounce" />
-        </div>
-        <CardTitle className="text-3xl font-black tracking-tight">
-          Study Complete!
-        </CardTitle>
-        <p className="text-muted-foreground mt-2">
-          You&apos;ve finished reviewing &quot;{title}&quot;
-        </p>
-      </CardHeader>
+    <div className="bg-card text-card-foreground shadow-card animate-card-in border-border/70 mx-auto max-w-xl rounded-sm border p-10 text-center sm:p-14">
+      <p className="text-muted-foreground font-mono text-[11px] font-semibold tracking-[0.2em] uppercase">
+        Session complete
+      </p>
+      <h1 className="font-display mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+        You finished &quot;{title}&quot;.
+      </h1>
 
-      <CardContent className="px-10 pb-10">
-        <div className="mb-10 grid grid-cols-3 gap-4">
-          <div className="bg-background/40 border-border/50 rounded-3xl border p-4 text-center">
-            <div className="text-primary mb-1 text-2xl font-black">
-              {correctCount}
-            </div>
-            <div className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
-              Correct
-            </div>
+      <div className="mt-12 flex flex-col items-center gap-10 sm:flex-row sm:justify-center sm:gap-14">
+        {/* The graded mark */}
+        <div className="flex flex-col items-center gap-3">
+          <div className="border-destructive flex h-40 w-40 items-center justify-center rounded-full border-[3px]">
+            <span className="font-display text-6xl font-bold tracking-tight">
+              {accuracy}
+            </span>
+            <span className="text-2xl font-bold">%</span>
           </div>
-          <div className="bg-background/40 border-border/50 rounded-3xl border p-4 text-center">
-            <div className="text-destructive mb-1 text-2xl font-black">
-              {incorrectCount}
-            </div>
-            <div className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
-              Incorrect
-            </div>
-          </div>
-          <div className="bg-background/40 border-border/50 rounded-3xl border p-4 text-center">
-            <div className="text-foreground mb-1 text-2xl font-black">
-              {accuracy}%
-            </div>
-            <div className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
-              Accuracy
-            </div>
-          </div>
+          <span className="text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.2em] uppercase">
+            Accuracy
+          </span>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <Button
-            onClick={onRestart}
-            className="shadow-primary/20 h-12 w-full rounded-2xl font-bold shadow-lg"
-          >
-            <RotateCcw className="mr-2 h-4 w-4" />
-            Study Again
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => router.push("/my-decks")}
-            className="border-border/50 bg-background/50 hover:bg-background h-12 w-full rounded-2xl font-bold"
-          >
-            Back to Library
-          </Button>
+        <div className="space-y-4 text-left font-mono text-xs font-semibold tracking-[0.15em] uppercase">
+          <div className="flex items-center gap-3">
+            <span className="bg-success inline-block h-2 w-2 rounded-full" />
+            <span className="text-foreground text-sm tracking-widest">
+              {correctCount} got it
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="bg-destructive inline-block h-2 w-2 rounded-full" />
+            <span className="text-foreground text-sm tracking-widest">
+              {incorrectCount} missed
+            </span>
+          </div>
+          <p className="text-muted-foreground pt-1 text-[10px] font-normal tracking-normal normal-case">
+            {totalCards} cards reviewed
+          </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      <div className="mt-12 flex flex-col gap-3">
+        <Button onClick={onRestart} className="h-12 w-full rounded-md">
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Study again
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => void navigate({ to: "/dashboard" })}
+          className="h-12 w-full rounded-md"
+        >
+          Back to dashboard
+        </Button>
+      </div>
+    </div>
   );
 }

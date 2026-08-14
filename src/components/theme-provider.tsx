@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -12,23 +10,23 @@ type ThemeProviderState = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
 };
-const initialState: ThemeProviderState = {
-  theme: "system",
-  setTheme: () => null,
-};
-const ThemeProviderContext =
-  React.createContext<ThemeProviderState>(initialState);
+const ThemeProviderContext = React.createContext<
+  ThemeProviderState | undefined
+>(undefined);
 export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "vibecards-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(() =>
-    typeof window !== "undefined"
-      ? (localStorage.getItem(storageKey) as Theme) || defaultTheme
-      : defaultTheme,
-  );
+  const [theme, setTheme] = React.useState<Theme>(() => {
+    if (typeof window === "undefined") return defaultTheme;
+    const stored = localStorage.getItem(storageKey);
+    if (stored === "dark" || stored === "light" || stored === "system") {
+      return stored;
+    }
+    return defaultTheme;
+  });
   React.useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
@@ -44,9 +42,9 @@ export function ThemeProvider({
   }, [theme]);
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (nextTheme: Theme) => {
+      localStorage.setItem(storageKey, nextTheme);
+      setTheme(nextTheme);
     },
   };
   return (
@@ -55,7 +53,7 @@ export function ThemeProvider({
     </ThemeProviderContext.Provider>
   );
 }
-export const useTheme = () => {
+export const useTheme = (): ThemeProviderState => {
   const context = React.useContext(ThemeProviderContext);
   if (context === undefined)
     throw new Error("useTheme must be used within a ThemeProvider");

@@ -20,11 +20,12 @@
   "importOrderTypeScriptVersion": "4.4.0",
   "printWidth": 80,
   "sortPackageJson": false,
+  "endOfLine": "lf",
   "ignorePatterns": [
-    "pnpm-lock.yaml",
+    "bun.lock",
     "node_modules",
     "coverage",
-    ".next",
-    "*.yml"
+    ".tanstack",
+    "src/routeTree.gen.ts"
   ]
 }

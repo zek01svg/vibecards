@@ -1,0 +1,124 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "react",
+    "vitest",
+    "jsx-a11y",
+    "promise",
+    "node"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "no-alert": "error",
+    "no-console": "error",
+    "no-debugger": "error",
+    "eqeqeq": ["error", "always"],
+    "no-var": "error",
+    "prefer-const": "error",
+    "import/no-cycle": "error",
+    "react/react-in-jsx-scope": "off",
+    "import/no-named-export": "off",
+    "import/prefer-default-export": "off",
+    "import/exports-last": "off",
+    "sort-imports": "off",
+    "sort-keys": "off",
+    "func-style": "off",
+    "no-magic-numbers": "off",
+    "no-ternary": "off",
+    "vitest/no-importing-vitest-globals": "off",
+    "vitest/prefer-describe-function-title": "off",
+    "node/no-process-env": "error",
+    "unicorn/prefer-node-protocol": "off",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+
+    "unicorn/no-null": "off",
+
+    "no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
+    "typescript/consistent-type-imports": [
+      "warn",
+      { "prefer": "type-imports", "fixStyle": "separate-type-imports" }
+    ],
+    "typescript/no-unnecessary-condition": [
+      "error",
+      { "allowConstantLoopConditions": true }
+    ],
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-explicit-any": "warn",
+
+    "import/no-duplicates": "error",
+    "import/first": "error",
+    "import/extensions": "off",
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+    "no-underscore-dangle": [
+      "error",
+      { "allow": ["__dirname", "__appSentryInitialized__"] }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "name": "zod",
+        "message": "Use `import { z } from 'zod/v4'` instead to ensure v4."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["tests/**", "instrument.server.mjs"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "src/lib/env.ts",
+        "src/env.ts",
+        "playwright.config.ts",
+        "instrument.server.mjs",
+        "tests/integration/setup.ts"
+      ],
+      "rules": {
+        "node/no-process-env": "off"
+      }
+    },
+    {
+      "files": ["**/*.css", "src/routes/__root.tsx"],
+      "rules": {
+        "import/no-unassigned-import": "off"
+      }
+    },
+    {
+      "files": ["tests/**"],
+      "rules": {
+        "typescript/unbound-method": "off",
+        "typescript/no-unsafe-type-assertion": "off",
+        "typescript/no-unnecessary-condition": "off"
+      }
+    }
+  ],
+  "env": {
+    "builtin": true,
+    "node": true,
+    "browser": true
+  },
+  "ignorePatterns": [
+    "test-app",
+    ".output/**",
+    ".nitro/**",
+    "node_modules/**",
+    "src/routeTree.gen.ts"
+  ]
+}

@@ -1,8 +1,6 @@
-"use client";
-
-import Link from "next/link";
-import { Card as CardType } from "@/lib/validations/generate-deck-schema";
-import { Calendar, ChevronRight, Star, Trash2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight, Star, Trash2 } from "lucide-react";
+import type { DeckIndexItem } from "@/lib/local-deck-store";
 
 import {
   AlertDialog,
@@ -15,7 +13,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -25,119 +22,125 @@ import {
   CardTitle,
 } from "../ui/card";
 
-export interface Deck {
-  id: string;
-  title: string;
-  topic: string;
-  cards: CardType[];
-  createdAt: string;
-  isFavorite: boolean;
-}
+export type DeckSummary = DeckIndexItem;
 
 interface FlashcardProps {
-  deck: Deck;
-  onDelete: (id: string, e: React.MouseEvent) => Promise<void>;
+  deck: DeckSummary;
+  onDelete: (id: string, e: React.MouseEvent) => Promise<void> | void;
   onToggleFavorite: (
     id: string,
     isFavorite: boolean,
     e: React.MouseEvent,
-  ) => Promise<void>;
+  ) => Promise<void> | void;
 }
 
 export function FlashcardDeck({
   deck,
   onDelete,
   onToggleFavorite,
-  isPending,
-  isPendingFavorite,
-}: FlashcardProps & { isPending?: boolean; isPendingFavorite?: boolean }) {
+}: FlashcardProps) {
+  const cardCount = deck.cardCount;
+
   return (
-    <Card className="border-border/50 bg-card/50 hover:border-primary/50 hover:bg-card hover:shadow-primary/5 group relative h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <Card className="group bg-card text-card-foreground border-border/70 hover:border-foreground/30 hover:shadow-card shadow-paper relative flex h-full flex-col justify-between rounded-sm border transition-all duration-300 hover:-translate-y-0.5">
       <Link
-        href={`/deck/${deck.id}`}
-        className="focus:ring-primary absolute inset-0 z-0 rounded-xl focus:ring-2 focus:ring-offset-2 focus:outline-none"
+        to="/deck/$id"
+        params={{ id: deck.id }}
+        className="focus-visible:ring-ring focus-visible:ring-offset-background absolute inset-0 z-0 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         aria-label={`Study deck: ${deck.title}`}
       />
-      <CardHeader className="pointer-events-none relative z-10 p-6">
-        <div className="pointer-events-auto flex items-start justify-between gap-4">
-          <div className="space-y-1">
-            <Badge
-              variant="secondary"
-              className="bg-primary/10 text-primary hover:bg-primary/20 mb-2 border-none font-bold"
-            >
-              {deck.cards?.length || 0} Cards
-            </Badge>
-            <CardTitle className="group-hover:text-primary line-clamp-1 transition-colors">
-              {deck.title}
-            </CardTitle>
-          </div>
+      <div>
+        <CardHeader className="pointer-events-none relative z-10 p-5 pb-3">
+          <div className="pointer-events-auto flex items-start justify-between gap-2">
+            <div className="min-w-0 space-y-2">
+              <span className="bg-secondary text-secondary-foreground inline-block rounded-[3px] px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-[0.15em] uppercase">
+                {cardCount} cards
+              </span>
+              <CardTitle className="font-display line-clamp-1 text-base font-semibold tracking-tight">
+                {deck.title}
+              </CardTitle>
+            </div>
 
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`relative z-10 shrink-0 transition-colors hover:bg-yellow-500/10 hover:text-yellow-500 ${deck.isFavorite ? "text-yellow-500" : "text-muted-foreground"}`}
-              onClick={(e) => onToggleFavorite(deck.id, !deck.isFavorite, e)}
-              disabled={isPendingFavorite}
-            >
-              <Star
-                className={`h-4 w-4 ${deck.isFavorite ? "fill-current" : ""}`}
-              />
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive relative z-10 shrink-0 transition-colors"
-                  disabled={isPending}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </AlertDialogTrigger>
-
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the deck <strong>&quot;{deck.title}&quot;</strong> and all
-                    its cards.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={isPending}>
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    onClick={(e) => onDelete(deck.id, e)}
-                    disabled={isPending}
+            <div className="flex items-center gap-0.5">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className={`hover:bg-accent/50 h-8 w-8 shrink-0 rounded-sm transition-colors ${
+                  deck.isFavorite
+                    ? "text-accent hover:text-accent"
+                    : "text-card-foreground/40 hover:text-card-foreground"
+                }`}
+                onClick={(e) => {
+                  void onToggleFavorite(deck.id, !deck.isFavorite, e);
+                }}
+                aria-label={
+                  deck.isFavorite
+                    ? `Unfavorite ${deck.title}`
+                    : `Favorite ${deck.title}`
+                }
+              >
+                <Star
+                  className={`h-3.5 w-3.5 ${
+                    deck.isFavorite ? "fill-current" : ""
+                  }`}
+                />
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-card-foreground/40 hover:bg-destructive/10 hover:text-destructive h-8 w-8 shrink-0 rounded-sm transition-colors"
+                    aria-label={`Delete ${deck.title}`}
                   >
-                    {isPending ? "Deleting..." : "Delete"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </AlertDialogTrigger>
+
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this deck?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This can&apos;t be undone. It permanently removes &quot;
+                      {deck.title}&quot; and all its cards from your browser.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Keep it</AlertDialogCancel>
+                    <AlertDialogAction
+                      variant="destructive"
+                      onClick={(e) => {
+                        void onDelete(deck.id, e);
+                      }}
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
-      <CardContent className="pointer-events-none relative z-10 px-6 pt-0 pb-6">
-        <p className="text-muted-foreground line-clamp-2 text-sm">
-          {deck.topic}
-        </p>
-      </CardContent>
+        <CardContent className="pointer-events-none relative z-10 px-5 pt-0 pb-4">
+          <p className="text-card-foreground/60 line-clamp-2 text-sm leading-relaxed">
+            {deck.topic}
+          </p>
+        </CardContent>
+      </div>
 
-      <CardFooter className="border-border/50 bg-muted/20 pointer-events-none relative z-10 flex items-center justify-between border-t px-6 py-4">
-        <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
-          <Calendar className="h-3 w-3" />
-          {new Date(deck.createdAt).toLocaleDateString()}
-        </div>
-        <div className="group-hover:text-primary flex items-center gap-1 text-xs font-bold transition-all">
-          Study Now
-          <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
-        </div>
+      <CardFooter className="border-border/60 pointer-events-none relative z-10 flex items-center justify-between border-t px-5 py-3">
+        <span className="text-card-foreground/40 font-mono text-[10px] tracking-[0.12em] uppercase">
+          {new Date(deck.createdAt).toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
+        <span className="group-hover:text-card-foreground text-card-foreground/60 flex items-center gap-1 font-mono text-[10px] font-semibold tracking-[0.15em] uppercase transition-colors">
+          Study
+          <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+        </span>
       </CardFooter>
     </Card>
   );
